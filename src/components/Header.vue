@@ -1,9 +1,30 @@
 <template>
 	<header class="flex flex-column items-center w-screen h-16 top-0 left-0  px-6">
 		<nav>
-			<RouterLink to="/">
-				<img class="logo" src="@/assets/logo.svg" alt="Vue logo" width="60" height="60" />
+			<RouterLink class="link flex flex-row items-center space-x-2" to="/">
+				<img src="@/assets/images/logo.png" alt="玉桃易转" width="50" height="50" />
+				<h1 class="text-lg font-bold rainbow-text">玉桃易转</h1>
 			</RouterLink>
 		</nav>
 	</header>
 </template>
+
+
+<style lang="scss">
+.link {
+
+	&:hover,
+	&:focus,
+	&:active {
+		border: none !important;
+		outline: none !important;
+	}
+
+	.rainbow-text {
+		color: transparent;
+		background-image: linear-gradient(0deg, #ff6768 28%, #a3cd39 60%);
+		background-clip: text;
+		-webkit-background-clip: text;
+	}
+}
+</style>
