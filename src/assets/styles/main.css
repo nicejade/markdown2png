@@ -1,0 +1,30 @@
+@import "./base.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-white {
+  background-color: #ffffff;
+}
+
+.border-slate-100 {
+  border-color: rgb(226 232 240);
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1280px;
+  height: 100vh;
+  margin: 0 auto;
+  font-weight: normal;
+}
+
+@media (min-width: 1024px) {
+  body {
+    display: flex;
+    place-items: center;
+  }
+}
