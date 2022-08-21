@@ -1,0 +1,257 @@
+.markdown ol ol,
+.markdown ul ol,
+.markdown ol ul,
+.markdown ul ul,
+.markdown ol ul ol,
+.markdown ul ul ol,
+.markdown ol ul ul,
+.markdown ul ul ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown {
+  font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 1rem;
+  line-height: 1.6;
+  word-wrap: break-word;
+  padding: 0;
+  text-align: left;
+  -webkit-border-radius: 0 0 3px 3px;
+  border-radius: 0 0 3px 3px;
+}
+
+.markdown>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+.markdown * {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+  margin-top: 1em;
+  margin-bottom: 16px;
+  font-weight: bold;
+  line-height: 1.4;
+}
+
+.markdown p,
+.markdown blockquote,
+.markdown ul,
+.markdown ol,
+.markdown dl,
+.markdown table,
+.markdown pre {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown h1 {
+  margin: 0.67em 0;
+  padding-bottom: 0.3em;
+  font-size: 2rem;
+  line-height: 1.2;
+  border-bottom: 1px solid #eee;
+}
+
+.markdown h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.8rem;
+  line-height: 1.225;
+}
+
+.markdown h3 {
+  font-size: 1.6rem;
+  line-height: 1.43;
+}
+
+.markdown h4 {
+  font-size: 1.4rem;
+}
+
+.markdown h5 {
+  font-size: 1.4rem;
+}
+
+.markdown h6 {
+  font-size: 1.4rem;
+  color: #777;
+}
+
+.markdown ol,
+.markdown ul {
+  padding-left: 2em;
+}
+
+.markdown ol ol,
+.markdown ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown ol ul,
+.markdown ul ul {
+  list-style-type: circle;
+}
+
+.markdown ol ul ul,
+.markdown ul ul ul {
+  list-style-type: square;
+}
+
+.markdown ol {
+  list-style-type: decimal;
+}
+
+.markdown ul {
+  list-style-type: disc;
+}
+
+.markdown blockquote {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0 15px;
+  color: #777;
+  border-left: 4px solid #ddd;
+}
+
+.markdown table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown table tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+.markdown table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+.markdown table th,
+.markdown table td {
+  padding: 6px 13px;
+  border: 1px solid #ddd;
+}
+
+.markdown pre {
+  word-wrap: normal;
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.markdown pre code {
+  display: inline;
+  max-width: initial;
+  padding: 0;
+  margin: 0;
+  overflow: initial;
+  font-size: 100%;
+  line-height: inherit;
+  word-wrap: normal;
+  white-space: pre;
+  border: 0;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  background-color: transparent;
+}
+
+.markdown pre code:before,
+.markdown pre code:after {
+  content: normal;
+}
+
+.markdown code {
+  font-family: Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(0, 0, 0, 0.04);
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+}
+
+.markdown code:before,
+.markdown code:after {
+  letter-spacing: -0.2em;
+  content: '\00a0';
+}
+
+.markdown a {
+  color: #4078c0;
+  text-decoration: none;
+  background: transparent;
+}
+
+.markdown img {
+  max-width: 100%;
+  max-height: 100%;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.markdown strong {
+  font-weight: bold;
+}
+
+.markdown em {
+  font-style: italic;
+}
+
+.markdown del {
+  text-decoration: line-through;
+}
+
+.task-list-item {
+  list-style-type: none;
+}
+
+.task-list-item input {
+  font: 13px/1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  margin: 0 0.35em 0.25em -1.6em;
+  vertical-align: middle;
+}
+
+.task-list-item input[disabled] {
+  cursor: default;
+}
+
+.task-list-item input[type='checkbox'] {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.task-list-item input[type='radio'] {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0;
+}

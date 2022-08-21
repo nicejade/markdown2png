@@ -1,6 +1,6 @@
 <template>
-	<header class="flex flex-column items-center w-screen h-16 top-0 left-0  px-6">
-		<nav>
+	<header class="flex flex-column items-center w-screen top-0 left-0 py-5">
+		<nav class="w-screen px-6">
 			<RouterLink class="link flex flex-row items-center space-x-2" to="/">
 				<img src="@/assets/images/logo.png" alt="玉桃易转" width="50" height="50" />
 				<h1 class="text-lg font-bold rainbow-text">玉桃易转</h1>
