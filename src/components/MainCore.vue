@@ -6,28 +6,44 @@
 		</div>
 	</div>
 	<div class="operate-area flex flex-row items-center space-x-4 px-4 bg-white h-24 shadow-lg rounded-md">
-		<button class="flex flex-row items-center	h-10 px-8 py-2 bg-gray-100 rounded-md border border-solid border-gray"
+		<div class="flex flex-col justify-center items-center w-24 h-full">
+			<p class="pb-2 font-medium">日期</p>
+			<Switch :state="isHaveDate" @check="handleDate" class="block" />
+		</div>
+		<button
+			class="flex flex-row items-center	h-10 px-8 py-4 bg-gray-100 rounded-md font-medium border border-solid border-gray hover:bg-gray-50 dark:hover:bg-gray-900"
 			@click="onSave2Image">保存图片
 		</button>
+		<Select :active="0" @change="onSelectChange"></Select>
 	</div>
 </template>
 
 <script lang="ts">
 import { parse } from 'marked'
-import { useContentStore } from './../stores/content'
 import html2canvas from "html2canvas"
+
+import { useContentStore } from './../stores/content'
+import Switch from './Switch.vue'
+import Select from './Select.vue'
 
 export default {
 	setup() {
 		const contentStore = useContentStore()
+		const isHaveDate = false
 
 		return {
-			contentStore
+			isHaveDate,
+			contentStore,
 		}
 	},
 
 	mounted() {
 		this.$refs.editor.focus()
+	},
+
+	components: {
+		Switch,
+		Select,
 	},
 
 	methods: {
@@ -36,6 +52,10 @@ export default {
 			tempDomNode.href = canvas.toDataURL("image/png");
 			tempDomNode.download = new Date().getTime() + ".png";
 			tempDomNode.click();
+		},
+
+		updatePreview() {
+			this.$refs.editor.innerHTML += `<p>2022.02.21</p>`
 		},
 
 		enter2preview() {
@@ -47,6 +67,9 @@ export default {
 		},
 
 		/* -------------------On Event Callback------------------- */
+		handleDate(value) {
+			value ? this.updatePreview() : ''
+		},
 
 		onEditorFocus() {
 			this.enter2editor()
@@ -62,6 +85,10 @@ export default {
 			html2canvas(this.$refs.container).then(canvas => {
 				this.download2png(canvas)
 			})
+		},
+
+		onSelectChange(index: number) {
+			console.log(index)
 		}
 	}
 }

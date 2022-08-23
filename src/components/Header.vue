@@ -1,5 +1,5 @@
 <template>
-	<header class="flex flex-column items-center w-screen top-0 left-0 py-5">
+	<header class="flex flex-col items-center w-screen top-0 left-0 py-5">
 		<nav class="w-screen px-6">
 			<RouterLink class="link flex flex-row items-center space-x-2" to="/">
 				<img src="@/assets/images/logo.png" alt="玉桃易转" width="50" height="50" />
@@ -8,7 +8,6 @@
 		</nav>
 	</header>
 </template>
-
 
 <style lang="scss">
 .link {
