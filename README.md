@@ -1,40 +1,56 @@
-# markdown2png
+<h1 align="center"><a href="https://peach.nicelinks.site?utm_source=github.com&pid=peach"><img src="https://raw.githubusercontent.com/nicejade/markdown2png/master/src/assets/images/logo.png" width="200" alt="玉桃文飨轩"></a></h1>
 
-This template should help get you started developing with Vue 3 in Vite.
+<div align="center">
+  <strong>
+    <a href="https://peach.nicelinks.site?utm_source=github.com&pid=peach">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text、word 等格式内容，快速转化为 png、pdf、html 等文件，并支持自动下载、自定义设置等功能。
+  </strong>🐬 基于 <a href="https://nicelinks.site/post/5b1a221c0526c920d6dfaada">Vue3</a>、<a href="https://nicelinks.site/post/6010e1b10c71de1fb957b64e">Vite</a>、<a href="https://nicelinks.site/post/5fd20cb4c06d6302c1907ec7">TailwindCSS</a>、<a href="https://nicelinks.site/post/6278fdeaac00ce3f9b11a8ef">TypeScript</a> 等构建。
+</div>
 
-## Recommended IDE Setup
+## 功能特性
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+### 核心功能
 
-## Type Support for `.vue` Imports in TS
+- [x] 支持将内容转换 png；
+- [ ] 支持将内容转换 pdf；
+- [ ] 支持将内容转换 html；
+- [ ] 支持将内容转换 Markdown；
+- [x] 支持 markdown 格式；
+- [ ] 支持 rich text 格式；
+- [ ] 支持 word（docs） 格式；
+- [ ] 支持从本地文件导入；
+- [ ] 支持在线资源地址；
+- [x] 支持自动下载产物；
+- [x] 支持将内容排版美化；
+- [ ] 支持社交平台快捷分享；
+- [x] 支持为产物添加日期；
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+### 自定义设置
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+- [ ] 内置多种主题，支持切换；
+- [ ] 支持自主定义主题样式；
+- [ ] 支持背景、padding 等选择；
+- [ ] 支持生成各种设备的尺寸；
+- [ ] 支持暗黑主题（dark mode）；
+- [ ] 支持为图片添加`品牌水印`；
+- [ ] 支持为图片添加渐变阴影效果；
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## 相关链接
 
-## Customize configuration
+- [**倾城之链**](https://nicelinks.site?utm_source=github.com&pid=peach)
+- [**曼妙句子**](https://read.lovejade.cn?utm_source=github.com&pid=peach)
+- [晚晴幽草轩](https://jeffjade.com/nicelinks?utm_source=github.com&pid=peach)
+- [静轩之别苑](https://quickapp.lovejade.cn/?utm_source=github.com&pid=peach)
+- [静晴轩别苑](https://nice.lovejade.cn/?utm_source=github.com&pid=peach)
+- [吾意静晴轩](https://docz.lovejade.cn/?utm_source=github.com&pid=peach)
+- [天意人间舫](https://blog.lovejade.cn/?utm_source=github.com&pid=peach)
+- [新浪微博](https://weibo.com/jeffjade?utm_source=github.com&pid=peach)
+- [简书主页](https://www.jianshu.com/u/9aae3d8f4c3d)
+- [SegmentFault](https://segmentfault.com/u/jeffjade)
+- [Twitter](https://twitter.com/nicejadeyang)
+- [Facebook](https://www.facebook.com/nice.jade.yang)
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## 许可执照
 
-## Project Setup
+[MIT](http://opensource.org/licenses/MIT)
 
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
+Copyright (c) 2022-present, [nicejade](https://nicelinks.site/member/admin)
