@@ -5,6 +5,7 @@
     "start": "yarn vite",
     "dev": "vite",
     "build": "run-p type-check build-only",
+    "deploy": "bash deploy.sh",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit"
