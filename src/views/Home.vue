@@ -3,7 +3,7 @@ import MainCore from '@/components/MainCore.vue'
 </script>
 
 <template>
-  <main>
+  <main class="p-2">
     <MainCore />
   </main>
 </template>

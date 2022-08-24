@@ -1,5 +1,5 @@
 <template>
-  <div class="container" ref="container">
+  <div class="container m-auto max-w-screen-md" ref="container">
     <div class="content">
       <div
         ref="editor"
@@ -11,7 +11,7 @@
     </div>
   </div>
   <div
-    class="operate-area flex flex-row items-center space-x-4 px-4 bg-white h-24 shadow-lg rounded-md"
+    class="operate-area flex flex-row items-center space-x-4 px-4 bg-white h-28 shadow-lg rounded-md"
   >
     <div class="flex flex-col justify-center items-center w-24 h-full">
       <p class="pb-2 font-medium">日期</p>
@@ -132,7 +132,7 @@ export default {
     }
 
     .editor {
-      min-height: 20rem;
+      min-height: 12rem;
       padding: 1rem;
       border: none;
       outline: none;
@@ -147,7 +147,7 @@ export default {
 }
 
 .operate-area {
-  width: 50rem;
+  max-width: 50rem;
   margin: 2rem auto;
 }
 </style>

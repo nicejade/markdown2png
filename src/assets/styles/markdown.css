@@ -11,8 +11,8 @@
 }
 
 .markdown {
-  font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
@@ -20,13 +20,14 @@
   text-align: left;
   -webkit-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
+  color: #161823;
 }
 
-.markdown>*:first-child {
+.markdown > *:first-child {
   margin-top: 0 !important;
 }
 
-.markdown>*:last-child {
+.markdown > *:last-child {
   margin-bottom: 0 !important;
 }
 
@@ -43,7 +44,7 @@
 .markdown h5,
 .markdown h6 {
   margin-top: 1em;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
   font-weight: bold;
   line-height: 1.4;
 }
@@ -56,39 +57,40 @@
 .markdown table,
 .markdown pre {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .markdown h1 {
-  margin: 0.67em 0;
-  padding-bottom: 0.3em;
-  font-size: 2rem;
-  line-height: 1.2;
-  border-bottom: 1px solid #eee;
+  margin: 1rem 0;
+  padding: 0;
+  font-size: 1.8rem;
+  line-height: 2rem;
 }
 
 .markdown h2 {
-  padding-bottom: 0.3em;
-  font-size: 1.8rem;
-  line-height: 1.225;
+  font-size: 1.6rem;
+  line-height: 1.8rem;
 }
 
 .markdown h3 {
-  font-size: 1.6rem;
-  line-height: 1.43;
+  font-size: 1.4rem;
+  line-height: 1.6rem;
 }
 
 .markdown h4 {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
+  line-height: 1.4rem;
 }
 
 .markdown h5 {
-  font-size: 1.4rem;
+  font-size: 1.125rem;
+  line-height: 1.2rem;
 }
 
 .markdown h6 {
-  font-size: 1.4rem;
-  color: #777;
+  font-size: 1.125rem;
+  line-height: 1.2rem;
+  color: #777777;
 }
 
 .markdown ol,
@@ -138,18 +140,18 @@
 }
 
 .markdown table tr {
-  background-color: #fff;
+  background-color: transparent;
   border-top: 1px solid #ccc;
 }
 
 .markdown table tr:nth-child(2n) {
-  background-color: #f8f8f8;
+  background-color: transparent;
 }
 
 .markdown table th,
 .markdown table td {
   padding: 6px 13px;
-  border: 1px solid #ddd;
+  border: 1px solid #c2ccd099;
 }
 
 .markdown pre {
@@ -232,8 +234,8 @@
 }
 
 .task-list-item input {
-  font: 13px/1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font: 13px/1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   margin: 0 0.35em 0.25em -1.6em;
   vertical-align: middle;
 }
