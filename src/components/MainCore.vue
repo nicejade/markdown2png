@@ -23,7 +23,6 @@
     >
       保存图片
     </button>
-    <Select :active="0" @change="onSelectChange"></Select>
   </div>
 </template>
 
@@ -34,7 +33,6 @@ import html2canvas from 'html2canvas'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 import Switch from './Switch.vue'
-import Select from './Select.vue'
 
 export default {
   setup() {
@@ -53,7 +51,6 @@ export default {
 
   components: {
     Switch,
-    Select,
   },
 
   methods: {
@@ -94,10 +91,6 @@ export default {
       html2canvas(this.$refs.container).then((canvas) => {
         download2png(canvas)
       })
-    },
-
-    onSelectChange(index: number) {
-      console.log(index)
     },
   },
 }
