@@ -59,7 +59,7 @@ export default {
       if (dateDomNode) {
         return dateDomNode.remove()
       }
-      dateDomNode = `<p id='date-time'><time>${getCurrentDate()}</time></p>`
+      dateDomNode = `<p id='date-time' style='text-align: right;'><time>${getCurrentDate()}</time></p>`
       this.$refs.editor.innerHTML += dateDomNode
     },
 
@@ -82,8 +82,7 @@ export default {
     },
 
     onEditorBlur() {
-      const innerText = this.$refs.editor.innerText
-      this.contentStore.content = innerText
+      this.contentStore.updateContent(this.$refs.editor.innerText)
       this.enter2preview()
     },
 
