@@ -1,5 +1,5 @@
 <template>
-	<div class="container m-auto max-w-screen-md">
+	<div class="container m-auto max-w-screen-md" ref="container">
 		<div class="content">
 			<div ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown" contenteditable="true">
 			</div>
@@ -109,6 +109,8 @@ export default {
 			right: 5px;
 			bottom: 5px;
 			content: '';
+			width: calc(100% - 10px);
+			height: calc(100% - 10px);
 			border: 1px solid #c02c38;
 			opacity: 0.8;
 			z-index: 0;
