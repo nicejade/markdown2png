@@ -167,6 +167,7 @@ export default {
 
 <style lang="scss" scoped>
 .container {
+	height: auto;
 	padding: 3rem;
 	box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
 	transition: box-shadow 1s ease-out;
@@ -174,7 +175,7 @@ export default {
 	background-color: transparent;
 	.content {
 		width: 100%;
-		height: 100%;
+		min-height: 100%;
 		flex: 1 1 0%;
 		position: relative;
 
