@@ -1,15 +1,31 @@
 import { defineStore } from 'pinia'
 import { DEFAULT_TEXT, STORAGE_CONTENT, STORAGE_DATE, STORAGE_THEME, STORAGE_SIZE } from './../helper/constant'
 
+
+const parseJSONSafely = (str: string) => {
+  try {
+     return JSON.parse(str);
+  }
+  catch (err: any) {
+     console.error(`Something Error @ ${err.message}`);
+     return {}
+  }
+}
+
+const getStorageItem = (key: string) => {
+  const value: any = localStorage.getItem(key)
+  return parseJSONSafely(value)
+}
+
 export const useContentStore = defineStore({
   id: 'content',
 
   state: () => {
     return {
-      isWithDate: JSON.parse(localStorage.getItem(STORAGE_DATE)) || false,
+      isWithDate: getStorageItem(STORAGE_DATE) || false,
       content: localStorage.getItem(STORAGE_CONTENT) || DEFAULT_TEXT,
-      currentTheme: JSON.parse(localStorage.getItem(STORAGE_THEME)) || null,
-      currentSize: JSON.parse(localStorage.getItem(STORAGE_SIZE)) || null,
+      currentTheme: getStorageItem(STORAGE_THEME) || null,
+      currentSize: getStorageItem(STORAGE_SIZE) || null,
     }
   },
 
