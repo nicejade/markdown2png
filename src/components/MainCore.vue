@@ -17,28 +17,34 @@
 		</div>
 	</div>
 	<div
-		class="flex flex-row items-center px-4 space-x-4 bg-white rounded-md shadow-lg operate-area h-28"
+		class="flex flex-row items-center px-4 py-4 space-x-6 bg-white rounded-md shadow-lg operate-area"
 	>
-		<div class="flex flex-col items-center justify-center w-24 h-full">
-			<p class="pb-2 font-medium">日期</p>
+		<div class="flex flex-col items-center justify-between h-20">
+			<p class="pb-2 font-medium text-gray-400">选择主题</p>
+			<HeadlessSelect
+				className="w-24"
+				:sourceArr="themesArr"
+				:defaultItem="currentTheme"
+				@selected="handleSelectTheme"
+			/>
+		</div>
+		<div class="flex flex-col items-center justify-between h-20">
+			<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
+			<HeadlessSelect
+				className="w-28"
+				:sourceArr="sizesArr"
+				:defaultItem="currentSize"
+				@selected="handleSelectSize"
+			/>
+		</div>
+		<div class="flex flex-col items-center justify-between w-24 h-20">
+			<p class="pb-2 font-medium text-gray-400">日期</p>
 			<Switch
 				:state="contentStore.isWithDate"
 				@check="handleDate"
 				class="block"
 			></Switch>
 		</div>
-		<HeadlessSelect
-			className="w-24"
-			:sourceArr="themesArr"
-			:defaultItem="currentTheme"
-			@selected="handleSelectTheme"
-		/>
-		<HeadlessSelect
-			className="w-28"
-			:sourceArr="sizesArr"
-			:defaultItem="currentSize"
-			@selected="handleSelectSize"
-		/>
 		<button
 			class="flex flex-row items-center justify-center w-24 h-10 py-4 font-medium bg-white border border-solid rounded-md hover:bg-gray-100 dark:hover:bg-gray-900"
 			@click="onSave2Image"
