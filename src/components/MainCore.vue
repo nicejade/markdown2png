@@ -1,37 +1,72 @@
 <template>
-	<div class="container m-auto max-w-screen-md" ref="container">
-		<div class="content">
-			<div ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown" contenteditable="true">
-			</div>
+	<div
+		class="container max-w-screen-md m-auto"
+		:class="`${currentTheme.id}-box`"
+		ref="container"
+	>
+		<div class="bg" v-if="currentTheme.id === 'official'"></div>
+		<div class="content" :class="currentTheme.id">
+			<div
+				ref="editor"
+				@blur="onEditorBlur"
+				@focus="onEditorFocus"
+				class="editor markdown"
+				contenteditable="true"
+			></div>
 		</div>
 	</div>
-	<div class="operate-area flex flex-row items-center space-x-4 px-4 bg-white h-28 shadow-lg rounded-md">
-		<div class="flex flex-col justify-center items-center w-24 h-full">
+	<div
+		class="flex flex-row items-center px-4 space-x-4 bg-white rounded-md shadow-lg operate-area h-28"
+	>
+		<div class="flex flex-col items-center justify-center w-24 h-full">
 			<p class="pb-2 font-medium">日期</p>
-			<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
+			<Switch
+				:state="contentStore.isWithDate"
+				@check="handleDate"
+				class="block"
+			></Switch>
 		</div>
 		<button
-			class="flex flex-row items-center h-10 px-8 py-4 bg-gray-100 rounded-md font-medium border border-solid border-gray hover:bg-gray-50 dark:hover:bg-gray-900"
-			@click="onSave2Image">
+			class="flex flex-row items-center justify-center w-24 h-10 py-4 font-medium bg-gray-100 border border-solid rounded-md border-gray hover:bg-gray-50 dark:hover:bg-gray-900"
+			@click="onSave2Image"
+		>
 			保存图片
 		</button>
+		<HeadlessSelect :sourceArr="themesArr" @selected="handleSelectTheme" />
 	</div>
 </template>
 
 <script lang="ts">
+import { ref } from 'vue'
 import { parse } from 'marked'
 import html2canvas from 'html2canvas'
 
+import Switch from './Switch.vue'
+import HeadlessSelect from './HeadlessSelect.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
-import Switch from './Switch.vue'
+
+const themesArr = [
+	{ name: '古风', id: 'antiquity' },
+	{ name: '经典', id: 'classic' },
+	{ name: '便签', id: 'note' },
+	{ name: '暗黑', id: 'dark' },
+	{ name: '元气', id: 'vitality' },
+	{ name: '纸屑', id: 'bbburst' },
+	{ name: '渐变', id: 'gradient' },
+	{ name: '公务', id: 'official' },
+	{ name: '芒黄', id: 'yellow' },
+]
 
 export default {
 	setup() {
 		const contentStore = useContentStore()
+		const currentTheme = ref(themesArr[0])
 
 		return {
 			contentStore,
+			currentTheme,
+			themesArr,
 		}
 	},
 
@@ -41,6 +76,7 @@ export default {
 
 	components: {
 		Switch,
+		HeadlessSelect,
 	},
 
 	methods: {
@@ -68,6 +104,10 @@ export default {
 			this.updatePreview()
 		},
 
+		handleSelectTheme(item) {
+			this.currentTheme = item
+		},
+
 		onEditorFocus() {
 			this.enter2editor()
 		},
@@ -88,19 +128,36 @@ export default {
 
 <style lang="scss" scoped>
 .container {
-	background: #e9e7d9 url('./../assets/images/classical.png') repeat 0 0;
-	padding: 2rem 1rem;
+	padding: 3rem;
 	box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
 	transition: box-shadow 1s ease-out;
 	transition-delay: 2s;
-
+	background-color: transparent;
 	.content {
 		width: 100%;
 		flex: 1 1 0%;
 		position: relative;
+
+		.editor {
+			min-height: 12rem;
+			padding: 1rem;
+			border: none;
+			outline: none;
+
+			&:hover,
+			&:active {
+				border: none;
+				outline: none;
+			}
+		}
+	}
+}
+
+.antiquity-box {
+	background: #e9e7d9 url('./../assets/images/classical.png') repeat 0 0;
+	.antiquity {
 		border: 4px solid #c02c38;
 		padding: 1rem;
-
 		&::before {
 			position: absolute;
 			z-index: -1;
@@ -115,18 +172,117 @@ export default {
 			opacity: 0.8;
 			z-index: 0;
 		}
+	}
+}
 
+.classic-box {
+	background-color: #f2f2f2;
+	.classic {
+		background-color: #f2f2f2;
+	}
+}
+
+.note-box {
+	background-color: #fffcf5;
+	.note {
+		border: 1px solid #e8e5dc;
+		&::before {
+			position: absolute;
+			content: '';
+			left: 3px;
+			right: 3px;
+			bottom: 3px;
+			top: 3px;
+			border: 1px solid #e8e5dc;
+			z-index: 0;
+		}
+	}
+}
+
+.dark-box {
+	background-image: linear-gradient(to right, #434343 0%, black 100%);
+	.dark {
+		background-color: transparent;
 		.editor {
-			min-height: 12rem;
-			padding: 1rem;
-			border: none;
-			outline: none;
+			color: #f2f2f2;
+			background-color: transparent;
+		}
+	}
+}
 
-			&:hover,
-			&:active {
-				border: none;
-				outline: none;
-			}
+.bbburst-box {
+	background: url(./../assets/images/bbburst.svg);
+	background-size: 100%;
+	.bbburst {
+		background-color: transparent;
+		.editor {
+			background-color: rgba(255, 255, 255, 0.8);
+			backdrop-filter: blur(2px);
+		}
+	}
+}
+
+.vitality-box {
+	background: linear-gradient(225deg, #9cccfc 0, #e6cefd 99.54%);
+	.vitality {
+		background-color: #f2f2f2;
+		border-radius: 1rem;
+	}
+}
+
+.gradient-box {
+	background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+	.gradient {
+		background-color: transparent;
+		.editor {
+			background-color: transparent;
+		}
+	}
+}
+
+.official-box {
+	position: relative;
+	&::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: -2;
+		background: linear-gradient(
+			180deg,
+			#04629d 0,
+			#037dcc 49.48%,
+			#0289e0 100%
+		);
+	}
+	.bg {
+		position: absolute;
+		z-index: -1;
+		left: 0;
+		top: -6.6rem;
+		right: 0;
+		bottom: 0;
+		background: url(./../assets/images/official.svg);
+		background-size: 80% auto;
+		background-position: center top;
+		background-repeat: no-repeat;
+	}
+	.official {
+		.editor {
+			color: #f2f2f2;
+			background-color: transparent;
+		}
+	}
+}
+
+.yellow-box {
+	background-image: radial-gradient(circle farthest-side, #fceabb, #f8b500);
+	.yellow {
+		.editor {
+			color: #000;
+			background-color: transparent;
 		}
 	}
 }
