@@ -32,7 +32,11 @@
 		>
 			保存图片
 		</button>
-		<HeadlessSelect :sourceArr="themesArr" @selected="handleSelectTheme" />
+		<HeadlessSelect
+			:sourceArr="themesArr"
+			:defaultItem="currentTheme"
+			@selected="handleSelectTheme"
+		/>
 	</div>
 </template>
 
@@ -61,7 +65,7 @@ const themesArr = [
 export default {
 	setup() {
 		const contentStore = useContentStore()
-		const currentTheme = ref(themesArr[0])
+		const currentTheme = ref(contentStore.currentTheme || themesArr[0])
 
 		return {
 			contentStore,
@@ -104,8 +108,9 @@ export default {
 			this.updatePreview()
 		},
 
-		handleSelectTheme(item) {
+		handleSelectTheme(item: Object) {
 			this.currentTheme = item
+			this.contentStore.updateCurrentTheme(item)
 		},
 
 		onEditorFocus() {

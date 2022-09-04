@@ -67,11 +67,12 @@ import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
 
 const props = defineProps({
 	sourceArr: Array,
+	defaultItem: Object,
 })
 
 const emits = defineEmits(['selected'])
 
-const selectedVal = ref(props.sourceArr[0])
+const selectedVal = ref(props.defaultItem)
 watch(selectedVal, (newValue, oldValue) => {
 	emits('selected', newValue)
 })
