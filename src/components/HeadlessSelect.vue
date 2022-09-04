@@ -1,10 +1,10 @@
 <template>
-	<Listbox v-model="selectedVal">
+	<Listbox v-model="selectedItem">
 		<div class="relative" :class="props.className">
 			<ListboxButton
 				class="relative w-full h-10 pl-3 pr-10 text-left bg-white border border-solid rounded-lg cursor-pointer border-gray focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
 			>
-				<span class="block truncate">{{ selectedVal.name }}</span>
+				<span class="block truncate">{{ selectedItem.name }}</span>
 				<span
 					class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
 				>
@@ -23,7 +23,7 @@
 					<ListboxOption
 						v-slot="{ active, selected }"
 						v-for="item in sourceArr"
-						:key="item.name"
+						:key="item.id"
 						:value="item"
 						as="template"
 					>
@@ -56,6 +56,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+
 import {
 	Listbox,
 	ListboxLabel,
@@ -73,8 +74,13 @@ const props = defineProps({
 
 const emits = defineEmits(['selected'])
 
-const selectedVal = ref(props.defaultItem)
-watch(selectedVal, (newValue, oldValue) => {
+const index = props.sourceArr.findIndex((item) => {
+	return item.id === props.defaultItem.id
+})
+
+const selectedItem = ref(props.sourceArr[index])
+
+watch(selectedItem, (newValue, oldValue) => {
 	emits('selected', newValue)
 })
 </script>
