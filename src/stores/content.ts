@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { DEFAULT_TEXT, STORAGE_CONTENT, STORAGE_DATE, STORAGE_THEME } from './../helper/constant'
+import { DEFAULT_TEXT, STORAGE_CONTENT, STORAGE_DATE, STORAGE_THEME, STORAGE_SIZE } from './../helper/constant'
 
 export const useContentStore = defineStore({
   id: 'content',
@@ -8,7 +8,8 @@ export const useContentStore = defineStore({
     return {
       isWithDate: JSON.parse(localStorage.getItem(STORAGE_DATE)) || false,
       content: localStorage.getItem(STORAGE_CONTENT) || DEFAULT_TEXT,
-      currentTheme: JSON.parse(localStorage.getItem(STORAGE_THEME)) || null
+      currentTheme: JSON.parse(localStorage.getItem(STORAGE_THEME)) || null,
+      currentSize: JSON.parse(localStorage.getItem(STORAGE_SIZE)) || null,
     }
   },
 
@@ -28,6 +29,11 @@ export const useContentStore = defineStore({
     updateCurrentTheme(obj: Object) {
       this.currentTheme = obj
       localStorage.setItem(STORAGE_THEME, JSON.stringify(obj))
+    },
+
+    updateCurrentSize(obj: Object) {
+      this.currentSize = obj
+      localStorage.setItem(STORAGE_SIZE, JSON.stringify(obj))
     }
   },
 })

@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="container max-w-screen-md m-auto"
+		class="container flex-1 m-auto"
+		:style="currentSize.style"
 		:class="`${currentTheme.id}-box`"
 		ref="container"
 	>
@@ -26,17 +27,24 @@
 				class="block"
 			></Switch>
 		</div>
+		<HeadlessSelect
+			className="w-24"
+			:sourceArr="themesArr"
+			:defaultItem="currentTheme"
+			@selected="handleSelectTheme"
+		/>
+		<HeadlessSelect
+			className="w-28"
+			:sourceArr="sizesArr"
+			:defaultItem="currentSize"
+			@selected="handleSelectSize"
+		/>
 		<button
 			class="flex flex-row items-center justify-center w-24 h-10 py-4 font-medium bg-gray-100 border border-solid rounded-md border-gray hover:bg-gray-50 dark:hover:bg-gray-900"
 			@click="onSave2Image"
 		>
 			保存图片
 		</button>
-		<HeadlessSelect
-			:sourceArr="themesArr"
-			:defaultItem="currentTheme"
-			@selected="handleSelectTheme"
-		/>
 	</div>
 </template>
 
@@ -62,15 +70,36 @@ const themesArr = [
 	{ name: '芒黄', id: 'yellow' },
 ]
 
+const sizesArr = [
+	{
+		name: '电脑端',
+		id: 'desktop',
+		style: 'width: 50rem; aspect-ratio: 16 / 9; padding: 3rem;',
+	},
+	{
+		name: '平板端',
+		id: 'tablet',
+		style: 'width: 37.5rem; aspect-ratio: 4 / 3; padding: 2rem;',
+	},
+	{
+		name: '移动端',
+		id: 'mobile',
+		style: 'width: 20rem; aspect-ratio: 3 / 4; padding: 1rem;',
+	},
+]
+
 export default {
 	setup() {
 		const contentStore = useContentStore()
 		const currentTheme = ref(contentStore.currentTheme || themesArr[0])
+		const currentSize = ref(contentStore.currentSize || sizesArr[0])
 
 		return {
 			contentStore,
 			currentTheme,
+			currentSize,
 			themesArr,
+			sizesArr,
 		}
 	},
 
@@ -113,6 +142,11 @@ export default {
 			this.contentStore.updateCurrentTheme(item)
 		},
 
+		handleSelectSize(item: Object) {
+			this.currentSize = item
+			this.contentStore.updateCurrentSize(item)
+		},
+
 		onEditorFocus() {
 			this.enter2editor()
 		},
@@ -140,6 +174,7 @@ export default {
 	background-color: transparent;
 	.content {
 		width: 100%;
+		height: 100%;
 		flex: 1 1 0%;
 		position: relative;
 

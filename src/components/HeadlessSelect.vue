@@ -1,6 +1,6 @@
 <template>
 	<Listbox v-model="selectedVal">
-		<div class="relative w-24">
+		<div class="relative" :class="props.className">
 			<ListboxButton
 				class="relative w-full h-10 pl-3 pr-10 text-left bg-white border border-solid rounded-lg cursor-pointer border-gray focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
 			>
@@ -66,6 +66,7 @@ import {
 import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
 
 const props = defineProps({
+	className: String,
 	sourceArr: Array,
 	defaultItem: Object,
 })
