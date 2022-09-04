@@ -11,6 +11,9 @@
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@headlessui/tailwindcss": "^0.1.0",
+    "@headlessui/vue": "^1.6.7",
+    "@heroicons/vue": "v1",
     "html2canvas": "^1.4.1",
     "marked": "^4.0.18",
     "pinia": "^2.0.17",
