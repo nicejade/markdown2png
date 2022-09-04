@@ -10,9 +10,11 @@ module.exports = {
         '144': '36rem',
       }
     },
-    colors: {
-      gray: '#E2E8F0'
+    ringColor: {
+      white: colors.white,
+      black: colors.black,
     },
+    colors: colors,
     screens: {
       'tablet': '640px',
       // => @media (min-width: 640px) { ... }
@@ -26,7 +28,8 @@ module.exports = {
   },
   variants: {
     extend: {
-      backgroundColor: ['hover', 'focus'],
+      backgroundColor: ['hover', 'focus', 'active'],
+      borderColor: ['hover', 'focus', 'active'],
     }
   },
   corePlugins: {
