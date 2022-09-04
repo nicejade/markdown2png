@@ -40,7 +40,7 @@
 			@selected="handleSelectSize"
 		/>
 		<button
-			class="flex flex-row items-center justify-center w-24 h-10 py-4 font-medium bg-gray-100 border border-solid rounded-md border-gray hover:bg-gray-50 dark:hover:bg-gray-900"
+			class="flex flex-row items-center justify-center w-24 h-10 py-4 font-medium bg-white border border-solid rounded-md hover:bg-gray-100 dark:hover:bg-gray-900"
 			@click="onSave2Image"
 		>
 			保存图片

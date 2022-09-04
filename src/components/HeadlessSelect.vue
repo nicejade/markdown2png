@@ -2,7 +2,7 @@
 	<Listbox v-model="selectedItem">
 		<div class="relative" :class="props.className">
 			<ListboxButton
-				class="relative w-full h-10 pl-3 pr-10 text-left bg-white border border-solid rounded-lg cursor-pointer border-gray focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+				class="relative w-full h-10 pl-3 pr-10 text-left bg-white border border-solid rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
 			>
 				<span class="block truncate">{{ selectedItem.name }}</span>
 				<span
@@ -30,7 +30,7 @@
 						<li
 							:class="[
 								active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
-								'relative cursor-pointer select-none py-2 pl-10 pr-4 bg-red-500 hover:bg-lime-500',
+								'relative cursor-pointer select-none py-2 pl-10 pr-4',
 							]"
 						>
 							<span
