@@ -4,11 +4,11 @@ import { DEFAULT_TEXT, STORAGE_CONTENT, STORAGE_DATE, STORAGE_THEME, STORAGE_SIZ
 
 const parseJSONSafely = (str: string) => {
   try {
-     return JSON.parse(str);
+    return JSON.parse(str);
   }
   catch (err: any) {
-     console.error(`Something Error @ ${err.message}`);
-     return {}
+    console.error(`Something Error @ ${err.message}`);
+    return {}
   }
 }
 
@@ -22,7 +22,7 @@ export const useContentStore = defineStore({
 
   state: () => {
     return {
-      isWithDate: getStorageItem(STORAGE_DATE) || false,
+      isWithDate: !!localStorage.getItem(STORAGE_DATE),
       content: localStorage.getItem(STORAGE_CONTENT) || DEFAULT_TEXT,
       currentTheme: getStorageItem(STORAGE_THEME) || null,
       currentSize: getStorageItem(STORAGE_SIZE) || null,
@@ -39,7 +39,7 @@ export const useContentStore = defineStore({
 
     updateWithDate(isWith: boolean) {
       this.isWithDate = isWith
-      localStorage.setItem(STORAGE_DATE, isWith)
+      localStorage.setItem(STORAGE_DATE, isWith ? '1' : '')
     },
 
     updateCurrentTheme(obj: Object) {

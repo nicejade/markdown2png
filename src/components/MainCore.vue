@@ -119,6 +119,8 @@ export default {
 			let dateDomNode: any = document.getElementById('date-time')
 			if (dateDomNode) return dateDomNode.remove()
 
+			if (!this.contentStore.isWithDate) return
+
 			dateDomNode = `<p id='date-time' style='text-align: right;'><time>${getCurrentDate()}</time></p>`
 			this.$refs.editor.innerHTML += dateDomNode
 		},
@@ -154,6 +156,7 @@ export default {
 		onEditorBlur() {
 			this.contentStore.updateContent(this.$refs.editor.innerText)
 			this.enter2preview()
+			this.updatePreview()
 		},
 
 		onSave2Image() {
