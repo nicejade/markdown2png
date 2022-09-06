@@ -52,6 +52,7 @@
 			保存图片
 		</button>
 	</div>
+	<FooterNav />
 </template>
 
 <script lang="ts">
@@ -61,6 +62,7 @@ import html2canvas from 'html2canvas'
 
 import Switch from './Switch.vue'
 import HeadlessSelect from './HeadlessSelect.vue'
+import FooterNav from './FooterNav.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 
@@ -116,6 +118,7 @@ export default {
 	components: {
 		Switch,
 		HeadlessSelect,
+		FooterNav,
 	},
 
 	methods: {
