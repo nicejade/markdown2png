@@ -1,7 +1,7 @@
 <template>
-	<footer class="px-5 pt-10 pb-10 text-sm text-center text-gray-400">
+	<footer class="z-0 px-5 pt-10 pb-10 text-sm text-center text-gray-400">
 		<div
-			class="flex flex-row items-center justify-center mt-2 mb-2 space-x-6 friends"
+			class="flex flex-row flex-wrap items-center justify-center mt-2 mb-2 space-x-6 friends"
 		>
 			<a
 				target="_blank"

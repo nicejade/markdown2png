@@ -17,40 +17,46 @@
 		</div>
 	</div>
 	<div
-		class="flex flex-row items-center px-4 py-4 space-x-6 bg-white rounded-md shadow-lg operate-area"
+		class="flex flex-row items-center w-full px-4 py-4 my-8 space-x-6 bg-white rounded-md shadow-lg operate-area"
 	>
-		<div class="flex flex-col items-center justify-between h-20">
-			<p class="pb-2 font-medium text-gray-400">选择主题</p>
-			<HeadlessSelect
-				className="w-24"
-				:sourceArr="themesArr"
-				:defaultItem="currentTheme"
-				@selected="handleSelectTheme"
-			/>
+		<div class="flex flex-wrap justify-between w-full item-center">
+			<div class="flex justify-between flex-auto mobile-adjust">
+				<div class="flex flex-col items-center justify-between h-20">
+					<p class="pb-2 font-medium text-gray-400">选择主题</p>
+					<HeadlessSelect
+						className="w-24"
+						:sourceArr="themesArr"
+						:defaultItem="currentTheme"
+						@selected="handleSelectTheme"
+					/>
+				</div>
+				<div class="flex flex-col items-center justify-between h-20">
+					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
+					<HeadlessSelect
+						className="w-28"
+						:sourceArr="sizesArr"
+						:defaultItem="currentSize"
+						@selected="handleSelectSize"
+					/>
+				</div>
+				<div class="flex flex-col items-center justify-between w-24 h-20">
+					<p class="pb-2 font-medium text-gray-400">日期</p>
+					<Switch
+						:state="contentStore.isWithDate"
+						@check="handleDate"
+						class="block"
+					></Switch>
+				</div>
+			</div>
+			<div class="flex items-center mobile-w-full">
+				<button
+					class="block w-full py-3 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 px-9 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+					@click="onSave2Image"
+				>
+					保存图片
+				</button>
+			</div>
 		</div>
-		<div class="flex flex-col items-center justify-between h-20">
-			<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
-			<HeadlessSelect
-				className="w-28"
-				:sourceArr="sizesArr"
-				:defaultItem="currentSize"
-				@selected="handleSelectSize"
-			/>
-		</div>
-		<div class="flex flex-col items-center justify-between w-24 h-20">
-			<p class="pb-2 font-medium text-gray-400">日期</p>
-			<Switch
-				:state="contentStore.isWithDate"
-				@check="handleDate"
-				class="block"
-			></Switch>
-		</div>
-		<button
-			class="flex flex-row items-center justify-center w-24 h-10 py-4 font-medium bg-white border border-solid rounded-md hover:bg-gray-100 dark:hover:bg-gray-900"
-			@click="onSave2Image"
-		>
-			保存图片
-		</button>
 	</div>
 	<FooterNav />
 </template>
@@ -342,6 +348,26 @@ export default {
 
 .operate-area {
 	max-width: 50rem;
-	margin: 2rem auto;
+}
+
+.mobile-adjust {
+	padding-right: 5rem;
+}
+
+.mobile-w-full {
+	width: auto;
+}
+
+@media (max-width: 960px) {
+	.container {
+		width: 100% !important;
+	}
+	.mobile-adjust {
+		padding: 0;
+		margin-bottom: 1rem;
+	}
+	.mobile-w-full {
+		width: 100%;
+	}
 }
 </style>

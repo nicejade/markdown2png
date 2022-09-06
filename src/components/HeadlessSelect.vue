@@ -2,7 +2,7 @@
 	<Listbox v-model="selectedItem">
 		<div class="relative" :class="props.className">
 			<ListboxButton
-				class="relative w-full h-10 pl-3 pr-10 text-left bg-white border border-solid rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+				class="relative w-full h-10 pl-3 pr-10 text-left bg-white border border-solid rounded-lg cursor-pointer z-200 hover:bg-gray-100 dark:hover:bg-gray-900 focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
 			>
 				<span class="block truncate">{{ selectedItem.name }}</span>
 				<span
