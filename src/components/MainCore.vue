@@ -17,9 +17,9 @@
 		</div>
 	</div>
 	<div
-		class="flex flex-row items-center w-full px-4 py-4 my-8 space-x-6 bg-white rounded-md shadow-lg operate-area"
+		class="flex flex-row items-center w-full px-4 py-4 mx-auto my-8 bg-white rounded-md shadow-lg operate-area"
 	>
-		<div class="flex flex-wrap justify-between w-full item-center">
+		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust">
 				<div class="flex flex-col items-center justify-between h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
@@ -350,27 +350,29 @@ export default {
 }
 
 .operate-area {
-	max-width: 50rem;
-}
+	width: 40rem;
+	.mobile-adjust {
+		padding-right: 5rem;
+	}
 
-.mobile-adjust {
-	padding-right: 5rem;
-}
-
-.mobile-w-full {
-	width: auto;
+	.mobile-w-full {
+		width: auto;
+	}
 }
 
 @media (max-width: 960px) {
 	.container {
 		width: 100% !important;
 	}
-	.mobile-adjust {
-		padding: 0;
-		margin-bottom: 1rem;
-	}
-	.mobile-w-full {
+	.operate-area {
 		width: 100%;
+		.mobile-adjust {
+			padding: 0;
+			margin-bottom: 1rem;
+		}
+		.mobile-w-full {
+			width: 100%;
+		}
 	}
 }
 </style>
