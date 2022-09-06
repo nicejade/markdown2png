@@ -7,48 +7,53 @@
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://nicelinks.site/')"
+				@click="onReortEvent('nicelinks-site', 'footer')"
 				>倾城之链</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://read.lovejade.cn/')"
+				@click="onReortEvent('read-lovejade', 'footer')"
 				>曼妙句子</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://quickapp.lovejade.cn/')"
+				@click="onReortEvent('quickapp-lovejade', 'footer')"
 				>静轩之别苑</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://forum.lovejade.cn/')"
+				@click="onReortEvent('forum-lovejade', 'footer')"
 				>悠然宜想亭</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://wiki.lovejade.cn/')"
+				@click="onReortEvent('beian', 'footer')"
 				>清风明月阁</a
 			>
 		</div>
 		<div class="icp">
 			<span class="mx-3 text-gray-400">{{ copyright }}</span>
 			<a
-				class="text-gray-400 cursor-pointer hover:text-amber-500"
 				target="_blank"
-				@click="onReortEvent('link-jeffjade')"
+				class="text-gray-400 cursor-pointer hover:text-amber-500"
+				@click="$reortGaEvent('jeffjade', 'footer')"
 				rel="external noopener"
 				:href="assembleExternalLink('https://www.jeffjade.com')"
 				>晚晴幽草轩</a
 			>出品<br class="show-on-mobile" />
 			<a
-				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				target="_blank"
+				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				rel="external noopener"
-				@click="onReortEvent('beian')"
+				@click="onReortEvent('beian', 'footer')"
 				:href="assembleExternalLink('https://beian.miit.gov.cn/')"
 				>粤ICP备17099767号</a
 			>
@@ -67,14 +72,6 @@ const copyright = ref(`Copyright © ${new Date().getFullYear()}`)
 
 const assembleExternalLink = (url) => {
 	return `${url}?ref=nicelinks.site`
-}
-
-const onReortEvent = (scene) => {
-	const gtag = window.gtag || (() => {})
-	gtag('event', scene, {
-		event_category: 'conversion',
-		event_label: scene,
-	})
 }
 </script>
 

@@ -11,4 +11,12 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
+app.config.globalProperties.$reortGaEvent = (action: string, category: string, label: string) => {
+	const gtag = window.gtag || (() => {})
+	gtag('event', action, {
+		event_category: category,
+		event_label: label || action,
+	})
+}
+
 app.mount('#app')

@@ -160,24 +160,29 @@ export default {
 		handleSelectTheme(item: Object) {
 			this.currentTheme = item
 			this.contentStore.updateCurrentTheme(item)
+			this.$reortGaEvent('item', 'main')
 		},
 
 		handleSelectSize(item: Object) {
 			this.currentSize = item
 			this.contentStore.updateCurrentSize(item)
+			this.$reortGaEvent('size', 'main')
 		},
 
 		onEditorFocus() {
 			this.enter2editor()
+			this.$reortGaEvent('focus', 'main')
 		},
 
 		onEditorBlur() {
 			this.contentStore.updateContent(this.$refs.editor.innerText)
 			this.enter2preview()
 			this.updatePreview()
+			this.$reortGaEvent('blur', 'main')
 		},
 
 		onSave2Image() {
+			this.$reortGaEvent('save-img', 'main')
 			html2canvas(this.$refs.container).then((canvas) => {
 				download2png(canvas)
 			})
