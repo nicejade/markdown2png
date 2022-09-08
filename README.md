@@ -1,9 +1,7 @@
-<h1 align="center"><a href="https://share.lovejade.cn/?utm_source=github.com&pid=peach"><img src="https://raw.githubusercontent.com/nicejade/markdown2png/master/src/assets/images/logo.png" width="200" alt="玉桃文飨轩"></a></h1>
+<h1 align="center"><a href="https://share.lovejade.cn/?utm_source=github.com&pid=share"><img src="https://raw.githubusercontent.com/nicejade/markdown2png/master/src/assets/images/logo.png" width="200" alt="玉桃文飨轩"></a></h1>
 
-<div align="center">
-  <strong>
-    <a href="https://share.lovejade.cn/?utm_source=github.com&pid=peach">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text、word 等格式内容，快速转化为 png、pdf、html 等文件，并支持自动下载、自定义设置等功能。
-  </strong>🐬 基于 <a href="https://nicelinks.site/post/5b1a221c0526c920d6dfaada">Vue3</a>、<a href="https://nicelinks.site/post/6010e1b10c71de1fb957b64e">Vite</a>、<a href="https://nicelinks.site/post/5fd20cb4c06d6302c1907ec7">TailwindCSS</a>、<a href="https://nicelinks.site/post/6278fdeaac00ce3f9b11a8ef">TypeScript</a> 等构建。
+<div align="center"><strong><a target="_blank" href="https://share.lovejade.cn/?utm_source=github.com&pid=share">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。
+</strong>基于 <a target="_blank" href="https://nicelinks.site/post/5b1a221c0526c920d6dfaada">Vue3</a>、<a href="https://nicelinks.site/post/6010e1b10c71de1fb957b64e">Vite</a>、<a target="_blank" href="https://nicelinks.site/post/631813c3c0922e0e572bde81">Pinia</a>、<a target="_blank" href="https://nicelinks.site/post/5fd20cb4c06d6302c1907ec7">TailwindCSS</a>、<a target="_blank" href="https://nicelinks.site/post/6278fdeaac00ce3f9b11a8ef">TypeScript</a> 构建。
 </div>
 
 ## 如何访问
@@ -38,19 +36,19 @@
 - [ ] 支持背景、padding 等选择；
 - [ ] 支持变更字体，及纵向排版；
 - [ ] 支持暗黑主题（dark mode）；
-- [ ] 支持为图片添加渐变阴影效果；
+- [x] 支持为图片添加渐变阴影效果；
 - [ ] 支持为图片添加`品牌水印`；
 
 ## 相关链接
 
-- [**倾城之链**](https://nicelinks.site?utm_source=github.com&pid=peach)
-- [**曼妙句子**](https://read.lovejade.cn?utm_source=github.com&pid=peach)
-- [晚晴幽草轩](https://jeffjade.com/nicelinks?utm_source=github.com&pid=peach)
-- [静轩之别苑](https://quickapp.lovejade.cn/?utm_source=github.com&pid=peach)
-- [静晴轩别苑](https://nice.lovejade.cn/?utm_source=github.com&pid=peach)
-- [吾意静晴轩](https://docz.lovejade.cn/?utm_source=github.com&pid=peach)
-- [天意人间舫](https://blog.lovejade.cn/?utm_source=github.com&pid=peach)
-- [新浪微博](https://weibo.com/jeffjade?utm_source=github.com&pid=peach)
+- [**倾城之链**](https://nicelinks.site?utm_source=github.com&pid=share)
+- [**曼妙句子**](https://read.lovejade.cn?utm_source=github.com&pid=share)
+- [晚晴幽草轩](https://jeffjade.com/nicelinks?utm_source=github.com&pid=share)
+- [静轩之别苑](https://quickapp.lovejade.cn/?utm_source=github.com&pid=share)
+- [静晴轩别苑](https://nice.lovejade.cn/?utm_source=github.com&pid=share)
+- [吾意静晴轩](https://docz.lovejade.cn/?utm_source=github.com&pid=share)
+- [天意人间舫](https://blog.lovejade.cn/?utm_source=github.com&pid=share)
+- [新浪微博](https://weibo.com/jeffjade?utm_source=github.com&pid=share)
 - [简书主页](https://www.jianshu.com/u/9aae3d8f4c3d)
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
 - [Twitter](https://twitter.com/nicejadeyang)
