@@ -7,35 +7,35 @@
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://nicelinks.site/')"
-				@click="onReortEvent('nicelinks-site', 'footer')"
+				@click="$reortGaEvent('nicelinks-site', 'footer')"
 				>倾城之链</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://read.lovejade.cn/')"
-				@click="onReortEvent('read-lovejade', 'footer')"
+				@click="$reortGaEvent('read-lovejade', 'footer')"
 				>曼妙句子</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://quickapp.lovejade.cn/')"
-				@click="onReortEvent('quickapp-lovejade', 'footer')"
+				@click="$reortGaEvent('quickapp-lovejade', 'footer')"
 				>静轩之别苑</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://forum.lovejade.cn/')"
-				@click="onReortEvent('forum-lovejade', 'footer')"
+				@click="$reortGaEvent('forum-lovejade', 'footer')"
 				>悠然宜想亭</a
 			>
 			<a
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://wiki.lovejade.cn/')"
-				@click="onReortEvent('beian', 'footer')"
+				@click="$reortGaEvent('beian', 'footer')"
 				>清风明月阁</a
 			>
 		</div>
@@ -53,7 +53,7 @@
 				target="_blank"
 				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				rel="external noopener"
-				@click="onReortEvent('beian', 'footer')"
+				@click="$reortGaEvent('beian', 'footer')"
 				:href="assembleExternalLink('https://beian.miit.gov.cn/')"
 				>粤ICP备17099767号</a
 			>
@@ -66,11 +66,11 @@
 	</footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 const copyright = ref(`Copyright © ${new Date().getFullYear()}`)
 
-const assembleExternalLink = (url) => {
+const assembleExternalLink = (url: string) => {
 	return `${url}?ref=nicelinks.site`
 }
 </script>
