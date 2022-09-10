@@ -101,7 +101,7 @@ interface Size {
 const sizesArr = [
 	{
 		name: '电脑端',
-		id: 'desktop',
+		id: 'laptop',
 		style: 'width: 50rem; padding: 3rem;',
 	},
 	{
@@ -113,6 +113,11 @@ const sizesArr = [
 		name: '移动端',
 		id: 'mobile',
 		style: 'width: 20rem; padding: 1rem;',
+	},
+	{
+		name: '超级屏',
+		id: 'desktop',
+		style: 'width: 60rem; padding: 3rem;',
 	},
 ]
 
@@ -368,7 +373,7 @@ function onSave2Image() {
 	.container {
 		width: 100% !important;
 	}
-	.operate-area {
+	#app .operate-area {
 		width: 100%;
 		.mobile-adjust {
 			padding: 0;
@@ -376,6 +381,7 @@ function onSave2Image() {
 		}
 		.mobile-w-full {
 			width: 100%;
+			margin-left: 0;
 		}
 	}
 }
