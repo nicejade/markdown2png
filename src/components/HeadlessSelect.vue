@@ -24,7 +24,7 @@
 					<ListboxOption
 						v-slot="{ active, selected }"
 						v-for="item in sourceArr"
-						:key="item.id"
+						:key="`${item.id}`"
 						:value="item"
 						as="template"
 					>
@@ -69,7 +69,6 @@ import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
 interface Item {
 	id: String
 	name: String
-	style: String
 }
 
 interface Props {

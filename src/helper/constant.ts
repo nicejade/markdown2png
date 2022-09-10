@@ -6,7 +6,7 @@ export const STORAGE_THEME = 'current-theme'
 
 export const STORAGE_SIZE = 'current-size'
 
-export const themesArr = [
+export const THEME_ARR = [
 	{ name: '古风', id: 'antiquity' },
 	{ name: '经典', id: 'classic' },
 	{ name: '便签', id: 'note' },
@@ -18,7 +18,7 @@ export const themesArr = [
 	{ name: '芒黄', id: 'yellow' },
 ]
 
-export const sizesArr = [
+export const SIZES_ARR = [
 	{
 		name: '电脑端',
 		id: 'laptop',

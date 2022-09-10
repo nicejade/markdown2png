@@ -12,7 +12,7 @@
 					width="50"
 					height="50"
 				/>
-				<h1 class="text-lg font-bold rainbow-text">玉桃文飨轩</h1>
+				<h1 class="text-xl font-bold rainbow-text">玉桃文飨轩</h1>
 			</RouterLink>
 		</nav>
 	</header>

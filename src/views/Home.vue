@@ -26,7 +26,7 @@
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect
 						className="w-24"
-						:sourceArr="themesArr"
+						:sourceArr="THEME_ARR"
 						:defaultItem="currentTheme"
 						@selected="handleSelectTheme"
 					/>
@@ -35,7 +35,7 @@
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect
 						className="w-28"
-						:sourceArr="sizesArr"
+						:sourceArr="SIZES_ARR"
 						:defaultItem="currentSize"
 						@selected="handleSelectSize"
 					/>
@@ -74,7 +74,7 @@ import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
-import { themesArr, sizesArr } from './../helper/constant'
+import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 interface Theme {
 	id: String
@@ -88,8 +88,8 @@ interface Size {
 }
 
 const contentStore = useContentStore()
-let currentTheme = reactive(contentStore.currentTheme || themesArr[0])
-let currentSize = reactive(contentStore.currentSize || sizesArr[0])
+let currentTheme = reactive(contentStore.currentTheme)
+let currentSize = reactive(contentStore.currentSize)
 
 const editor = ref(null) as any
 const container = ref({}) as any
