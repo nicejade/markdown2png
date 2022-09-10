@@ -1,5 +1,5 @@
 <template>
-	<footer class="z-0 px-5 pt-10 pb-10 text-sm text-center text-gray-400">
+	<footer class="z-0 px-5 pt-10 pb-10 text-center text-gray-400">
 		<div
 			class="flex flex-row flex-wrap items-center justify-center mt-2 mb-2 space-x-6 friends"
 		>
@@ -37,6 +37,13 @@
 				:href="assembleExternalLink('https://wiki.lovejade.cn/')"
 				@click="$reortGaEvent('beian', 'footer')"
 				>清风明月阁</a
+			>
+			<a
+				target="_blank"
+				class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
+				:href="assembleExternalLink('https://www.lovejade.cn/')"
+				@click="$reortGaEvent('www-lovejade', 'footer')"
+				>幽居空谷轩</a
 			>
 		</div>
 		<div class="icp">

@@ -1,9 +1,9 @@
 <template>
 	<div
-		class="mx-auto my-8 h-28 max-w-[360px] border border-gray-200 flex flex-row items-center px-4 bg-white rounded-md shadow-md z-0"
+		class="mx-auto w-full h-28 max-w-[500px] border border-gray-200 flex flex-row items-center bg-white rounded-md shadow-md z-0"
 	>
 		<a
-			class="flex flex-row items-center justify-between w-full h-full"
+			class="flex flex-row items-center justify-between w-full h-full px-4 py-4"
 			href="https://nicelinks.site/?ref=share.lovejade.cn"
 			@click="$reortGaEvent('recommand', 'footer')"
 		>
