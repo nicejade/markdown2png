@@ -8,6 +8,7 @@
 		<div class="bg" v-if="currentTheme.id === 'official'"></div>
 		<div class="content" :class="currentTheme.id">
 			<div
+				id="editor"
 				ref="editor"
 				@blur="onEditorBlur"
 				@focus="onEditorFocus"
@@ -62,8 +63,8 @@
 	<FooterNav />
 </template>
 
-<script lang="ts">
-import { ref } from 'vue'
+<script setup lang="ts">
+import { ref, getCurrentInstance, reactive, onMounted } from 'vue'
 import { parse } from 'marked'
 import html2canvas from 'html2canvas'
 
@@ -86,108 +87,106 @@ const themesArr = [
 	{ name: '芒黄', id: 'yellow' },
 ]
 
+interface Theme {
+	id: String
+	name: String
+}
+
+interface Size {
+	id: String
+	name: String
+	style: String
+}
+
 const sizesArr = [
 	{
 		name: '电脑端',
 		id: 'desktop',
-		style: 'width: 50rem; aspect-ratio: 16 / 9; padding: 3rem;',
+		style: 'width: 50rem; padding: 3rem;',
 	},
 	{
 		name: '平板端',
 		id: 'tablet',
-		style: 'width: 37.5rem; aspect-ratio: 4 / 3; padding: 2rem;',
+		style: 'width: 37.5rem; padding: 2rem;',
 	},
 	{
 		name: '移动端',
 		id: 'mobile',
-		style: 'width: 20rem; aspect-ratio: 3 / 4; padding: 1rem;',
+		style: 'width: 20rem; padding: 1rem;',
 	},
 ]
 
-export default {
-	setup() {
-		const contentStore = useContentStore()
-		const currentTheme = ref(contentStore.currentTheme || themesArr[0])
-		const currentSize = ref(contentStore.currentSize || sizesArr[0])
+const contentStore = useContentStore()
+let currentTheme = reactive(contentStore.currentTheme || themesArr[0])
+let currentSize = reactive(contentStore.currentSize || sizesArr[0])
 
-		return {
-			contentStore,
-			currentTheme,
-			currentSize,
-			themesArr,
-			sizesArr,
-		}
-	},
+const editor = ref(null) as any
+const container = ref({}) as any
+const { proxy } = getCurrentInstance() as any
 
-	mounted() {
-		this.$refs.editor.focus()
-	},
+onMounted(() => {
+	editor.value.focus()
+})
 
-	components: {
-		Switch,
-		HeadlessSelect,
-		FooterNav,
-		Recommand,
-	},
+function updatePreview() {
+	if (!editor.value) return
 
-	methods: {
-		updatePreview() {
-			if (!this.$refs.editor) return
+	let dateDomNode: any = document.getElementById('date-time')
+	if (dateDomNode) return dateDomNode.remove()
 
-			let dateDomNode: any = document.getElementById('date-time')
-			if (dateDomNode) return dateDomNode.remove()
+	if (!contentStore.isWithDate) return
+	if (!editor.value.innerHTML) return
 
-			if (!this.contentStore.isWithDate) return
+	dateDomNode = `<p id='date-time' style='text-align: right;'><time>${getCurrentDate()}</time></p>`
+	editor.value.innerHTML += dateDomNode
+}
 
-			dateDomNode = `<p id='date-time' style='text-align: right;'><time>${getCurrentDate()}</time></p>`
-			this.$refs.editor.innerHTML += dateDomNode
-		},
+function enter2preview() {
+	editor.value.innerHTML = parse(contentStore.content)
+}
 
-		enter2preview() {
-			this.$refs.editor.innerHTML = parse(this.contentStore.content)
-		},
+function enter2editor() {
+	editor.value.innerText = contentStore.content
+}
 
-		enter2editor() {
-			this.$refs.editor.innerText = this.contentStore.content
-		},
+/* -------------------On Event Callback------------------- */
+function handleDate(value: boolean) {
+	contentStore.updateWithDate(value)
+	updatePreview()
+}
 
-		/* -------------------On Event Callback------------------- */
-		handleDate(value: boolean) {
-			this.contentStore.updateWithDate(value)
-			this.updatePreview()
-		},
+function handleSelectTheme(item: Theme) {
+	currentTheme.id = item.id
+	currentTheme.name = item.name
+	contentStore.updateCurrentTheme(item)
+	proxy.$reortGaEvent('item', 'main')
+}
 
-		handleSelectTheme(item: Object) {
-			this.currentTheme = item
-			this.contentStore.updateCurrentTheme(item)
-			this.$reortGaEvent('item', 'main')
-		},
+function handleSelectSize(item: Size) {
+	currentSize.id = item.id
+	currentSize.name = item.name
+	currentSize.style = item.style
+	contentStore.updateCurrentSize(item)
+	proxy.$reortGaEvent('size', 'main')
+}
 
-		handleSelectSize(item: Object) {
-			this.currentSize = item
-			this.contentStore.updateCurrentSize(item)
-			this.$reortGaEvent('size', 'main')
-		},
+function onEditorFocus() {
+	enter2editor()
+	proxy.$reortGaEvent('focus', 'main')
+}
 
-		onEditorFocus() {
-			this.enter2editor()
-			this.$reortGaEvent('focus', 'main')
-		},
+function onEditorBlur() {
+	contentStore.updateContent(editor.value.innerText)
+	enter2preview()
+	updatePreview()
+	proxy.$reortGaEvent('blur', 'main')
+}
 
-		onEditorBlur() {
-			this.contentStore.updateContent(this.$refs.editor.innerText)
-			this.enter2preview()
-			this.updatePreview()
-			this.$reortGaEvent('blur', 'main')
-		},
-
-		onSave2Image() {
-			this.$reortGaEvent('save-img', 'main')
-			html2canvas(this.$refs.container).then((canvas) => {
-				download2png(canvas)
-			})
-		},
-	},
+function onSave2Image() {
+	proxy.$reortGaEvent('save-img', 'main')
+	html2canvas(container).then((canvas) => {
+		download2png(canvas)
+	})
 }
 </script>
 

@@ -19,4 +19,9 @@ app.config.globalProperties.$reortGaEvent = (action: string, category: string, l
 	})
 }
 
+app.config.errorHandler = (err, instance, info) => {
+  // 处理错误，例如：报告给一个服务
+	console.error(err, instance, info)
+}
+
 app.mount('#app')

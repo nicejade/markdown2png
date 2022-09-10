@@ -33,6 +33,8 @@ export const useContentStore = defineStore({
 
   actions: {
     updateContent(content: string) {
+      if (!content || 'undefined' === content) return
+
       this.content = content
       localStorage.setItem(STORAGE_CONTENT, content)
     },

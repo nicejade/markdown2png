@@ -60,17 +60,26 @@ import { ref, watch } from 'vue'
 
 import {
 	Listbox,
-	ListboxLabel,
 	ListboxButton,
 	ListboxOptions,
 	ListboxOption,
 } from '@headlessui/vue'
 import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
 
-const props = defineProps({
-	className: String,
-	sourceArr: Array,
-	defaultItem: Object,
+interface Item {
+	id: String
+	name: String
+	style: String
+}
+
+interface Props {
+	className: String | ''
+	sourceArr: Array<Item>
+	defaultItem: Item
+}
+
+const props = withDefaults(defineProps<Props>(), {
+	className: '',
 })
 
 const emits = defineEmits(['selected'])
