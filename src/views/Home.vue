@@ -74,18 +74,7 @@ import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
-
-const themesArr = [
-	{ name: '古风', id: 'antiquity' },
-	{ name: '经典', id: 'classic' },
-	{ name: '便签', id: 'note' },
-	{ name: '暗黑', id: 'dark' },
-	{ name: '元气', id: 'vitality' },
-	{ name: '纸屑', id: 'bbburst' },
-	{ name: '渐变', id: 'gradient' },
-	{ name: '公务', id: 'official' },
-	{ name: '芒黄', id: 'yellow' },
-]
+import { themesArr, sizesArr } from './../helper/constant'
 
 interface Theme {
 	id: String
@@ -97,29 +86,6 @@ interface Size {
 	name: String
 	style: String
 }
-
-const sizesArr = [
-	{
-		name: '电脑端',
-		id: 'laptop',
-		style: 'width: 50rem; padding: 3rem;',
-	},
-	{
-		name: '平板端',
-		id: 'tablet',
-		style: 'width: 37.5rem; padding: 2rem;',
-	},
-	{
-		name: '移动端',
-		id: 'mobile',
-		style: 'width: 20rem; padding: 1rem;',
-	},
-	{
-		name: '超级屏',
-		id: 'desktop',
-		style: 'width: 60rem; padding: 3rem;',
-	},
-]
 
 const contentStore = useContentStore()
 let currentTheme = reactive(contentStore.currentTheme || themesArr[0])

@@ -6,6 +6,41 @@ export const STORAGE_THEME = 'current-theme'
 
 export const STORAGE_SIZE = 'current-size'
 
+export const themesArr = [
+	{ name: '古风', id: 'antiquity' },
+	{ name: '经典', id: 'classic' },
+	{ name: '便签', id: 'note' },
+	{ name: '暗黑', id: 'dark' },
+	{ name: '元气', id: 'vitality' },
+	{ name: '纸屑', id: 'bbburst' },
+	{ name: '渐变', id: 'gradient' },
+	{ name: '公务', id: 'official' },
+	{ name: '芒黄', id: 'yellow' },
+]
+
+export const sizesArr = [
+	{
+		name: '电脑端',
+		id: 'laptop',
+		style: 'width: 50rem; padding: 3rem;',
+	},
+	{
+		name: '平板端',
+		id: 'tablet',
+		style: 'width: 37.5rem; padding: 2rem;',
+	},
+	{
+		name: '移动端',
+		id: 'mobile',
+		style: 'width: 20rem; padding: 1rem;',
+	},
+	{
+		name: '超级屏',
+		id: 'desktop',
+		style: 'width: 60rem; padding: 3rem;',
+	},
+]
+
 export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)，简单好用的在线文本工具；支持将 Markdown、rich text、word 等格式内容，快速转化为 png、pdf、html、PPT 等文件，并支持一键下载、社交分享、自定义设置等功能。
 
 ## 如何使用？
