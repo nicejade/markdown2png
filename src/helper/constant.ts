@@ -1,10 +1,10 @@
-export const STORAGE_CONTENT = 'content-text'
+export const CURRENT_CONTENT = 'current-content'
 
-export const STORAGE_DATE = 'is-with-date'
+export const HAVE_DATE = 'is-with-date'
 
-export const STORAGE_THEME = 'current-theme'
+export const CURRENT_THEME = 'current-theme'
 
-export const STORAGE_SIZE = 'current-size'
+export const CURRENT_SIZE = 'current-size'
 
 export const THEME_ARR = [
 	{ name: '古风', id: 'antiquity' },
@@ -25,14 +25,14 @@ export const SIZES_ARR = [
 		style: 'width: 50rem; padding: 3rem;',
 	},
 	{
-		name: '平板端',
-		id: 'tablet',
-		style: 'width: 37.5rem; padding: 2rem;',
-	},
-	{
 		name: '移动端',
 		id: 'mobile',
 		style: 'width: 20rem; padding: 1rem;',
+	},
+	{
+		name: '平板端',
+		id: 'tablet',
+		style: 'width: 37.5rem; padding: 2rem;',
 	},
 	{
 		name: '超级屏',

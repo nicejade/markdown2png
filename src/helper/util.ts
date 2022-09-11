@@ -33,3 +33,18 @@ export function getCurrentDate() {
 export function deepClone(obj: Object) {
   return JSON.parse(JSON.stringify(obj))
 }
+
+const parseJSONSafely = (str: string) => {
+  try {
+    return JSON.parse(str);
+  }
+  catch (err: any) {
+    console.error(`Something Error @[ParseJSON] ${err.message}`);
+    return {}
+  }
+}
+
+export function getStorageItem (key: string) {
+  const value: any = localStorage.getItem(key)
+  return parseJSONSafely(value)
+}

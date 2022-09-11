@@ -67,28 +67,27 @@ import {
 import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
 
 interface Item {
-	id: String
-	name: String
+	id: string
+	name: string
 }
 
 interface Props {
-	className: String | ''
+	className: string | ''
 	sourceArr: Array<Item>
-	defaultItem: Item
+	defaultId: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
 	className: '',
 })
 
-const emits = defineEmits(['selected'])
-
 const index = props.sourceArr.findIndex((item) => {
-	return item.id === props.defaultItem.id
+	return item.id === props.defaultId
 })
 
 const selectedItem = ref(props.sourceArr[index])
 
+const emits = defineEmits(['selected'])
 watch(selectedItem, (newValue, oldValue) => {
 	emits('selected', newValue)
 })

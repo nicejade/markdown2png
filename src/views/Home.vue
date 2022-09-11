@@ -1,12 +1,12 @@
 <template>
 	<div
 		class="container flex-1 m-auto"
-		:style="currentSize.style"
-		:class="`${currentTheme.id}-box`"
+		:style="currentSizeObj.style"
+		:class="`${currentThemeObj.id}-box`"
 		ref="container"
 	>
-		<div class="bg" v-if="currentTheme.id === 'official'"></div>
-		<div class="content" :class="currentTheme.id">
+		<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
+		<div class="content" :class="currentThemeObj.id">
 			<div
 				id="editor"
 				ref="editor"
@@ -27,16 +27,18 @@
 					<HeadlessSelect
 						className="w-24"
 						:sourceArr="THEME_ARR"
-						:defaultItem="currentTheme"
+						:defaultId="currentTheme"
 						@selected="handleSelectTheme"
 					/>
 				</div>
-				<div class="flex flex-col items-center justify-between h-20">
+				<div
+					class="flex flex-col items-center justify-between h-20 select-zize"
+				>
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect
 						className="w-28"
 						:sourceArr="SIZES_ARR"
-						:defaultItem="currentSize"
+						:defaultId="currentSize"
 						@selected="handleSelectSize"
 					/>
 				</div>
@@ -64,7 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, getCurrentInstance, reactive, onMounted } from 'vue'
+import { computed, ref, getCurrentInstance, onMounted } from 'vue'
+import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
 import html2canvas from 'html2canvas'
 
@@ -77,19 +80,18 @@ import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 interface Theme {
-	id: String
-	name: String
+	id: string
+	name: string
 }
 
 interface Size {
-	id: String
-	name: String
-	style: String
+	id: string
+	name: string
+	style: string
 }
 
 const contentStore = useContentStore()
-let currentTheme = reactive(contentStore.currentTheme)
-let currentSize = reactive(contentStore.currentSize)
+let { currentSize, currentTheme } = storeToRefs(contentStore)
 
 const editor = ref(null) as any
 const container = ref({}) as any
@@ -97,6 +99,14 @@ const { proxy } = getCurrentInstance() as any
 
 onMounted(() => {
 	editor.value.focus()
+})
+
+const currentSizeObj = computed(() => {
+	return SIZES_ARR.filter((item: Size) => item.id === currentSize.value)[0]
+})
+
+const currentThemeObj = computed(() => {
+	return THEME_ARR.filter((item: Theme) => item.id === currentTheme.value)[0]
 })
 
 function updatePreview() {
@@ -127,17 +137,12 @@ function handleDate(value: boolean) {
 }
 
 function handleSelectTheme(item: Theme) {
-	currentTheme.id = item.id
-	currentTheme.name = item.name
-	contentStore.updateCurrentTheme(item)
+	contentStore.updateCurrentTheme(item.id)
 	proxy.$reortGaEvent('item', 'main')
 }
 
 function handleSelectSize(item: Size) {
-	currentSize.id = item.id
-	currentSize.name = item.name
-	currentSize.style = item.style
-	contentStore.updateCurrentSize(item)
+	contentStore.updateCurrentSize(item.id)
 	proxy.$reortGaEvent('size', 'main')
 }
 
@@ -348,6 +353,9 @@ function onSave2Image() {
 		.mobile-w-full {
 			width: 100%;
 			margin-left: 0;
+		}
+		.select-zize {
+			display: none;
 		}
 	}
 }

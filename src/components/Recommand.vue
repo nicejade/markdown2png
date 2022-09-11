@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="mx-auto w-full h-24 mt-8 max-w-[450px] border border-gray-200 flex flex-row items-center bg-white rounded-md shadow-md z-0"
+		class="mx-auto w-full h-28 mt-8 max-w-[450px] border border-gray-200 flex flex-row items-center bg-white rounded-md shadow-md z-0"
 	>
 		<a
 			class="flex flex-row items-center justify-between w-full h-full px-4 py-4"
