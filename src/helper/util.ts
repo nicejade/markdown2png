@@ -15,17 +15,21 @@ const genFileName = () => {
   return [year, month, day, ramdom].join('-')
 }
 
-export const download2png = (canvas) => {
+export function download2png(canvas: any) {
   const tempDomNode = document.createElement('a')
   tempDomNode.href = canvas.toDataURL('image/png')
   tempDomNode.download = genFileName() + '.png'
   tempDomNode.click()
 }
 
-export const getCurrentDate = () => {
+export function getCurrentDate() {
   const date = new Date()
   const year = date.getFullYear()
   const month = `${date.getMonth() + 1}`
   const day = `${date.getDate()}`
   return [year, month.padStart(2, 0), day.padStart(2, 0)].join('-')
+}
+
+export function deepClone(obj: Object) {
+  return JSON.parse(JSON.stringify(obj))
 }
