@@ -98,7 +98,8 @@ const container = ref({}) as any
 const { proxy } = getCurrentInstance() as any
 
 onMounted(() => {
-	editor.value.focus()
+	// editor.value.focus() // NOTE: Cannot enter foucs state (at mobile end)
+	switch2preview()
 })
 
 const currentSizeObj = computed(() => {
@@ -122,11 +123,11 @@ function updatePreview() {
 	editor.value.innerHTML += dateDomNode
 }
 
-function enter2preview() {
+function switch2preview() {
 	editor.value.innerHTML = parse(contentStore.content)
 }
 
-function enter2editor() {
+function switch2editor() {
 	editor.value.innerText = contentStore.content
 }
 
@@ -147,13 +148,13 @@ function handleSelectSize(item: Size) {
 }
 
 function onEditorFocus() {
-	enter2editor()
+	switch2editor()
 	proxy.$reortGaEvent('focus', 'main')
 }
 
 function onEditorBlur() {
 	contentStore.updateContent(editor.value.innerText)
-	enter2preview()
+	switch2preview()
 	updatePreview()
 	proxy.$reortGaEvent('blur', 'main')
 }
