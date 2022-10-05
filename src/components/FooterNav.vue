@@ -39,7 +39,9 @@
 				>清风明月阁</a
 			>
 		</div>
-		<div class="icp">
+		<div
+			class="flex flex-row flex-wrap items-center justify-center w-full text-sm"
+		>
 			<span class="mx-3 text-gray-400">{{ copyright }}</span>
 			<a
 				target="_blank"
@@ -92,8 +94,7 @@ const assembleExternalLink = (url: string) => {
 
 .zero {
 	display: inline-block;
-	height: 1.5rem;
-	width: 1.1rem;
-	margin-left: 0.5rem;
+	width: 18px;
+	height: 24px;
 }
 </style>

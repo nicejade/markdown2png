@@ -69,6 +69,7 @@
 import { computed, ref, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
+import TurndownService from 'turndown'
 import html2canvas from 'html2canvas'
 
 import Switch from './../components/Switch.vue'
@@ -78,6 +79,18 @@ import Recommand from './../components/Recommand.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
+
+import { gfm, tables, strikethrough } from 'turndown-plugin-gfm'
+
+const turndownService = new TurndownService({
+	headingStyle: 'atx',
+	hr: '---',
+	codeBlockStyle: 'fenced',
+	preformattedCode: true,
+	bulletListMarker: '*',
+})
+turndownService.use(gfm)
+turndownService.use([tables, strikethrough])
 
 interface Theme {
 	id: string
@@ -100,6 +113,8 @@ const { proxy } = getCurrentInstance() as any
 onMounted(() => {
 	// editor.value.focus() // NOTE: Cannot enter foucs state (at mobile end)
 	switch2preview()
+
+	handlePasteEvent()
 })
 
 const currentSizeObj = computed(() => {
@@ -129,6 +144,23 @@ function switch2preview() {
 
 function switch2editor() {
 	editor.value.innerText = contentStore.content
+}
+
+function handlePasteEvent() {
+	const editor: Element | null = document.querySelector('#editor')
+	editor?.addEventListener('paste', (event: any) => {
+		const target = event.clipboardData || event?.dataTransfer
+		const htmlTextStr = target.getData('text/html')
+		const mdTextStr = turndownService
+			.turndown(htmlTextStr)
+			.replaceAll(/\* /gi, '<br>- ')
+			.replace('\n', '<br>')
+		const selection: Selection | null = window.getSelection()
+		if (!selection?.rangeCount) return false
+		selection.deleteFromDocument()
+		document.execCommand('insertHTML', false, mdTextStr)
+		event.preventDefault()
+	})
 }
 
 /* -------------------On Event Callback------------------- */
