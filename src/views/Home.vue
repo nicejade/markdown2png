@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="container flex-1 m-auto"
+		class="container"
 		:style="currentSizeObj.style"
 		:class="`${currentThemeObj.id}-box`"
 		ref="container"
