@@ -41,7 +41,7 @@
 								<div class="flex flex-col items-center justify-between h-20">
 									<p class="pb-2 font-medium text-gray-400">FILTERS</p>
 									<HeadlessSelect
-										className="w-32"
+										className="w-36"
 										:sourceArr="FILTERS_ARR"
 										:defaultId="FILTERS_ARR[0].id"
 										@selected="handleFilter"
@@ -82,6 +82,12 @@ const FILTERS_ARR = [
 	{ name: 'Golden', id: 'golden' },
 	{ name: 'Seagreen', id: 'seagreen' },
 	{ name: 'Islands', id: 'islands' },
+	{ name: 'Twenties', id: 'twenties' },
+	{ name: 'Radio', id: 'radio' },
+	{ name: 'Bluechrome', id: 'bluechrome' },
+	{ name: 'Obsidian', id: 'obsidian' },
+	{ name: 'Vintage', id: 'vintage' },
+	{ name: 'Pastel Pink', id: 'pastel pink' },
 ]
 
 watch(
@@ -138,7 +144,7 @@ function renderNewImage(img: HTMLImageElement, size: Object) {
 	return { canvas, ctx, image }
 }
 
-function handleFilter(style: string) {
-	filterImage(style)
+function handleFilter(item: Object) {
+	filterImage(item.id)
 }
 </script>
