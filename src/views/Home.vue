@@ -1,9 +1,10 @@
 <template>
 	<div
+		id="container"
+		ref="container"
 		class="container"
 		:style="currentSizeObj.style"
 		:class="`${currentThemeObj.id}-box`"
-		ref="container"
 	>
 		<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
 		<div class="content" :class="currentThemeObj.id">
@@ -53,7 +54,15 @@
 			</div>
 			<div class="flex items-center mobile-w-full">
 				<button
-					class="block w-full py-3 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 px-9 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+					class="block w-full px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+					@click="onPreviewImage"
+				>
+					预览图片
+				</button>
+			</div>
+			<div class="flex items-center mobile-w-full">
+				<button
+					class="block w-full px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
 					@click="onSave2Image"
 				>
 					保存图片
@@ -61,6 +70,7 @@
 			</div>
 		</div>
 	</div>
+	<PreviewDialog :visble="visble" @change="onPreviewDialogChange" />
 	<Recommand />
 	<FooterNav />
 </template>
@@ -76,6 +86,7 @@ import Switch from './../components/Switch.vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
+import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
@@ -107,7 +118,7 @@ const contentStore = useContentStore()
 let { currentSize, currentTheme } = storeToRefs(contentStore)
 
 const editor = ref(null) as any
-const container = ref({}) as any
+let visble = ref(false) as any
 const { proxy } = getCurrentInstance() as any
 
 onMounted(() => {
@@ -193,26 +204,34 @@ function onEditorBlur() {
 
 function onSave2Image() {
 	proxy.$reortGaEvent('save-img', 'main')
+	const container = document.getElementById('container')
 	html2canvas(container).then((canvas) => {
 		download2png(canvas)
 	})
+}
+
+function onPreviewImage() {
+	visble.value = true
+}
+
+function onPreviewDialogChange(state: boolean) {
+	visble.value = state
 }
 </script>
 
 <style lang="scss" scoped>
 .container {
-	height: auto;
+	// height: auto;
 	padding: 3rem;
 	box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
 	transition: box-shadow 1s ease-out;
 	transition-delay: 2s;
 	background-color: transparent;
 	.content {
-		width: 100%;
-		min-height: 100%;
-		flex: 1 1 0%;
 		position: relative;
-
+		width: 100%;
+		height: 100%;
+		flex: 1 1 0%;
 		.editor {
 			min-height: 12rem;
 			padding: 1rem;
@@ -231,22 +250,9 @@ function onSave2Image() {
 .antiquity-box {
 	background: #e9e7d9 url('./../assets/images/classical.png') repeat 0 0;
 	.antiquity {
-		border: 4px solid #c02c38;
+		position: relative !important;
+		border: 3px solid #c02c38;
 		padding: 1rem;
-		&::before {
-			position: absolute;
-			z-index: -1;
-			left: 5px;
-			top: 5px;
-			right: 5px;
-			bottom: 5px;
-			content: '';
-			width: calc(100% - 10px);
-			height: calc(100% - 10px);
-			border: 1px solid #c02c38;
-			opacity: 0.8;
-			z-index: 0;
-		}
 	}
 }
 
@@ -364,9 +370,6 @@ function onSave2Image() {
 
 .operate-area {
 	width: 40rem;
-	.mobile-adjust {
-		padding-right: 5rem;
-	}
 
 	.mobile-w-full {
 		width: auto;
@@ -386,6 +389,9 @@ function onSave2Image() {
 		.mobile-w-full {
 			width: 100%;
 			margin-left: 0;
+		}
+		.mobile-w-full + .mobile-w-full {
+			margin-top: 1rem;
 		}
 		.select-zize {
 			display: none;
