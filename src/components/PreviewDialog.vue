@@ -36,9 +36,11 @@
 								效果预览
 							</DialogTitle>
 							<div
-								class="flex justify-between flex-auto px-2 py-2 mx-4 my-2 rounded-md shadow-inner bg-slate-50"
+								class="flex items-center justify-start flex-auto px-2 py-2 mx-4 my-2 rounded-md shadow-inner bg-slate-50"
 							>
-								<div class="flex flex-col items-center justify-between h-20">
+								<div
+									class="flex flex-col items-center justify-between h-20 mx-2"
+								>
 									<p class="pb-2 font-medium text-gray-400">FILTERS</p>
 									<HeadlessSelect
 										className="w-36"
@@ -47,6 +49,24 @@
 										@selected="handleFilter"
 									/>
 								</div>
+								<button
+									class="block h-12 px-2 py-2 mx-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
+									@click="onOperateImage('emboss')"
+								>
+									EMBOSS
+								</button>
+								<button
+									class="block h-12 px-2 py-2 mx-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
+									@click="onOperateImage('grayscale')"
+								>
+									GRAYSCALE
+								</button>
+								<button
+									class="block h-12 px-2 py-2 mx-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
+									@click="onOperateImage('colorize')"
+								>
+									COLORIZE
+								</button>
 							</div>
 							<canvas id="preview-area" class="m-auto my-2"></canvas>
 						</DialogPanel>
@@ -97,6 +117,7 @@ watch(
 		if (!visble) return
 		import('@silvia-odwyer/photon').then((photon) => {
 			photonIns = photon
+			debugger
 			filterImage(FILTERS_ARR[0].id)
 		})
 	}
@@ -146,5 +167,15 @@ function renderNewImage(img: HTMLImageElement, size: Object) {
 
 function handleFilter(item: Object) {
 	filterImage(item.id)
+}
+
+const onOperateImage = async (action: string) => {
+	const img = await generateImg()
+	const size = { width: img.width, height: img.height }
+	const { canvas, ctx, image } = renderNewImage(img, size)
+	// Filter the image, the PhotonImage's raw pixels are modified
+	photonIns[action](image)
+	// Place the modified image back on the canvas
+	photonIns.putImageData(canvas, ctx, image)
 }
 </script>
