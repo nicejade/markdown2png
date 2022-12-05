@@ -79,7 +79,6 @@
 import { computed, ref, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
-import TurndownService from 'turndown'
 import html2canvas from 'html2canvas'
 
 import Switch from './../components/Switch.vue'
@@ -90,18 +89,6 @@ import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
-
-import { gfm, tables, strikethrough } from 'turndown-plugin-gfm'
-
-const turndownService = new TurndownService({
-	headingStyle: 'atx',
-	hr: '---',
-	codeBlockStyle: 'fenced',
-	preformattedCode: true,
-	bulletListMarker: '*',
-})
-turndownService.use(gfm)
-turndownService.use([tables, strikethrough])
 
 interface Theme {
 	id: string
@@ -150,7 +137,9 @@ function updatePreview() {
 }
 
 function switch2preview() {
-	editor.value.innerHTML = parse(contentStore.content)
+	editor.value.innerHTML = parse(contentStore.content, {
+		breaks: true,
+	})
 }
 
 function switch2editor() {
@@ -161,15 +150,12 @@ function handlePasteEvent() {
 	const editor: Element | null = document.querySelector('#editor')
 	editor?.addEventListener('paste', (event: any) => {
 		const target = event.clipboardData || event?.dataTransfer
-		const htmlTextStr = target.getData('text/html')
-		const mdTextStr = turndownService
-			.turndown(htmlTextStr)
-			.replaceAll(/\* /gi, '<br>- ')
-			.replace('\n', '<br>')
+		let htmlPlain = target.getData('text/plain')
+		htmlPlain = htmlPlain.replaceAll('\n', '<br />')
 		const selection: Selection | null = window.getSelection()
 		if (!selection?.rangeCount) return false
 		selection.deleteFromDocument()
-		document.execCommand('insertHTML', false, mdTextStr)
+		document.execCommand('insertHTML', false, htmlPlain)
 		event.preventDefault()
 	})
 }
