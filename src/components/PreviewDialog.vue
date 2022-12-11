@@ -36,10 +36,10 @@
 								效果预览
 							</DialogTitle>
 							<div
-								class="flex items-center justify-start flex-auto px-2 py-2 mx-4 my-2 rounded-md shadow-inner bg-slate-50"
+								class="flex items-center justify-start flex-auto px-2 py-2 m-4 rounded-md shadow-inner bg-slate-50"
 							>
 								<div
-									class="flex flex-col items-center justify-between h-20 mx-2"
+									class="flex flex-col flex-wrap items-center justify-center h-20 mx-2"
 								>
 									<p class="pb-2 font-medium text-gray-400">FILTERS</p>
 									<HeadlessSelect
@@ -50,19 +50,19 @@
 									/>
 								</div>
 								<button
-									class="block h-12 px-2 py-2 mx-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
+									class="block h-12 p-2 m-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
 									@click="onOperateImage('emboss')"
 								>
 									EMBOSS
 								</button>
 								<button
-									class="block h-12 px-2 py-2 mx-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
+									class="block h-12 p-2 m-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
 									@click="onOperateImage('grayscale')"
 								>
 									GRAYSCALE
 								</button>
 								<button
-									class="block h-12 px-2 py-2 mx-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
+									class="block h-12 p-2 m-2 border border-gray-300 rounded-md w-36 hover:bg-gray-50"
 									@click="onOperateImage('colorize')"
 								>
 									COLORIZE
@@ -78,8 +78,6 @@
 </template>
 
 <script setup lang="ts">
-import HeadlessSelect from './../components/HeadlessSelect.vue'
-
 import { ref, watch } from 'vue'
 import {
 	TransitionRoot,
@@ -89,6 +87,8 @@ import {
 	DialogTitle,
 } from '@headlessui/vue'
 import html2canvas from 'html2canvas'
+
+import HeadlessSelect from './../components/HeadlessSelect.vue'
 
 const props = defineProps({
 	visble: Boolean,
@@ -117,7 +117,6 @@ watch(
 		if (!visble) return
 		import('@silvia-odwyer/photon').then((photon) => {
 			photonIns = photon
-			debugger
 			filterImage(FILTERS_ARR[0].id)
 		})
 	}
