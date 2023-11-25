@@ -1,73 +1,46 @@
 <template>
-	<div
-		id="container"
-		ref="container"
-		class="container"
-		:style="currentSizeObj.style"
-		:class="`${currentThemeObj.id}-box`"
-	>
+	<div id="container" ref="container" class="container" :style="currentSizeObj.style"
+		:class="`${currentThemeObj.id}-box`">
 		<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
 		<div class="content" :class="currentThemeObj.id">
-			<div
-				id="editor"
-				ref="editor"
-				@blur="onEditorBlur"
-				@focus="onEditorFocus"
-				class="editor markdown"
-				contenteditable="true"
-			></div>
+			<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
+				contenteditable="true"></div>
 		</div>
 	</div>
-	<div
-		class="flex flex-row items-center w-full px-4 py-4 mx-auto my-8 bg-white rounded-md shadow-lg operate-area"
-	>
+	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-8 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust">
 				<div class="flex flex-col items-center justify-between h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
-					<HeadlessSelect
-						className="w-24"
-						:sourceArr="THEME_ARR"
-						:defaultId="currentTheme"
-						@selected="handleSelectTheme"
-					/>
+					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
+						@selected="handleSelectTheme" />
 				</div>
-				<div
-					class="flex flex-col items-center justify-between h-20 select-zize"
-				>
+				<div class="flex flex-col items-center justify-between h-20 select-zize">
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
-					<HeadlessSelect
-						className="w-28"
-						:sourceArr="SIZES_ARR"
-						:defaultId="currentSize"
-						@selected="handleSelectSize"
-					/>
+					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize" @selected="handleSelectSize" />
 				</div>
 				<div class="flex flex-col items-center justify-between w-24 h-20">
 					<p class="pb-2 font-medium text-gray-400">日期</p>
-					<Switch
-						:state="contentStore.isWithDate"
-						@check="handleDate"
-						class="block"
-					></Switch>
+					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
 				</div>
 			</div>
-			<div class="flex items-center mobile-w-full">
-				<button
-					class="block w-full px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
-					@click="onPreviewImage"
-				>
-					预览图片
-				</button>
-			</div>
-			<div class="flex items-center mobile-w-full">
-				<button
-					class="block w-full px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
-					@click="onSave2Image"
-				>
-					保存图片
-				</button>
-			</div>
+		</div>
+		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly">
+			<button
+				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+				@click="onCopyImage">
+				复制图片
+			</button>
+			<button
+				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+				@click="onPreviewImage">
+				预览图片
+			</button>
+			<button
+				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+				@click="onSave2Image">
+				保存图片
+			</button>
 		</div>
 	</div>
 	<PreviewDialog :visble="visble" @change="onPreviewDialogChange" />
@@ -87,7 +60,7 @@ import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
 import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
-import { download2png, getCurrentDate } from './../helper/util'
+import { copy2clipboard, download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 interface Theme {
@@ -200,6 +173,14 @@ function onPreviewImage() {
 	visble.value = true
 }
 
+function onCopyImage() {
+	proxy.$reortGaEvent('save-img', 'main')
+	const container = document.getElementById('container')
+	html2canvas(container).then((canvas) => {
+		copy2clipboard(canvas)
+	})
+}
+
 function onPreviewDialogChange(state: boolean) {
 	visble.value = state
 }
@@ -213,11 +194,13 @@ function onPreviewDialogChange(state: boolean) {
 	transition: box-shadow 1s ease-out;
 	transition-delay: 2s;
 	background-color: transparent;
+
 	.content {
 		position: relative;
 		width: 100%;
 		height: 100%;
 		flex: 1 1 0%;
+
 		.editor {
 			min-height: 12rem;
 			padding: 1rem;
@@ -235,6 +218,7 @@ function onPreviewDialogChange(state: boolean) {
 
 .antiquity-box {
 	background: #e9e7d9 url('./../assets/images/classical.png') repeat 0 0;
+
 	.antiquity {
 		position: relative !important;
 		border: 3px solid #c02c38;
@@ -244,6 +228,7 @@ function onPreviewDialogChange(state: boolean) {
 
 .classic-box {
 	background-color: #f2f2f2;
+
 	.classic {
 		background-color: #f2f2f2;
 	}
@@ -251,8 +236,10 @@ function onPreviewDialogChange(state: boolean) {
 
 .note-box {
 	background-color: #fffcf5;
+
 	.note {
 		border: 1px solid #e8e5dc;
+
 		&::before {
 			position: absolute;
 			content: '';
@@ -268,8 +255,10 @@ function onPreviewDialogChange(state: boolean) {
 
 .dark-box {
 	background-image: linear-gradient(to right, #434343 0%, black 100%);
+
 	.dark {
 		background-color: transparent;
+
 		.editor {
 			color: #f2f2f2;
 			background-color: transparent;
@@ -280,8 +269,10 @@ function onPreviewDialogChange(state: boolean) {
 .bbburst-box {
 	background: url(./../assets/images/bbburst.svg);
 	background-size: 100%;
+
 	.bbburst {
 		background-color: transparent;
+
 		.editor {
 			background-color: rgba(255, 255, 255, 0.8);
 			backdrop-filter: blur(2px);
@@ -291,6 +282,7 @@ function onPreviewDialogChange(state: boolean) {
 
 .vitality-box {
 	background: linear-gradient(225deg, #9cccfc 0, #e6cefd 99.54%);
+
 	.vitality {
 		background-color: #f2f2f2;
 		border-radius: 1rem;
@@ -299,8 +291,10 @@ function onPreviewDialogChange(state: boolean) {
 
 .gradient-box {
 	background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+
 	.gradient {
 		background-color: transparent;
+
 		.editor {
 			background-color: transparent;
 		}
@@ -309,6 +303,7 @@ function onPreviewDialogChange(state: boolean) {
 
 .official-box {
 	position: relative;
+
 	&::before {
 		content: '';
 		position: absolute;
@@ -317,13 +312,12 @@ function onPreviewDialogChange(state: boolean) {
 		right: 0;
 		bottom: 0;
 		z-index: -2;
-		background: linear-gradient(
-			180deg,
-			#04629d 0,
-			#037dcc 49.48%,
-			#0289e0 100%
-		);
+		background: linear-gradient(180deg,
+				#04629d 0,
+				#037dcc 49.48%,
+				#0289e0 100%);
 	}
+
 	.bg {
 		position: absolute;
 		z-index: -1;
@@ -336,6 +330,7 @@ function onPreviewDialogChange(state: boolean) {
 		background-position: center top;
 		background-repeat: no-repeat;
 	}
+
 	.official {
 		.editor {
 			color: #f2f2f2;
@@ -346,6 +341,7 @@ function onPreviewDialogChange(state: boolean) {
 
 .yellow-box {
 	background-image: radial-gradient(circle farthest-side, #fceabb, #f8b500);
+
 	.yellow {
 		.editor {
 			color: #000;
@@ -366,19 +362,24 @@ function onPreviewDialogChange(state: boolean) {
 	.container {
 		width: 100% !important;
 	}
+
 	#app .operate-area {
 		width: 100%;
+
 		.mobile-adjust {
 			padding: 0;
 			margin-bottom: 1rem;
 		}
+
 		.mobile-w-full {
 			width: 100%;
 			margin-left: 0;
 		}
-		.mobile-w-full + .mobile-w-full {
+
+		.mobile-w-full+.mobile-w-full {
 			margin-top: 1rem;
 		}
+
 		.select-zize {
 			display: none;
 		}

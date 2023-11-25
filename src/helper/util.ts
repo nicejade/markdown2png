@@ -19,7 +19,18 @@ export function download2png(canvas: any) {
   const tempDomNode = document.createElement('a')
   tempDomNode.href = canvas.toDataURL('image/png')
   tempDomNode.download = genFileName() + '.png'
-  tempDomNode.click()
+  tempDomNode.click() 
+}
+
+export function copy2clipboard(canvas: any) {
+  canvas.toBlob((blob) => {
+    const item = new ClipboardItem({ 'image/png': blob })
+    navigator.clipboard.write([item]).then( () => {
+      console.log('Image copied to clipboard')
+    }).catch( (err) => {
+      console.error('Could not copy image to clipboard: ', err)
+    })
+    }, 'image/png')
 }
 
 export function getCurrentDate() {
