@@ -1,3 +1,5 @@
+export const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay || 1000))
+
 const randomString = (length: number) => {
   const str: string = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678'
   let result: string = ''

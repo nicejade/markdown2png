@@ -25,12 +25,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly">
-			<button
-				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
-				@click="onCopyImage">
-				复制图片
-			</button>
+		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly " role="group">
 			<button
 				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
 				@click="onPreviewImage">
@@ -38,8 +33,34 @@
 			</button>
 			<button
 				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
+				@click="onCopyImage">
+				复制图片
+			</button>
+			<button
+				class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md dark:border-gray-900 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-900"
 				@click="onSave2Image">
 				保存图片
+			</button>
+		</div>
+		<div id="toast-success" v-show="actionMsg"
+			class="fixed flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow top-10"
+			role="alert">
+			<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+				<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+					viewBox="0 0 20 20">
+					<path
+						d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+				</svg>
+			</div>
+			<div class="text-sm font-normal ms-3">{{ actionMsg }}</div>
+			<button type="button" @click="onCloseAlert"
+				class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8"
+				data-dismiss-target="#toast-success" aria-label="Close">
+				<span class="sr-only">Close</span>
+				<svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+						d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+				</svg>
 			</button>
 		</div>
 	</div>
@@ -49,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, getCurrentInstance, onMounted } from 'vue'
+import { computed, ref, watch, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
 import html2canvas from 'html2canvas'
@@ -60,7 +81,7 @@ import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
 import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
-import { copy2clipboard, download2png, getCurrentDate } from './../helper/util'
+import { copy2clipboard, download2png, getCurrentDate, sleep } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 interface Theme {
@@ -79,7 +100,13 @@ let { currentSize, currentTheme } = storeToRefs(contentStore)
 
 const editor = ref(null) as any
 let visble = ref(false) as any
+let actionMsg = ref(null)
 const { proxy } = getCurrentInstance() as any
+
+watch(actionMsg, async () => {
+	await sleep(5000)
+	actionMsg.value = null
+})
 
 onMounted(() => {
 	// editor.value.focus() // NOTE: Cannot enter foucs state (at mobile end)
@@ -166,7 +193,12 @@ function onSave2Image() {
 	const container = document.getElementById('container')
 	html2canvas(container).then((canvas) => {
 		download2png(canvas)
+		actionMsg.value = '已成功为你保存图片'
 	})
+}
+
+function onCloseAlert() {
+	actionMsg.value = null
 }
 
 function onPreviewImage() {
@@ -178,6 +210,7 @@ function onCopyImage() {
 	const container = document.getElementById('container')
 	html2canvas(container).then((canvas) => {
 		copy2clipboard(canvas)
+		actionMsg.value = '已复制图片至您的剪切板'
 	})
 }
 
