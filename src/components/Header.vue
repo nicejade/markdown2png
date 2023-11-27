@@ -1,5 +1,5 @@
 <template>
-	<header class="top-0 left-0 flex flex-col items-center w-screen py-5">
+	<header class="top-0 left-0 flex flex-col items-center w-screen">
 		<nav class="flex items-center justify-between w-full px-6">
 			<RouterLink class="inline-flex flex-row items-center space-x-2 link"
 				@click.native="$reortGaEvent('recommand', 'footer')" to="/">

@@ -1,5 +1,5 @@
 <template>
-	<div id="container" ref="container" class="container" :style="currentSizeObj.style"
+	<div id="container" ref="container" class="container my-4" :style="currentSizeObj.style"
 		:class="`${currentThemeObj.id}-box`">
 		<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
 		<div class="content" :class="currentThemeObj.id">
@@ -7,7 +7,7 @@
 				contenteditable="true"></div>
 		</div>
 	</div>
-	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-8 bg-white rounded-md shadow-lg operate-area">
+	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust">
 				<div class="flex flex-col items-center justify-between h-20">
