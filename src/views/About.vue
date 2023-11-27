@@ -1,15 +1,24 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div id="about" class="w-full max-w-xl my-4">
+    <div class="markdown" v-html="aboutHtml"></div>
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+<script setup lang="ts">
+import { parse } from 'marked'
+import aboutMD from './../markdown/About'
+
+console.log(aboutMD)
+
+let aboutHtml = parse(aboutMD, {
+  breaks: true,
+})
+</script>
+
+<style lang="scss">
+#about {
+  .markdown h2 {
+    font-size: 1.4rem;
   }
 }
 </style>

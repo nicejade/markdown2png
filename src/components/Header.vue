@@ -1,12 +1,13 @@
 <template>
 	<header class="top-0 left-0 flex flex-col items-center w-screen">
-		<nav class="flex items-center justify-between w-full px-6">
+		<nav class="flex items-center justify-between w-full px-6 py-2">
 			<RouterLink class="inline-flex flex-row items-center space-x-2 link"
 				@click.native="$reortGaEvent('recommand', 'footer')" to="/">
 				<img src="@/assets/images/logo.png" alt="玉桃文飨轩" width="50" height="50" />
 				<h1 class="text-xl font-bold rainbow-text">玉桃文飨轩</h1>
 			</RouterLink>
-			<div class="">
+			<div class="flex flex-row items-center justify-center space-x-6">
+				<RouterLink to="/about" class="text-lg">关于</RouterLink>
 				<a target="_blank" rel="noreferrer" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 					href="https://github.com/nicejade/markdown2png" @click="$reortGaEvent('github-repository', 'header')">
 					<svg viewBox="0 0 16 16" fill="#131313" class="w-8 h-8">
