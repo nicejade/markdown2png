@@ -2,19 +2,20 @@
 	<footer class="z-0 my-4 text-center text-gray-400">
 		<div class="flex flex-row flex-wrap items-center justify-center mt-2 mb-2 text-sm friends">
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
-				:href="assembleExternalLink('https://nicelinks.site/')"
-				@click="$reortGaEvent('nicelinks-site', 'footer')">倾城之链</a>
+				:href="assembleExternalLink('https://niceshare.site/')"
+				@click="$reortGaEvent('niceshare-site', 'footer')">逍遥自在轩</a>
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
-				:href="assembleExternalLink('https://read.lovejade.cn/')"
-				@click="$reortGaEvent('read-lovejade', 'footer')">曼妙句子</a>
+				:href="assembleExternalLink('https://www.jeffjade.com/')"
+				@click="$reortGaEvent('www-jeffjade-com', 'footer')">晚晴幽草轩</a>
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://quickapp.lovejade.cn/')"
 				@click="$reortGaEvent('quickapp-lovejade', 'footer')">静轩之别苑</a>
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
+				:href="assembleExternalLink('https://fine.niceshare.site/')"
+				@click="$reortGaEvent('fine-niceshare-site', 'footer')">缘知随心庭</a>
+			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://forum.lovejade.cn/')"
 				@click="$reortGaEvent('forum-lovejade', 'footer')">悠然宜想亭</a>
-			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
-				:href="assembleExternalLink('https://wiki.lovejade.cn/')" @click="$reortGaEvent('beian', 'footer')">清风明月阁</a>
 		</div>
 		<div class="flex flex-row flex-wrap items-center justify-center w-full text-sm">
 			<span class="mx-3 text-gray-400">{{ copyright }}</span>
