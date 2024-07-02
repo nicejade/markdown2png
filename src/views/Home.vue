@@ -17,7 +17,8 @@
 				</div>
 				<div class="flex flex-col items-center justify-between h-20 select-zize">
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
-					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize" @selected="handleSelectSize" />
+					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
+						@selected="handleSelectSize" />
 				</div>
 				<div class="flex flex-col items-center justify-between w-24 h-20">
 					<p class="pb-2 font-medium text-gray-400">日期</p>
@@ -110,6 +111,8 @@ watch(actionMsg, async () => {
 onMounted(() => {
 	// editor.value.focus() // NOTE: Cannot enter foucs state (at mobile end)
 	switch2preview()
+
+	updatePreview()
 
 	handlePasteEvent()
 })
