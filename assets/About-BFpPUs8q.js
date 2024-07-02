@@ -1,4 +1,4 @@
-import{d as s,p as n,c,a,u as i,o}from"./index-B26qxAXV.js";const e=`
+import{d as s,p as n,c,a,u as i,o}from"./index-CbwOw4AX.js";const e=`
 [玉桃文飨轩🍑](https://share.lovejade.cn/?utm_source=about) ，简单好用的在线文本工具；支持将 Markdown、Rich Text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。基于 [Vue3](https://nicelinks.site/post/5b1a221c0526c920d6dfaada) 、 [Vite](https://nicelinks.site/post/6010e1b10c71de1fb957b64e) 、 [Pinia](https://nicelinks.site/post/631813c3c0922e0e572bde81) 、 [TailwindCSS](https://nicelinks.site/post/5fd20cb4c06d6302c1907ec7) 、 [TypeScript](https://nicelinks.site/post/6278fdeaac00ce3f9b11a8ef) 构建。
 
 ## 诞生初衷
