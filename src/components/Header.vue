@@ -33,7 +33,7 @@
 
 	.rainbow-text {
 		color: transparent;
-		background-image: linear-gradient(0deg, #ff6768 28%, #a3cd39 60%);
+		background: linear-gradient(to top left, #ff8177, #ff867a, #ff8c7f, #f99185, #cf556c, #b12a5b);
 		background-clip: text;
 		-webkit-background-clip: text;
 	}
