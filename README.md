@@ -13,21 +13,22 @@
 ### 核心功能
 
 - [x] 支持将内容转换 `png`；
+- [x] 支持为产物添加`日期`；
+- [x] 数据本地保存，保证隐私安全；
+- [x] 支持 `markdown` 格式输入；
+- [x] 支持一键`下载`转化后产物；
 - [ ] 支持将内容转换 `pdf`；
 - [ ] 支持将内容转换 `html`；
 - [ ] 支持将内容转换 `PPT`；
 - [ ] 支持将内容转换 `Markdown`；
-- [x] 支持 `markdown` 格式输入；
 - [ ] 支持 `rich text` 格式输入；
 - [ ] 支持 `word`（docs） 格式输入；
 - [x] 粘贴 html 自动转换 Markdown；
 - [ ] 支持从本地文件`导入`输入；
 - [ ] 支持直接使用`在线`资源；
-- [x] 支持一键`下载`转化后产物；
 - [ ] 支持一键`美化`内容排版；
 - [ ] 支持社交平台快捷`分享`；
-- [x] 支持为产物添加`日期`；
-- [x] 数据本地保存，保证隐私安全；
+
 
 ### 自定义设置
 
@@ -49,7 +50,6 @@
 - [悠然宜想亭](https://forum.lovejade.cn//?ref=github.com)
 - [静晴轩别苑](https://nice.lovejade.cn/?ref=github.com)
 - [天意人间舫](https://blog.lovejade.cn/?ref=github.com)
-- [新浪微博](https://weibo.com/jeffjade?ref=github.com)
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
 - [Twitter](https://twitter.com/nicejadeyang)
 - [Facebook](https://www.facebook.com/nice.jade.yang)
@@ -58,4 +58,4 @@
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2022-present, [nicejade](https://nicelinks.site/member/admin)
+Copyright (c) 2022-present, [nicejade](https://niceshare.site/)
