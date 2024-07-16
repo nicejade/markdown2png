@@ -1,8 +1,40 @@
-<h1 align="center"><a href="https://share.lovejade.cn/?utm_source=github.com&pid=share"><img src="https://raw.githubusercontent.com/nicejade/markdown2png/master/src/assets/images/logo.png" width="200" alt="玉桃文飨轩"></a></h1>
-
-<div align="center"><strong><a target="_blank" href="https://share.lovejade.cn/?utm_source=github.com&pid=share">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。
-</strong>基于 <a target="_blank" href="https://nicelinks.site/post/5b1a221c0526c920d6dfaada">Vue3</a>、<a href="https://nicelinks.site/post/6010e1b10c71de1fb957b64e">Vite</a>、<a target="_blank" href="https://nicelinks.site/post/631813c3c0922e0e572bde81">Pinia</a>、<a target="_blank" href="https://nicelinks.site/post/5fd20cb4c06d6302c1907ec7">TailwindCSS</a>、<a target="_blank" href="https://nicelinks.site/post/6278fdeaac00ce3f9b11a8ef">TypeScript</a> 构建。
+<div align="center">
+  <a href="https://share.lovejade.cn/?utm_source=github.com&pid=share"><img src="https://raw.githubusercontent.com/nicejade/markdown2png/master/src/assets/images/logo.png" width="180" alt="玉桃文飨轩"></a>
 </div>
+
+<h1 align="center">玉桃文飨轩</h1>
+
+<div align="center">
+<strong><a target="_blank" href="https://share.lovejade.cn/?utm_source=github.com&pid=share">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。
+</strong>基于 Vue3、Vite、Pinia、TailwindCSS、TypeScript 构建。
+</div>
+
+<br />
+
+<div align="center">
+  <a href="https://nodejs.org/en/">
+    <img src="https://img.shields.io/badge/node->=16.0.0-green.svg" alt="Node Version">
+  </a>
+  <a href="https://github.com/nicejade/markdown2png">
+    <img src="https://img.shields.io/github/package-json/v/nicejade/markdown2png" alt="LICENSE">
+  </a>
+  <a href="https://github.com/nicejade/wealth-tracker">
+    <img src="https://img.shields.io/github/license/nicejade/markdown2png" alt="LICENSE">
+  </a>
+  <a href="https://prettier.io/">
+    <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat" alt="Prettier">
+  </a>
+  <a href="https://gitmoji.dev">
+  <img
+    src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg?style=flat-square"
+    alt="Gitmoji"
+  />
+</a>
+  <a href="https://niceshare.site/">
+    <img src="https://img.shields.io/badge/Author-nicejade-%23a696c8.svg" alt="Author nicejade">
+  </a>
+</div>
+
 
 ## 如何访问
 
