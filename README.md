@@ -83,11 +83,11 @@
 - [静晴轩别苑](https://nice.lovejade.cn/?ref=github.com)
 - [天意人间舫](https://blog.lovejade.cn/?ref=github.com)
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
-- [Twitter](https://twitter.com/nicejadeyang)
+- [Twitter](https://x.com/MarshalXuan)
 - [Facebook](https://www.facebook.com/nice.jade.yang)
 
 ## 许可执照
 
 [MIT](http://opensource.org/licenses/MIT)
 
-Copyright (c) 2022-present, [nicejade](https://niceshare.site/)
+Copyright (c) 2022-present, [逍遥自在轩](https://www.niceshare.site/)
