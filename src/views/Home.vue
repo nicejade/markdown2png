@@ -7,45 +7,45 @@
 				contenteditable="true"></div>
 		</div>
 	</div>
-	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
-		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
-			<div class="flex justify-between flex-auto mobile-adjust">
-				<div class="flex flex-col items-center justify-between h-20">
+	<div class="flex flex-col items-center px-4 py-4 mx-auto my-4 w-full bg-white rounded-md shadow-lg operate-area">
+		<div class="flex flex-wrap justify-between space-x-6 w-full item-center">
+			<div class="flex flex-auto justify-between mobile-adjust">
+				<div class="flex flex-col justify-between items-center h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
 						@selected="handleSelectTheme" />
 				</div>
-				<div class="flex flex-col items-center justify-between h-20 select-zize">
+				<div class="flex flex-col justify-between items-center h-20 select-zize">
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
 						@selected="handleSelectSize" />
 				</div>
-				<div class="flex flex-col items-center justify-between w-24 h-20">
+				<div class="flex flex-col justify-between items-center w-24 h-20">
 					<p class="pb-2 font-medium text-gray-400">日期</p>
 					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
 				</div>
 			</div>
 		</div>
 		<div
-			class="flex flex-row items-center w-full px-4 py-4 space-x-6 md:space-x-0 md:space-y-6 md:flex-col justify-evenly "
+			class="flex flex-row justify-evenly items-center px-4 py-4 space-x-6 w-full md:space-x-0 md:space-y-6 md:flex-col"
 			role="group">
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
+			<button class="block px-4 py-2 text-lg font-bold text-gray-900 rounded-md border border-gray-300 md:w-full"
 				@click="onPreviewImage">
 				预览图片
 			</button>
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
+			<button class="block px-4 py-2 text-lg font-bold text-gray-900 rounded-md border border-gray-300 md:w-full"
 				@click="onCopyImage">
 				复制图片
 			</button>
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
+			<button class="block px-4 py-2 text-lg font-bold text-gray-900 rounded-md border border-gray-300 md:w-full"
 				@click="onSave2Image">
 				保存图片
 			</button>
 		</div>
 		<div id="toast-success" v-show="actionMsg"
-			class="fixed flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow top-10"
+			class="flex fixed top-10 items-center p-4 mb-4 w-full max-w-xs text-gray-500 bg-white rounded-lg shadow"
 			role="alert">
-			<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+			<div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8 text-green-500 bg-green-100 rounded-lg">
 				<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 					viewBox="0 0 20 20">
 					<path
@@ -54,7 +54,7 @@
 			</div>
 			<div class="text-sm font-normal ms-3">{{ actionMsg }}</div>
 			<button type="button" @click="onCloseAlert"
-				class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8"
+				class="inline-flex justify-center items-center p-1.5 -mx-1.5 -my-1.5 w-8 h-8 text-gray-400 bg-white rounded-lg ms-auto hover:text-gray-900 focus:ring-2 focus:ring-gray-300 hover:bg-gray-100"
 				data-dismiss-target="#toast-success" aria-label="Close">
 				<span class="sr-only">Close</span>
 				<svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -73,7 +73,7 @@
 import { computed, ref, watch, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
-import html2canvas from 'html2canvas'
+import { toBlob } from 'html-to-image'
 
 import Switch from './../components/Switch.vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
@@ -81,7 +81,7 @@ import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
 import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
-import { copy2clipboard, download2png, getCurrentDate, sleep } from './../helper/util'
+import { download2png, getCurrentDate, sleep } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 interface Theme {
@@ -102,6 +102,15 @@ const editor = ref(null) as any
 let visble = ref(false) as any
 let actionMsg = ref(null)
 const { proxy } = getCurrentInstance() as any
+
+const options = {
+	quality: 1.0,
+	pixelRatio: window.devicePixelRatio,
+	skipAutoScale: true,
+	filter: (node) => {
+		return !node.classList || !node.classList.contains('exclude-from-image')
+	}
+}
 
 watch(actionMsg, async () => {
 	await sleep(5000)
@@ -190,15 +199,6 @@ function onEditorBlur() {
 	proxy.$reortGaEvent('blur', 'main')
 }
 
-function onSave2Image() {
-	proxy.$reortGaEvent('save-img', 'main')
-	const container = document.getElementById('container')
-	html2canvas(container).then((canvas) => {
-		download2png(canvas)
-		actionMsg.value = '已成功为你保存图片'
-	})
-}
-
 function onCloseAlert() {
 	actionMsg.value = null
 }
@@ -210,14 +210,38 @@ function onPreviewImage() {
 function onCopyImage() {
 	proxy.$reortGaEvent('save-img', 'main')
 	const container = document.getElementById('container')
-	html2canvas(container).then((canvas) => {
-		copy2clipboard(canvas)
-		actionMsg.value = '已复制图片至您的剪切板'
-	})
+
+	toBlob(container, options)
+		.then((blob) => {
+			navigator.clipboard.write([
+				new ClipboardItem({
+					'image/png': blob
+				})
+			])
+			actionMsg.value = '已复制图片至您的剪切板'
+		})
+		.catch((error) => {
+			console.error('复制图片失败:', error)
+			actionMsg.value = '复制图片失败，请重试'
+		})
 }
 
 function onPreviewDialogChange(state: boolean) {
 	visble.value = state
+}
+
+function onSave2Image() {
+	proxy.$reortGaEvent('save-img', 'main')
+	const container = document.getElementById('container')
+	toBlob(container, options)
+		.then((blob) => {
+			download2png(blob)
+			actionMsg.value = '已成功为你保存图片'
+		})
+		.catch((error) => {
+			console.error('保存图片失败:', error)
+			actionMsg.value = '保存图片失败，请重试'
+		})
 }
 </script>
 

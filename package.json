@@ -1,7 +1,7 @@
 {
   "name": "markdown2png",
-  "version": "0.6.6",
-  "packageManager": "pnpm@7.1.0",
+  "version": "0.6.7",
+  "packageManager": "pnpm@9.14.2",
   "scripts": {
     "start": "pnpm vite",
     "dev": "vite",
@@ -16,6 +16,7 @@
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^1.0.6",
     "@silvia-odwyer/photon": "^0.3.2",
+    "html-to-image": "^1.11.11",
     "html2canvas": "^1.4.1",
     "marked": "^10.0.0",
     "pinia": "^2.1.7",

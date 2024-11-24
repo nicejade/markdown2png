@@ -24,17 +24,6 @@ export function download2png(canvas: any) {
   tempDomNode.click() 
 }
 
-export function copy2clipboard(canvas: any) {
-  canvas.toBlob((blob) => {
-    const item = new ClipboardItem({ 'image/png': blob })
-    navigator.clipboard.write([item]).then( () => {
-      console.log('Image copied to clipboard')
-    }).catch( (err) => {
-      console.error('Could not copy image to clipboard: ', err)
-    })
-    }, 'image/png')
-}
-
 export function getCurrentDate() {
   const date = new Date()
   const year = date.getFullYear()
