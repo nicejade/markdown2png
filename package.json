@@ -1,6 +1,6 @@
 {
   "name": "markdown2png",
-  "version": "0.6.7",
+  "version": "0.6.8",
   "packageManager": "pnpm@9.14.2",
   "scripts": {
     "start": "pnpm vite",

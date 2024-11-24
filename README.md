@@ -5,8 +5,8 @@
 <h1 align="center">玉桃文飨轩</h1>
 
 <div align="center">
-<strong><a target="_blank" href="https://share.lovejade.cn/?utm_source=github.com&pid=share">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。
-</strong>基于 Vue3、Vite、Pinia、TailwindCSS、TypeScript 构建。
+  <strong><a target="_blank" href="https://share.lovejade.cn/?utm_source=github.com&pid=share">玉桃文飨轩🍑 </a>，简单好用的在线文本工具；支持将 Markdown、rich text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。
+  </strong>基于 <a target="_blank" href="https://site.lovejade.cn/post/5b1a221c0526c920d6dfaada">Vue3</a>、<a href="https://site.lovejade.cn/post/6010e1b10c71de1fb957b64e">Vite</a>、<a target="_blank" href="https://site.lovejade.cn/post/631813c3c0922e0e572bde81">Pinia</a>、<a target="_blank" href="https://site.lovejade.cn/post/5fd20cb4c06d6302c1907ec7">TailwindCSS</a>、<a target="_blank" href="https://site.lovejade.cn/post/6278fdeaac00ce3f9b11a8ef">TypeScript</a> 构建。
 </div>
 
 <br />

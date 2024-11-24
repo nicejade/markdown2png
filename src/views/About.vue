@@ -1,5 +1,5 @@
 <template>
-  <div id="about" class="w-full max-w-xl my-4">
+  <div id="about" class="my-4 w-full max-w-xl">
     <div class="markdown" v-html="aboutHtml"></div>
   </div>
 </template>
@@ -7,8 +7,6 @@
 <script setup lang="ts">
 import { parse } from 'marked'
 import aboutMD from './../markdown/About'
-
-console.log(aboutMD)
 
 let aboutHtml = parse(aboutMD, {
   breaks: true,

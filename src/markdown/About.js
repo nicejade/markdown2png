@@ -1,5 +1,5 @@
 export default `
-[玉桃文飨轩🍑](https://share.lovejade.cn/?utm_source=about) ，简单好用的在线文本工具；支持将 Markdown、富文本等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。 基于 Vue3、Vite、Pinia、TailwindCSS、TypeScript 构建。
+[玉桃文飨轩🍑](https://share.lovejade.cn/?utm_source=about) ，简单好用的在线文本工具；支持将 [Markdown](https://site.lovejade.cn/tags/Markdown)、Rich Text 等格式内容，快速转化为 png、pdf、html 等文件，并支持自定义设置、一键下载等功能。基于 [Vue3](https://site.lovejade.cn/post/5b1a221c0526c920d6dfaada) 、 [Vite](https://site.lovejade.cn/post/6010e1b10c71de1fb957b64e) 、 [Pinia](https://site.lovejade.cn/post/631813c3c0922e0e572bde81) 、 [TailwindCSS](https://site.lovejade.cn/post/5fd20cb4c06d6302c1907ec7) 、 [TypeScript](https://site.lovejade.cn/post/6278fdeaac00ce3f9b11a8ef) 构建。
 
 ## 诞生初衷
 
