@@ -1,51 +1,54 @@
 <template>
-	<div id="container" ref="container" class="container my-4" :style="currentSizeObj.style"
-		:class="`${currentThemeObj.id}-box`">
-		<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
-		<div class="content" :class="currentThemeObj.id">
-			<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
-				contenteditable="true"></div>
+	<section class="flex justify-center w-full m-auto my-4">
+		<div id="container" ref="container" class="container" :style="currentSizeObj.style"
+			:class="`${currentThemeObj.id}-box`">
+			<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
+			<div class="content" :class="currentThemeObj.id">
+				<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
+					contenteditable="true"></div>
+			</div>
 		</div>
-	</div>
-	<div class="flex flex-col items-center px-4 py-4 mx-auto my-4 w-full bg-white rounded-md shadow-lg operate-area">
-		<div class="flex flex-wrap justify-between space-x-6 w-full item-center">
-			<div class="flex flex-auto justify-between mobile-adjust">
-				<div class="flex flex-col justify-between items-center h-20">
+	</section>
+
+	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
+		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
+			<div class="flex justify-between flex-auto mobile-adjust">
+				<div class="flex flex-col items-center justify-between h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
 						@selected="handleSelectTheme" />
 				</div>
-				<div class="flex flex-col justify-between items-center h-20 select-zize">
+				<div class="flex flex-col items-center justify-between h-20 select-zize">
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
 						@selected="handleSelectSize" />
 				</div>
-				<div class="flex flex-col justify-between items-center w-24 h-20">
+				<div class="flex flex-col items-center justify-between w-24 h-20">
 					<p class="pb-2 font-medium text-gray-400">日期</p>
 					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
 				</div>
 			</div>
 		</div>
 		<div
-			class="flex flex-row justify-evenly items-center px-4 py-4 space-x-6 w-full md:space-x-0 md:space-y-6 md:flex-col"
+			class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0 md:space-y-6 md:flex-col"
 			role="group">
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 rounded-md border border-gray-300 md:w-full"
+			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
 				@click="onPreviewImage">
 				预览图片
 			</button>
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 rounded-md border border-gray-300 md:w-full"
+			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
 				@click="onCopyImage">
 				复制图片
 			</button>
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 rounded-md border border-gray-300 md:w-full"
+			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
 				@click="onSave2Image">
 				保存图片
 			</button>
 		</div>
 		<div id="toast-success" v-show="actionMsg"
-			class="flex fixed top-10 items-center p-4 mb-4 w-full max-w-xs text-gray-500 bg-white rounded-lg shadow"
+			class="fixed flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow top-10"
 			role="alert">
-			<div class="inline-flex flex-shrink-0 justify-center items-center w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+			<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
 				<svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
 					viewBox="0 0 20 20">
 					<path

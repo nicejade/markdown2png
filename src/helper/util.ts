@@ -17,11 +17,13 @@ const genFileName = () => {
   return [year, month, day, ramdom].join('-')
 }
 
-export function download2png(canvas: any) {
-  const tempDomNode = document.createElement('a')
-  tempDomNode.href = canvas.toDataURL('image/png')
-  tempDomNode.download = genFileName() + '.png'
-  tempDomNode.click() 
+export function download2png(blob: Blob) {
+  const url = window.URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = `玉桃文飨轩-${genFileName()}.png`
+  link.click()
+  window.URL.revokeObjectURL(url)
 }
 
 export function getCurrentDate() {
