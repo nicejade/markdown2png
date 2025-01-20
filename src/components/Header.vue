@@ -7,6 +7,7 @@
 				<h1 class="text-xl font-bold rainbow-text">玉桃文飨轩</h1>
 			</RouterLink>
 			<div class="flex flex-row items-center justify-center space-x-6">
+				<RouterLink to="/share" class="text-lg">书摘</RouterLink>
 				<RouterLink to="/about" class="text-lg">关于</RouterLink>
 				<a class="social-link" target="_blank" rel="noopener" href="https://x.com/MarshalXuan"
 					title="轩帅(MarshalXuan) @ X.com">

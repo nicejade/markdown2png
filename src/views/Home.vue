@@ -123,9 +123,7 @@ watch(actionMsg, async () => {
 onMounted(() => {
 	// editor.value.focus() // NOTE: Cannot enter foucs state (at mobile end)
 	switch2preview()
-
 	updatePreview()
-
 	handlePasteEvent()
 })
 
