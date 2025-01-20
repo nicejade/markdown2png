@@ -102,7 +102,9 @@
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
 import { toBlob } from 'html-to-image'
 import { download2png } from './../helper/util'
+import { useToastStore } from '@/stores/toast'
 
+const toast = useToastStore()
 const text = ref(`庐山烟雨浙江潮，
 未至千般恨不消。
 到得还来别无事，
@@ -217,11 +219,11 @@ function onCopyImage() {
           'image/png': blob
         })
       ])
-      // actionMsg.value = '已复制图片至您的剪切板'
+      toast.show('已复制图片至您的剪切板')
     })
     .catch((error) => {
       console.error('复制图片失败:', error)
-      // actionMsg.value = '复制图片失败，请重试'
+      toast.show('复制图片失败，请重试')
     })
 }
 
@@ -231,11 +233,11 @@ function onSave2Image() {
   toBlob(container, options)
     .then((blob) => {
       download2png(blob)
-      actionMsg.value = '已成功为你保存图片'
+      toast.show('已成功为你保存图片')
     })
     .catch((error) => {
       console.error('保存图片失败:', error)
-      actionMsg.value = '保存图片失败，请重试'
+      toast.show('保存图片失败，请重试')
     })
 }
 </script>
