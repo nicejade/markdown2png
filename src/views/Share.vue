@@ -8,8 +8,8 @@
       </textarea>
     </div>
 
-    <div id="container" class="mb-4">
-      <canvas ref="canvasRef" width="702" height="912" class="w-full border rounded-lg"></canvas>
+    <div class="mb-4">
+      <canvas id="digest" ref="canvasRef" width="702" height="912" class="w-full border rounded-lg"></canvas>
     </div>
 
     <div class="w-full px-6 py-6 mx-auto my-4 space-y-6 bg-white rounded-md shadow-sm">
@@ -158,6 +158,7 @@ const loadBackgroundImage = () => {
 const drawCanvas = (backgroundImage) => {
   const canvas = canvasRef.value
   const context = ctx.value
+  const padding = 10 // 设置内边距
 
   // 清空画布
   context.clearRect(0, 0, canvas.width, canvas.height)
@@ -168,32 +169,62 @@ const drawCanvas = (backgroundImage) => {
   // 设置文字样式
   context.font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
   context.fillStyle = textColor.value
-  context.textAlign = 'center'
+  context.textAlign = 'left' // 改为左对齐以便处理换行
 
-  // 计算行高
+  // 文本换行处理函数
+  const wrapText = (text) => {
+    const words = text.split('')
+    const lines = []
+    let currentLine = ''
+    const maxWidth = canvas.width - (padding * 2) // 考虑左右内边距
+
+    words.forEach(char => {
+      const testLine = currentLine + char
+      const metrics = context.measureText(testLine)
+      const testWidth = metrics.width
+
+      if (testWidth > maxWidth && currentLine !== '') {
+        lines.push(currentLine)
+        currentLine = char
+      } else {
+        currentLine = testLine
+      }
+    })
+    lines.push(currentLine)
+    return lines
+  }
+
+  // 处理每一段文本
+  const paragraphs = text.value.split('\n')
+  const allLines = []
+  paragraphs.forEach(para => {
+    allLines.push(...wrapText(para))
+  })
+
+  // 计算行高和总高度
   const lineHeightPx = fontSize.value * lineHeight.value
-
-  // 分割文本行
-  const lines = text.value.split('\n')
-
-  // 计算文本总高度
-  const totalHeight = lines.length * lineHeightPx
+  const totalHeight = allLines.length * lineHeightPx
 
   // 计算起始 Y 坐标（垂直居中）
   let startY = (canvas.height - totalHeight) / 2
 
-  // 绘制每一行文本
-  lines.forEach((line) => {
+  // 绘制文本
+  allLines.forEach(line => {
     const chars = line.split('')
-    // 计算每个字符实际占用的宽度（包含字间距）
-    const charWidth = context.measureText('测').width // 使用一个汉字作为基准宽度
-    const spacing = letterSpacing.value / 50 // 调整字间距的比例
-    const totalWidth = chars.length * (charWidth + spacing)
-    let currentX = canvas.width / 2 - totalWidth / 2
+    const spacing = letterSpacing.value / 50
 
-    chars.forEach((char) => {
+    // 计算这一行文本的总宽度
+    let totalLineWidth = 0
+    chars.forEach(char => {
+      totalLineWidth += context.measureText(char).width + spacing
+    })
+
+    // 计算居中的起始 X 坐标
+    let currentX = (canvas.width - totalLineWidth) / 2
+
+    chars.forEach(char => {
       context.fillText(char, currentX, startY)
-      currentX += charWidth + spacing
+      currentX += context.measureText(char).width + spacing
     })
     startY += lineHeightPx
   })
@@ -210,7 +241,7 @@ watch(
 
 function onCopyImage() {
   proxy.$reortGaEvent('save-img', 'share')
-  const container = document.getElementById('container')
+  const container = document.getElementById('digest')
 
   toBlob(container, options)
     .then((blob) => {
@@ -229,7 +260,7 @@ function onCopyImage() {
 
 function onSave2Image() {
   proxy.$reortGaEvent('save-img', 'share')
-  const container = document.getElementById('container')
+  const container = document.getElementById('digest')
   toBlob(container, options)
     .then((blob) => {
       download2png(blob)
