@@ -48,7 +48,6 @@
 	</div>
 	<PreviewDialog :visble="visble" @change="onPreviewDialogChange" />
 	<Recommand />
-	<FooterNav />
 </template>
 
 <script setup lang="ts">
@@ -60,7 +59,6 @@ import { useToastStore } from '@/stores/toast'
 
 import Switch from './../components/Switch.vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
-import FooterNav from './../components/FooterNav.vue'
 import Recommand from './../components/Recommand.vue'
 import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
