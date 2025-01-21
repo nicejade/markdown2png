@@ -11,7 +11,7 @@
         <strong class="text-lg font-medium">编辑文字</strong>
         <!-- 编辑区域 -->
         <div class="mb-4">
-          <textarea v-model="text" rows="6" maxlength="1000"
+          <textarea v-model="text" rows="5" maxlength="1000"
             class="w-full min-h-[120px] p-4 rounded-lg border border-gray-200 resize-none focus:outline-none focus:border-gray-300"
             placeholder="请输入想要呈现的文字...">
           </textarea>
@@ -70,15 +70,36 @@
             <input type="color" v-model="textColor" class="w-full h-10 border border-gray-200 rounded-lg" />
           </div>
         </div>
+      </div>
 
-        <!-- 背景选择 -->
-        <div>
-          <label class="block mb-2 text-sm font-medium text-gray-400">选择背景</label>
-          <div class="grid grid-cols-3 gap-3">
-            <div v-for="(bg, index) in backgrounds" :key="index"
-              class="w-24 h-24 overflow-hidden border rounded-lg cursor-pointer"
-              :class="{ 'ring-2 ring-blue-500': selectedBg === index }" @click="selectedBg = index">
-              <img :src="bg" class="object-cover w-full h-full" />
+      <div class="w-full px-6 py-6 mx-auto my-4 space-y-6 bg-white shadow-lg rounded-xl">
+        <!-- 背景选择部分的修改 -->
+        <strong class="text-lg font-medium">选择背景</strong>
+        <div class="grid grid-cols-3 gap-3">
+          <!-- 现有背景选项部分保持不变 -->
+          <div v-for="(bg, index) in backgrounds" :key="index"
+            class="w-24 h-24 overflow-hidden border rounded-lg cursor-pointer"
+            :class="{ 'ring-2 ring-blue-500': selectedBg === index }" @click="selectedBg = index">
+            <img :src="bg" class="object-cover w-full h-full" />
+          </div>
+        </div>
+
+        <!-- 上传按钮改为虚线框风格 -->
+        <div class="relative w-full h-24 my-4 group">
+          <input type="file" accept="image/*" class="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer"
+            @change="handleImageUpload" />
+          <div
+            class="flex flex-col items-center justify-center w-full h-full border border-gray-300 border-dashed rounded-lg">
+            <div class="flex flex-col items-center justify-center p-2 text-gray-500">
+              <div class="flex items-center text-xs text-center text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 text-gray-400" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                使用我自己的图片
+              </div>
+              <div class="text-[10px] text-center text-gray-400">(您的图片不会上传到服务器)</div>
             </div>
           </div>
         </div>
@@ -274,6 +295,29 @@ function onSave2Image() {
       console.error('保存图片失败:', error)
       toast.show('保存图片失败，请重试')
     })
+}
+// 处理图片上传
+const handleImageUpload = (event: Event) => {
+  const file = (event.target as HTMLInputElement).files?.[0]
+  if (!file) return
+
+  // 检查文件类型
+  if (!file.type.startsWith('image/')) {
+    toast.show('请上传图片文件')
+    return
+  }
+
+  // 创建临时URL
+  const imageUrl = URL.createObjectURL(file)
+
+  // 添加到背景列表的开头
+  backgrounds.value.unshift(imageUrl)
+
+  // 选中新上传的图片
+  selectedBg.value = 0
+
+    // 清空input，允许重复上传同一张图片
+    ; (event.target as HTMLInputElement).value = ''
 }
 </script>
 
