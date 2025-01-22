@@ -58,11 +58,13 @@
           <!-- 字重 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字重</label>
-            <select v-model="fontWeight" class="w-full h-10 px-3 border border-gray-200 rounded-lg">
+            <!-- <select v-model="fontWeight" class="w-full h-10 px-3 border border-gray-200 rounded-lg">
               <option value="normal">常规</option>
               <option value="medium">中等</option>
               <option value="bold">粗体</option>
-            </select>
+            </select> -->
+            <HeadlessSelect className="w-full" :sourceArr="fontWeights" defaultId="normal"
+              @selected="handleSelectWeight" />
           </div>
           <!-- 文字颜色 -->
           <div>
@@ -126,6 +128,7 @@
 <script setup lang="ts">
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
 import { toBlob } from 'html-to-image'
+import HeadlessSelect from './../components/HeadlessSelect.vue'
 import { download2png } from './../helper/util'
 import { useToastStore } from '@/stores/toast'
 
@@ -143,6 +146,13 @@ const fontWeight = ref('normal')
 const textColor = ref('#000000')
 const selectedBg = ref(0)
 const { proxy } = getCurrentInstance() as any
+
+// 添加字重选项配置
+const fontWeights = [
+  { id: 'normal', name: '常规' },
+  { id: 'medium', name: '中等' },
+  { id: 'bold', name: '粗体' }
+]
 
 const backgrounds = ref([
   '/share/bg0.png',
@@ -314,10 +324,15 @@ const handleImageUpload = (event: Event) => {
   backgrounds.value.unshift(imageUrl)
 
   // 选中新上传的图片
-  selectedBg.value = 0
+  selectedBg.value = 0;
 
-    // 清空input，允许重复上传同一张图片
-    ; (event.target as HTMLInputElement).value = ''
+  // 清空 input，允许重复上传同一张图片
+  (event.target as HTMLInputElement).value = ''
+}
+
+function handleSelectWeight(item) {
+  fontWeight.value = item.id
+  proxy.$reortGaEvent('select-weight', 'share')
 }
 </script>
 
