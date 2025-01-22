@@ -18,12 +18,10 @@
         </div>
 
         <div class="grid grid-cols-2 gap-6 md:grid-cols-1">
-          <!-- 字体 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字体</label>
-            <select v-model="fontFamily" class="w-full h-10 px-3 border border-gray-200 rounded-lg">
-              <option value="system-ui">系统默认</option>
-            </select>
+            <HeadlessSelect className="w-full" :sourceArr="fontFamilys" defaultId="system-ui"
+              @selected="handleSelectFont" />
           </div>
           <!-- 字号 -->
           <div>
@@ -58,11 +56,6 @@
           <!-- 字重 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字重</label>
-            <!-- <select v-model="fontWeight" class="w-full h-10 px-3 border border-gray-200 rounded-lg">
-              <option value="normal">常规</option>
-              <option value="medium">中等</option>
-              <option value="bold">粗体</option>
-            </select> -->
             <HeadlessSelect className="w-full" :sourceArr="fontWeights" defaultId="normal"
               @selected="handleSelectWeight" />
           </div>
@@ -154,6 +147,12 @@ const fontWeights = [
   { id: 'bold', name: '粗体' }
 ]
 
+// script setup 部分添加字体配置
+const fontFamilys = [
+  { id: 'system-ui', name: '系统默认' },
+  { id: 'Noto Sans TC', name: '简体中文' },
+  { id: 'ShouJinTi', name: '瘦金体' },
+]
 const backgrounds = ref([
   '/share/bg0.png',
   '/share/bg1.png',
@@ -190,7 +189,7 @@ const loadBackgroundImage = () => {
 }
 
 // 绘制 canvas
-const drawCanvas = (backgroundImage) => {
+const drawCanvas = async (backgroundImage) => {
   const canvas = canvasRef.value
   const context = ctx.value
   const padding = 10 // 设置内边距
@@ -201,6 +200,12 @@ const drawCanvas = (backgroundImage) => {
   // 绘制背景
   context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
 
+  try {
+    await document.fonts.ready
+    await document.fonts.load(`${fontSize.value}px ${fontFamily.value}`)
+  } catch (e) {
+    console.warn('字体加载失败，将使用后备字体:', e)
+  }
   // 设置文字样式
   context.font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
   context.fillStyle = textColor.value
@@ -275,7 +280,7 @@ watch(
 )
 
 function onCopyImage() {
-  proxy.$reortGaEvent('save-img', 'share')
+  proxy.$reortGaEvent('save-img', 'digest')
   const container = document.getElementById('digest')
 
   toBlob(container, options)
@@ -294,7 +299,7 @@ function onCopyImage() {
 }
 
 function onSave2Image() {
-  proxy.$reortGaEvent('save-img', 'share')
+  proxy.$reortGaEvent('save-img', 'digest')
   const container = document.getElementById('digest')
   toBlob(container, options)
     .then((blob) => {
@@ -332,7 +337,12 @@ const handleImageUpload = (event: Event) => {
 
 function handleSelectWeight(item) {
   fontWeight.value = item.id
-  proxy.$reortGaEvent('select-weight', 'share')
+  proxy.$reortGaEvent('select-weight', 'digest')
+}
+
+function handleSelectFont(item) {
+  fontFamily.value = item.id
+  proxy.$reortGaEvent('select-font', 'digest')
 }
 </script>
 
@@ -344,4 +354,25 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-thumb {
   @apply appearance-none w-4 h-4 bg-blue-500 rounded-full cursor-pointer;
 }
+
+@font-face {
+  font-family: 'ShouJinTi';
+  font-style: normal;
+  font-weight: 500;
+  font-display: block;
+  src: url('./../assets/fonts/ShouJinTi.woff2') format('woff2');
+  unicode-range: U+2E80-2EFF,
+    U+2F00-2FDF,
+    U+2FF0-2FFF,
+    U+3000-303F,
+    U+31C0-31EF,
+    U+3200-4DBF,
+    U+4E00-9FFF,
+    U+F900-FAFF,
+    U+FE30-FE4F;
+}
+</style>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
 </style>
