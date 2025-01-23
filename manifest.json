@@ -1,0 +1,36 @@
+{
+	"name": "玉桃文飨轩",
+	"short_name": "玉桃文飨轩",
+	"description": "玉桃文飨轩，简单好用的在线文本工具；支持将 Markdown、Rich Text 等格式内容，快速转化为 PNG、PDF、HTML 等文件，并支持自定义设置、一键下载等功能。基于 Vue3 、 Vite 、 Pinia 、 TailwindCSS 、 TypeScript 构建。",
+	"start_url": "/",
+	"display": "standalone",
+	"display_override": ["window-controls-overlay", "standalone"],
+	"screenshots": [
+		{
+			"src": "/screenshots/desktop.png",
+			"sizes": "1200x676",
+			"type": "image/png",
+			"form_factor": "wide",
+			"label": "桌面端主页面"
+		}
+	],
+	"background_color": "#ffffff",
+	"theme_color": "#f59e0b",
+	"icons": [
+		{
+			"src": "/android-chrome-384x384.png",
+			"sizes": "384x384",
+			"type": "image/png"
+		},
+		{
+			"src": "/android-chrome-192x192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/apple-touch-icon.png",
+			"sizes": "180x180",
+			"type": "image/png"
+		}
+	]
+}
