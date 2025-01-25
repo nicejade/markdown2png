@@ -22,7 +22,8 @@
         </div>
       </div>
       <!-- Canvas content -->
-      <canvas id="digest" ref="canvasRef" width="500" height="660" class="w-full border rounded-xl"></canvas>
+      <canvas id="digest" ref="canvasRef" width="500" height="660" :style="{ borderRadius: `${roundedRadius}px` }"
+        class="w-full border"></canvas>
     </div>
 
     <div class="w-2/5 md:w-full">
@@ -46,7 +47,7 @@
           <!-- 字号 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字号</label>
-            <div class="flex items-center">
+            <div class="flex items-center justify-center h-10">
               <input type="range" v-model="fontSize" min="12" max="72" class="flex-1 mr-4" />
               <span class="text-sm">{{ fontSize }}px</span>
             </div>
@@ -68,6 +69,23 @@
             <div class="flex items-center">
               <input type="range" v-model="letterSpacing" min="0" max="200" class="flex-1 mr-4" />
               <span class="text-sm">{{ letterSpacing }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 md:grid-cols-1">
+          <div class="w-full">
+            <label class="block mb-2 text-sm font-medium text-gray-400">弧度</label>
+            <div class="flex items-center justify-center h-10">
+              <input type="range" v-model="roundedRadius" min="0" max="250" class="flex-1 mr-4" />
+              <span class="text-sm">{{ roundedRadius }}px</span>
+            </div>
+          </div>
+          <div class="w-full">
+            <label class="block mb-2 text-sm font-medium text-gray-400">边距</label>
+            <div class="flex items-center justify-center h-10">
+              <input type="range" v-model="edgePadding" min="20" max="200" class="flex-1 mr-4" />
+              <span class="text-sm">{{ edgePadding }}px</span>
             </div>
           </div>
         </div>
@@ -157,6 +175,8 @@ const fontFamily = ref('system-ui')
 const fontSize = ref(16)
 const lineHeight = ref(2)
 const letterSpacing = ref(100)
+const edgePadding = ref(50)
+const roundedRadius = ref(30)
 const fontWeight = ref('normal')
 const textColor = ref('#000000')
 const selectedBg = ref(0)
@@ -222,7 +242,6 @@ const loadBackgroundImage = () => {
 const drawCanvas = async (backgroundImage) => {
   const canvas = canvasRef.value
   const context = ctx.value
-  const padding = 10 // 设置内边距
 
   context.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -245,7 +264,7 @@ const drawCanvas = async (backgroundImage) => {
     const words = text.split('')
     const lines = []
     let currentLine = ''
-    const maxWidth = canvas.width - (padding * 2) // 考虑左右内边距
+    const maxWidth = canvas.width - (edgePadding.value * 2) // 考虑左右内边距
 
     words.forEach(char => {
       const testLine = currentLine + char
@@ -301,7 +320,7 @@ const drawCanvas = async (backgroundImage) => {
 
 // 监听所有样式变化
 watch(
-  [text, fontFamily, fontSize, lineHeight, letterSpacing, fontWeight, textColor, selectedBg],
+  [text, fontFamily, fontSize, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg],
   () => {
     loadBackgroundImage()
   },
