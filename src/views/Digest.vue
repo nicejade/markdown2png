@@ -1,7 +1,7 @@
 <template>
   <div class="w-[80rem] md:w-full flex md:flex-col items-start justify-between p-6 md:p-0">
 
-    <div class="relative w-3/5 mb-4 mr-8 md:w-full">
+    <div class="relative w-3/5 mb-4 mr-8 bg-transparent md:w-full">
       <!-- Skeleton loading -->
       <div v-if="isLoading" class="absolute top-0 w-full aspect-[500/660] rounded-xl overflow-hidden bg-gray-50">
         <!-- 主体骨架 -->
@@ -108,7 +108,7 @@
       <div class="w-full px-6 py-6 mx-auto my-4 space-y-6 bg-white shadow-lg rounded-xl">
         <!-- 背景选择部分的修改 -->
         <strong class="text-lg font-medium">选择背景</strong>
-        <div class="grid grid-cols-3 gap-6 md:grid-cols-2">
+        <div class="grid grid-cols-3 gap-6 md:grid-cols-2 md:justify-items-center">
           <div v-for="(bg, index) in backgrounds" :key="index"
             class="w-24 h-24 overflow-hidden transition-all duration-200 border rounded-lg cursor-pointer group hover:shadow-md"
             :class="{ 'ring-2 ring-blue-500 shadow-lg': selectedBg === index }" @click="selectedBg = index"
@@ -140,17 +140,15 @@
         </div>
       </div>
 
-      <div class="w-full px-4 py-4 mx-auto my-4 space-y-6 bg-white shadow-sm md:px-2 md:py-2 rounded-xl">
-        <div
-          class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0 md:space-y-6 md:flex-col"
-          role="group">
-          <button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
-            @click="onCopyImage">
-            复制图片
+      <div class="w-full px-2 py-2 mx-auto my-4 space-y-6 bg-white shadow-sm rounded-xl">
+        <div class="flex flex-row items-center w-full px-2 py-2 justify-evenly md:space-y-6 md:flex-col" role="group">
+          <button class="space-x-2 general-btn" @click="onCopyImage">
+            <SvgIcon name="copy" />
+            <span>复制图片</span>
           </button>
-          <button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
-            @click="onSave2Image">
-            保存图片
+          <button class="space-x-2 general-btn" @click="onSave2Image">
+            <SvgIcon name="download" />
+            <span>保存图片</span>
           </button>
         </div>
       </div>
@@ -403,6 +401,10 @@ const handleImageLoad = (index: number) => {
 </script>
 
 <style scoped>
+/* .general-btn {
+  @apply text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 mb-2;
+} */
+
 input[type="range"] {
   @apply h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
 }

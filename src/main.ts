@@ -1,12 +1,16 @@
+
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-
 import App from './App.vue'
 import router from './router'
-
+import SvgIcon from './components/SvgIcon.vue'
+import 'virtual:svg-icons-register'
 import './assets/styles/main.css'
 
 const app = createApp(App)
+
+// 注册全局组件
+app.component('SvgIcon', SvgIcon)
 
 app.use(createPinia())
 app.use(router)

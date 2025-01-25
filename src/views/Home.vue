@@ -32,16 +32,13 @@
 		<div
 			class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0 md:space-y-6 md:flex-col"
 			role="group">
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
-				@click="onPreviewImage">
+			<button class="general-btn" @click="onPreviewImage">
 				预览图片
 			</button>
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
-				@click="onCopyImage">
+			<button class="general-btn" @click="onCopyImage">
 				复制图片
 			</button>
-			<button class="block px-4 py-2 text-lg font-bold text-gray-900 border border-gray-300 rounded-md md:w-full"
-				@click="onSave2Image">
+			<button class="general-btn" @click="onSave2Image">
 				保存图片
 			</button>
 		</div>
