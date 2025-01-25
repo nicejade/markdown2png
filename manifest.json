@@ -1,7 +1,7 @@
 {
 	"name": "玉桃文飨轩",
 	"short_name": "玉桃文飨轩",
-	"description": "玉桃文飨轩，简单好用的在线文本工具；支持将 Markdown、Rich Text 等格式内容，快速转化为 PNG、PDF、HTML 等文件，并支持自定义设置、一键下载等功能。基于 Vue3 、 Vite 、 Pinia 、 TailwindCSS 、 TypeScript 构建。",
+	"description": "玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。",
 	"start_url": "/",
 	"display": "standalone",
 	"display_override": ["window-controls-overlay", "standalone"],
