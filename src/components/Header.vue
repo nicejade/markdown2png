@@ -3,7 +3,7 @@
 		<nav class="flex items-center justify-between w-full px-6 py-2">
 			<RouterLink class="inline-flex flex-row items-center space-x-2 link"
 				@click.native="$reortGaEvent('recommand', 'footer')" to="/">
-				<img src="@/assets/images/logo.png" alt="玉桃文飨轩" width="50" height="50" />
+				<img src="@/assets/images/logo.png" alt="玉桃文飨轩 Logo" width="50" height="50" />
 				<h1 class="text-xl font-bold rainbow-text">玉桃文飨轩</h1>
 			</RouterLink>
 			<div class="flex flex-row items-center justify-center space-x-6">
