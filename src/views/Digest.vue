@@ -1,7 +1,27 @@
 <template>
   <div class="w-[80rem] md:w-full flex md:flex-col items-start justify-between p-6 md:p-0">
 
-    <div class="w-3/5 mb-4 mr-8 md:w-full">
+    <div class="relative w-3/5 mb-4 mr-8 md:w-full">
+      <!-- Skeleton loading -->
+      <div v-if="isLoading" class="absolute top-0 w-full aspect-[500/660] rounded-xl overflow-hidden bg-gray-50">
+        <!-- 主体骨架 -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-100"></div>
+        <!-- 文字区域骨架 -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 space-y-4">
+          <div class="w-1/2 h-4 bg-gray-300 rounded animate-pulse"></div>
+          <div class="w-2/3 h-4 bg-gray-300 rounded animate-pulse"></div>
+          <div class="w-2/3 h-4 bg-gray-300 rounded animate-pulse"></div>
+          <div class="w-3/4 h-4 bg-gray-300 rounded animate-pulse"></div>
+          <div class="w-2/3 h-4 bg-gray-300 rounded animate-pulse"></div>
+          <div class="w-1/2 h-4 bg-gray-300 rounded animate-pulse"></div>
+        </div>
+        <!-- 闪光效果 -->
+        <div class="absolute inset-0">
+          <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer">
+          </div>
+        </div>
+      </div>
+      <!-- Canvas content -->
       <canvas id="digest" ref="canvasRef" width="500" height="660" class="w-full border rounded-xl"></canvas>
     </div>
 
@@ -71,11 +91,13 @@
         <!-- 背景选择部分的修改 -->
         <strong class="text-lg font-medium">选择背景</strong>
         <div class="grid grid-cols-3 gap-6 md:grid-cols-2">
-          <!-- 现有背景选项部分保持不变 -->
           <div v-for="(bg, index) in backgrounds" :key="index"
-            class="w-24 h-24 overflow-hidden border rounded-lg cursor-pointer"
-            :class="{ 'ring-2 ring-blue-500': selectedBg === index }" @click="selectedBg = index">
-            <img :src="bg" class="object-cover w-full h-full" />
+            class="w-24 h-24 overflow-hidden transition-all duration-200 border rounded-lg cursor-pointer group hover:shadow-md"
+            :class="{ 'ring-2 ring-blue-500 shadow-lg': selectedBg === index }" @click="selectedBg = index"
+            role="button" :aria-label="`选择文摘背景图片 ${index + 1}`" :title="`背景图片 ${index + 1}`">
+            <img :src="bg" class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
+              loading="lazy" :alt="`文摘背景图片 ${index + 1}`" @error="handleImageError(index)"
+              @load="handleImageLoad(index)" />
           </div>
         </div>
 
@@ -138,6 +160,7 @@ const letterSpacing = ref(100)
 const fontWeight = ref('normal')
 const textColor = ref('#000000')
 const selectedBg = ref(0)
+const isLoading = ref(true)
 const { proxy } = getCurrentInstance() as any
 
 // 添加字重选项配置
@@ -181,22 +204,26 @@ onMounted(() => {
   loadBackgroundImage()
 })
 
-// 加载背景图
+// 修改 loadBackgroundImage 函数
 const loadBackgroundImage = () => {
+  isLoading.value = true
   const img = new Image()
   img.onload = () => {
     drawCanvas(img)
+    isLoading.value = false
+  }
+  img.onerror = () => {
+    toast.show('背景图片加载失败')
+    isLoading.value = false
   }
   img.src = backgrounds.value[selectedBg.value]
 }
 
-// 绘制 canvas
 const drawCanvas = async (backgroundImage) => {
   const canvas = canvasRef.value
   const context = ctx.value
   const padding = 10 // 设置内边距
 
-  // 清空画布
   context.clearRect(0, 0, canvas.width, canvas.height)
 
   // 绘制背景
@@ -293,10 +320,12 @@ function onCopyImage() {
         })
       ])
       toast.show('已复制图片至您的剪切板')
+      proxy.$reortGaEvent('copy-image', 'digest')
     })
     .catch((error) => {
       console.error('复制图片失败:', error)
       toast.show('复制图片失败，请重试')
+      proxy.$reortGaEvent('copy-image-failed', 'digest')
     })
 }
 
@@ -307,10 +336,12 @@ function onSave2Image() {
     .then((blob) => {
       download2png(blob)
       toast.show('已成功为你保存图片')
+      proxy.$reortGaEvent('save-image', 'digest')
     })
     .catch((error) => {
       console.error('保存图片失败:', error)
       toast.show('保存图片失败，请重试')
+      proxy.$reortGaEvent('save-image-failed', 'digest')
     })
 }
 // 处理图片上传
@@ -324,15 +355,10 @@ const handleImageUpload = (event: Event) => {
     return
   }
 
-  // 创建临时URL
   const imageUrl = URL.createObjectURL(file)
-
-  // 添加到背景列表的开头
   backgrounds.value.unshift(imageUrl)
-
   // 选中新上传的图片
   selectedBg.value = 0;
-
   // 清空 input，允许重复上传同一张图片
   (event.target as HTMLInputElement).value = ''
 }
@@ -346,6 +372,15 @@ function handleSelectFont(item) {
   fontFamily.value = item.id
   proxy.$reortGaEvent('select-font', 'digest')
 }
+
+const handleImageError = (index: number) => {
+  console.debug(`背景图片 ${index + 1} 加载失败`)
+  proxy.$reortGaEvent('load-bg-failed', 'digest')
+}
+
+const handleImageLoad = (index: number) => {
+  console.debug(`背景图片 ${index + 1} 加载成功`)
+}
 </script>
 
 <style scoped>
@@ -355,6 +390,21 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-thumb {
   @apply appearance-none w-4 h-4 bg-blue-500 rounded-full cursor-pointer;
+}
+
+/* 添加闪光动画 */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s infinite;
 }
 
 @font-face {

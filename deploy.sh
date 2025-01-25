@@ -16,7 +16,7 @@ echo 'google.com, pub-8586652723015758, DIRECT, f08c47fec0942fa0' > ads.txt
 
 git init
 git add -A
-git commit -m 'deploy update 🎉'
+git commit -m '🚀 local build for deploy'
 
 # 如果发布到 https://<USERNAME>.github.io
 # git push -f git@github.com:<USERNAME>/<USERNAME>.github.io.git master
