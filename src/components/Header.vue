@@ -9,7 +9,7 @@
 			<div class="flex flex-row items-center justify-center space-x-6">
 				<RouterLink to="/digest" class="text-lg">文摘</RouterLink>
 				<RouterLink to="/about" class="text-lg">关于</RouterLink>
-				<a class="social-link" target="_blank" rel="noopener" href="https://x.com/MarshalXuan"
+				<a class="social-link md:hidden" target="_blank" rel="noopener" href="https://x.com/MarshalXuan"
 					title="轩帅(MarshalXuan) @ X.com">
 					<svg aria-hidden="true" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
 						style="--sl-icon-size: 1em;">

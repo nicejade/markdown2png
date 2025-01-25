@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[80rem] md:w-full flex md:flex-col items-start justify-between p-6">
+  <div class="w-[80rem] md:w-full flex md:flex-col items-start justify-between p-6 md:p-0">
 
     <div class="w-3/5 mb-4 mr-8 md:w-full">
       <canvas id="digest" ref="canvasRef" width="500" height="660" class="w-full border rounded-xl"></canvas>
@@ -70,7 +70,7 @@
       <div class="w-full px-6 py-6 mx-auto my-4 space-y-6 bg-white shadow-lg rounded-xl">
         <!-- 背景选择部分的修改 -->
         <strong class="text-lg font-medium">选择背景</strong>
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-6 md:grid-cols-2">
           <!-- 现有背景选项部分保持不变 -->
           <div v-for="(bg, index) in backgrounds" :key="index"
             class="w-24 h-24 overflow-hidden border rounded-lg cursor-pointer"
@@ -100,7 +100,7 @@
         </div>
       </div>
 
-      <div class="w-full px-4 py-4 mx-auto my-4 space-y-6 bg-white shadow-sm rounded-xl">
+      <div class="w-full px-4 py-4 mx-auto my-4 space-y-6 bg-white shadow-sm md:px-2 md:py-2 rounded-xl">
         <div
           class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0 md:space-y-6 md:flex-col"
           role="group">
@@ -150,8 +150,10 @@ const fontWeights = [
 // script setup 部分添加字体配置
 const fontFamilys = [
   { id: 'system-ui', name: '系统默认' },
-  { id: 'Noto Sans TC', name: '简体中文' },
+  { id: 'Noto Sans SC', name: '思源黑体' },
   { id: 'ShouJinTi', name: '瘦金体' },
+  { id: 'Huiwen-Fangsong', name: '汇文仿宋' },
+  { id: 'ChillKai', name: '寒蝉正楷' },
 ]
 const backgrounds = ref([
   '/share/bg0.png',
@@ -374,5 +376,7 @@ input[type="range"]::-webkit-slider-thumb {
 </style>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+@import url('https://static.zeoseven.com/zsft/440/main/result.css');
+@import url('https://static.zeoseven.com/zsft/5/main/result.css');
 </style>
