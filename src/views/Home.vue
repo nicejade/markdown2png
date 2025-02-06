@@ -52,14 +52,13 @@ import { computed, ref, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
 import { toBlob } from 'html-to-image'
-import { useToastStore } from '@/stores/toast'
-
+import { useToastStore } from './../stores/toast'
 import Switch from './../components/Switch.vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import Recommand from './../components/Recommand.vue'
 import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
-import { download2png, getCurrentDate, sleep } from './../helper/util'
+import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 const toast = useToastStore()

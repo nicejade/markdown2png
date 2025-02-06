@@ -160,7 +160,7 @@
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import { download2png } from './../helper/util'
-import { useToastStore } from '@/stores/toast'
+import { useToastStore } from './../stores/toast'
 
 const toast = useToastStore()
 const text = ref(`庐山烟雨浙江潮，

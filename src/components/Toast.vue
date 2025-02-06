@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
-import { useToastStore } from '@/stores/toast'
+import { useToastStore } from './../stores/toast'
 
 const toast = useToastStore()
 const { isVisible, message } = storeToRefs(toast)

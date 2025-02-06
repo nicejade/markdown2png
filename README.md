@@ -35,14 +35,9 @@
   </a>
 </div>
 
-
 ## 如何访问
 
 在线访问地址：[https://share.lovejade.cn/](https://share.lovejade.cn/ '玉桃文飨轩')。
-
-## 功能特性
-
-### 核心功能
 
 ## 核心功能
 
@@ -57,7 +52,7 @@
 
 ## 相关链接
 
-- [清风明月轩](https://www.thebettersites.com/)
+- [清风明月轩](https://www.thebettersites.com/?ref=github.com)
 - [逍遥自在轩](https://niceshare.site/?ref=github.com)
 - [晚晴幽草轩](https://www.jeffjade.com/nicelinks?ref=github.com)
 - [缘知随心庭](https://fine.niceshare.site/?ref=github.com)

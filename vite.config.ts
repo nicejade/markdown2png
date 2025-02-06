@@ -19,9 +19,5 @@ export default defineConfig({
   build: {
     target:['edge90','chrome90','firefox90','safari15']
   },
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
+  resolve: {}
 })
