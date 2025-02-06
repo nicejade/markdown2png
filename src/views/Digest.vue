@@ -158,7 +158,6 @@
 
 <script setup lang="ts">
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
-import { toBlob } from 'html-to-image'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import { download2png } from './../helper/util'
 import { useToastStore } from '@/stores/toast'
@@ -327,40 +326,47 @@ watch(
 
 function onCopyImage() {
   proxy.$reortGaEvent('save-img', 'digest')
-  const container = document.getElementById('digest')
+  const canvas = canvasRef.value
 
-  toBlob(container, options)
-    .then((blob) => {
-      navigator.clipboard.write([
-        new ClipboardItem({
-          'image/png': blob
-        })
-      ])
-      toast.show('已复制图片至您的剪切板')
-      proxy.$reortGaEvent('copy-image', 'digest')
-    })
-    .catch((error) => {
-      console.error('复制图片失败:', error)
-      toast.show('复制图片失败，请重试')
-      proxy.$reortGaEvent('copy-image-failed', 'digest')
-    })
+  // 直接从 canvas 获取 blob
+  canvas.toBlob((blob) => {
+    navigator.clipboard.write([
+      new ClipboardItem({
+        'image/png': blob
+      })
+    ])
+      .then(() => {
+        toast.show('已复制图片至您的剪切板')
+        proxy.$reortGaEvent('copy-image', 'digest')
+      })
+      .catch((error) => {
+        console.error('复制图片失败:', error)
+        toast.show('复制图片失败，请重试')
+        proxy.$reortGaEvent('copy-image-failed', 'digest')
+      })
+  }, 'image/png')
 }
 
 function onSave2Image() {
   proxy.$reortGaEvent('save-img', 'digest')
-  const container = document.getElementById('digest')
-  toBlob(container, options)
-    .then((blob) => {
-      download2png(blob)
-      toast.show('已成功为你保存图片')
-      proxy.$reortGaEvent('save-image', 'digest')
-    })
-    .catch((error) => {
-      console.error('保存图片失败:', error)
-      toast.show('保存图片失败，请重试')
-      proxy.$reortGaEvent('save-image-failed', 'digest')
-    })
+  const canvas = canvasRef.value
+  try {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        download2png(blob)
+        toast.show('已成功为你保存图片')
+        proxy.$reortGaEvent('save-image', 'digest')
+      } else {
+        throw new Error('生成图片失败')
+      }
+    }, 'image/png')
+  } catch (error) {
+    console.error('保存图片失败:', error)
+    toast.show('保存图片失败，请重试')
+    proxy.$reortGaEvent('save-image-failed', 'digest')
+  }
 }
+
 // 处理图片上传
 const handleImageUpload = (event: Event) => {
   const file = (event.target as HTMLInputElement).files?.[0]
