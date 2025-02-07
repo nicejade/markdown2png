@@ -325,6 +325,15 @@ watch(
 )
 
 function onCopyImage() {
+  // 检测是否为 iOS 或 Safari, iOS/Safari 环境下使用替代方案
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+  if (isIOS || isSafari) {
+    toast.show('iOS/Safari 环境请选择"保存图片"')
+    return
+  }
+
   proxy.$reortGaEvent('save-img', 'digest')
   const canvas = canvasRef.value
 

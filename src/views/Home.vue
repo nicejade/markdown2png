@@ -85,9 +85,7 @@ const options = {
 	quality: 1.0,
 	pixelRatio: window.devicePixelRatio,
 	skipAutoScale: true,
-	filter: (node) => {
-		return !node.classList || !node.classList.contains('exclude-from-image')
-	}
+	cacheBust: true,
 }
 
 onMounted(() => {
@@ -175,9 +173,17 @@ function onPreviewImage() {
 }
 
 function onCopyImage() {
+	// 检测是否为 iOS 或 Safari, iOS/Safari 环境下使用替代方案
+	const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+	if (isIOS || isSafari) {
+		toast.show('iOS/Safari 环境请选择"保存图片"')
+		return
+	}
+
 	proxy.$reortGaEvent('save-img', 'main')
 	const container = document.getElementById('container')
-
 	toBlob(container, options)
 		.then((blob) => {
 			navigator.clipboard.write([
