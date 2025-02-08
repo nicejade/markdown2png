@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import wasm from 'vite-plugin-wasm'
@@ -19,5 +18,8 @@ export default defineConfig({
   build: {
     target:['edge90','chrome90','firefox90','safari15']
   },
-  resolve: {}
+  resolve: {},
+  worker: {
+    format: 'es'
+  }
 })

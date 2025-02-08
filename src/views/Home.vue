@@ -1,11 +1,11 @@
 <template>
 	<section class="flex justify-center w-full m-auto my-4">
-		<div id="container" ref="container" class="container" :style="currentSizeObj.style"
-			:class="`${currentThemeObj.id}-box`">
-			<div class="bg" v-if="currentThemeObj.id === 'official'"></div>
+		<div id="container" class="container" :style="currentSizeObj.style" :class="`${currentThemeObj.id}-box`">
+			<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
 			<div class="content" :class="currentThemeObj.id">
 				<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
-					contenteditable="true"></div>
+					contenteditable="true">
+				</div>
 			</div>
 		</div>
 	</section>
@@ -35,11 +35,13 @@
 			<button class="general-btn" @click="onPreviewImage">
 				预览图片
 			</button>
-			<button class="general-btn" @click="onCopyImage">
-				复制图片
+			<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
+				<Spinner v-if="isCopying" :size="20" />
+				<span>{{ isCopying ? '复制中...' : '复制图片' }}</span>
 			</button>
-			<button class="general-btn" @click="onSave2Image">
-				保存图片
+			<button class="space-x-1 general-btn" :disabled="isSaving" @click="onSave2Image">
+				<Spinner v-if="isSaving" :size="20" />
+				<span>{{ isSaving ? '保存中...' : '保存图片' }}</span>
 			</button>
 		</div>
 	</div>
@@ -54,6 +56,7 @@ import { parse } from 'marked'
 import { toBlob } from 'html-to-image'
 import { useToastStore } from './../stores/toast'
 import Switch from './../components/Switch.vue'
+import Spinner from './../components/Spinner.vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import Recommand from './../components/Recommand.vue'
 import PreviewDialog from './../components/PreviewDialog.vue'
@@ -79,13 +82,22 @@ let { currentSize, currentTheme } = storeToRefs(contentStore)
 
 const editor = ref(null) as any
 let visble = ref(false) as any
+const isCopying = ref(false) as any
+const isSaving = ref(false) as any
+let imageBlob = null
+let isGeneratingBlob = false // 添加标记位
+let genBlobPromise: Promise<void> | null = null // 用于存储当前的 Promise
 const { proxy } = getCurrentInstance() as any
 
 const options = {
-	quality: 1.0,
-	pixelRatio: window.devicePixelRatio,
+	quality: 0.8,
+	pixelRatio: 1,
 	skipAutoScale: true,
-	cacheBust: true,
+	cacheBust: false,
+	backgroundColor: '#ffffff',
+	filter: (node) => {
+		return !node.classList?.contains('exclude-from-image')
+	},
 }
 
 onMounted(() => {
@@ -172,55 +184,104 @@ function onPreviewImage() {
 	visble.value = true
 }
 
-function onCopyImage() {
-	// 检测是否为 iOS 或 Safari, iOS/Safari 环境下使用替代方案
-	const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-	const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-
-	if (isIOS || isSafari) {
-		toast.show('iOS/Safari 环境请选择"保存图片"')
+async function generateBlob() {
+	imageBlob = null
+	if (isGeneratingBlob) {
+		if (genBlobPromise) {
+			await genBlobPromise
+		}
 		return
 	}
 
+	isGeneratingBlob = true
+	genBlobPromise = new Promise(async (resolve, reject) => {
+		try {
+			const container = document.getElementById('container')
+			const editorEl: HTMLInputElement = container.querySelector('#editor')
+			// 临时移除所有动画和过渡效果 & 临时禁用 contenteditable
+			container.style.transition = 'none'
+			container.style.animation = 'none'
+			editorEl.contentEditable = 'false'
+			// 使用 requestAnimationFrame 确保样式更新已应
+			await new Promise(resolve => requestAnimationFrame(resolve))
+			imageBlob = await toBlob(container, options)
+			// 恢复原始状态 & 恢复 contenteditable
+			container.style.transition = ''
+			container.style.animation = ''
+			editorEl.contentEditable = 'true'
+			resolve()
+		} catch (error) {
+			console.error('生成图片 blob 失败:', error)
+			reject(error)
+		} finally {
+			isGeneratingBlob = false
+			genBlobPromise = null
+		}
+	})
+	await genBlobPromise
+}
+
+async function onCopyImage() {
+	if (isCopying.value) return
+	isCopying.value = true
 	proxy.$reortGaEvent('save-img', 'main')
-	const container = document.getElementById('container')
-	toBlob(container, options)
-		.then((blob) => {
-			navigator.clipboard.write([
+
+	try {
+		const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+		if (isIOS || isSafari) {
+			toast.show('iOS/Safari 环境请选择"保存图片"')
+			return
+		}
+
+		if (!imageBlob) {
+			await generateBlob()
+		}
+		if (imageBlob) {
+			await navigator.clipboard.write([
 				new ClipboardItem({
-					'image/png': blob
+					'image/png': imageBlob
 				})
 			])
 			toast.show('已复制图片至您的剪切板')
-		})
-		.catch((error) => {
-			console.error('复制图片失败:', error)
-			toast.show('复制图片失败，请重试')
-		})
+		}
+	} catch (error) {
+		console.error('复制图片失败:', error)
+		toast.show('复制图片失败，请重试')
+	} finally {
+		isCopying.value = false
+	}
 }
 
 function onPreviewDialogChange(state: boolean) {
 	visble.value = state
 }
 
-function onSave2Image() {
+async function onSave2Image() {
+	if (isSaving.value) return
+	isSaving.value = true
 	proxy.$reortGaEvent('save-img', 'main')
-	const container = document.getElementById('container')
-	toBlob(container, options)
-		.then((blob) => {
-			download2png(blob)
+
+	try {
+		if (!imageBlob) {
+			await generateBlob()
+		}
+		if (imageBlob) {
+			download2png(imageBlob)
 			toast.show('已成功为你保存图片')
-		})
-		.catch((error) => {
-			console.error('保存图片失败:', error)
-			toast.show('保存图片失败，请重试')
-		})
+		}
+	} catch (error) {
+		console.error('保存图片失败:', error)
+		toast.show('保存图片失败，请重试')
+	} finally {
+		isSaving.value = false
+	}
 }
 </script>
 
 <style lang="scss" scoped>
 .container {
-	// height: auto;
 	padding: 3rem;
 	box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
 	transition: box-shadow 1s ease-out;
