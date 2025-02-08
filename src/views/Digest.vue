@@ -230,7 +230,7 @@ const loadBackgroundImage = () => {
     isLoading.value = false
   }
   img.onerror = () => {
-    toast.show('背景图片加载失败')
+    toast.error('背景图片加载失败')
     isLoading.value = false
   }
   img.src = backgrounds.value[selectedBg.value]
@@ -330,7 +330,7 @@ function onCopyImage() {
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
   if (isIOS || isSafari) {
-    toast.show('iOS/Safari 环境请选择"保存图片"')
+    toast.info('iOS/Safari 环境请选择"保存图片"')
     return
   }
 
@@ -350,7 +350,7 @@ function onCopyImage() {
       })
       .catch((error) => {
         console.error('复制图片失败:', error)
-        toast.show('复制图片失败，请重试')
+        toast.error('复制图片失败，请重试')
         proxy.$reortGaEvent('copy-image-failed', 'digest')
       })
   }, 'image/png')
@@ -371,7 +371,7 @@ function onSave2Image() {
     }, 'image/png')
   } catch (error) {
     console.error('保存图片失败:', error)
-    toast.show('保存图片失败，请重试')
+    toast.error('保存图片失败，请重试')
     proxy.$reortGaEvent('save-image-failed', 'digest')
   }
 }
@@ -383,7 +383,7 @@ const handleImageUpload = (event: Event) => {
 
   // 检查文件类型
   if (!file.type.startsWith('image/')) {
-    toast.show('请上传图片文件')
+    toast.info('请上传图片格式文件')
     return
   }
 
@@ -406,20 +406,16 @@ function handleSelectFont(item) {
 }
 
 const handleImageError = (index: number) => {
-  console.debug(`背景图片 ${index + 1} 加载失败`)
+  const message = `背景图片 ${index + 1} 加载失败`
+  console.debug(message)
+  toast.error(message)
   proxy.$reortGaEvent('load-bg-failed', 'digest')
 }
 
-const handleImageLoad = (index: number) => {
-  console.debug(`背景图片 ${index + 1} 加载成功`)
-}
+const handleImageLoad = () => { }
 </script>
 
 <style scoped>
-/* .general-btn {
-  @apply text-gray-900 bg-white hover:bg-gray-100 border border-gray-200 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center me-2 mb-2;
-} */
-
 input[type="range"] {
   @apply h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
 }

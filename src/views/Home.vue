@@ -231,7 +231,7 @@ async function onCopyImage() {
 		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
 		if (isIOS || isSafari) {
-			toast.show('iOS/Safari 环境请选择"保存图片"')
+			toast.info('iOS/Safari 环境请选择"保存图片"')
 			return
 		}
 
@@ -248,7 +248,7 @@ async function onCopyImage() {
 		}
 	} catch (error) {
 		console.error('复制图片失败:', error)
-		toast.show('复制图片失败，请重试')
+		toast.error('复制图片失败，请重试')
 	} finally {
 		isCopying.value = false
 	}
@@ -273,7 +273,7 @@ async function onSave2Image() {
 		}
 	} catch (error) {
 		console.error('保存图片失败:', error)
-		toast.show('保存图片失败，请重试')
+		toast.error('保存图片失败，请重试')
 	} finally {
 		isSaving.value = false
 	}
