@@ -38,7 +38,7 @@ export const useDigestStore = defineStore('digest', {
     updateDigestClick(hash: string) {
       const index = this.digestList.findIndex((item: DigestItem) => item.hash === hash)
       if (index !== -1) {
-        this.digestList[index].click = (this.digestList[index].click || 0) + 1
+        this.digestList[index].click += 1
         localStorage.setItem(DIGEST_TEXT, JSON.stringify(this.digestList))
       }
     },

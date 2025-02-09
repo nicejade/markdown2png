@@ -2,7 +2,7 @@
   <div class="w-full px-2 py-4 my-4 sm:px-0">
     <TabGroup>
       <TabList class="flex p-1 space-x-1 bg-gray-300 rounded-xl">
-        <Tab v-for="category in Object.keys(categories)" as="template" :key="category" v-slot="{ selected }">
+        <Tab v-for="category in Object.keys(digestHistory)" as="template" :key="category" v-slot="{ selected }">
           <button :class="[
           'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
           'ring-white/60 ring-offset-2 ring-offset-gray-300 focus:outline-none focus:ring-2',
@@ -15,7 +15,7 @@
         </Tab>
       </TabList>
       <TabPanels class="mt-2">
-        <TabPanel v-for="(posts, idx) in Object.values(categories)" :key="idx" :class="[
+        <TabPanel v-for="(posts, idx) in Object.values(digestHistory)" :key="idx" :class="[
           'rounded-xl bg-white p-3',
           'ring-white/60 ring-offset-2 focus:outline-none focus:ring-2',
         ]">
@@ -41,14 +41,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
-import { DIGEST_TEXT, TAB_LABELS } from './../helper/constant'
+import { TAB_LABELS } from './../helper/constant'
 import { useDigestStore } from './../stores/digest'
 import { useToastStore } from './../stores/toast'
 
 const toastStore = useToastStore()
 const digestStore = useDigestStore()
+const digestHistory = ref({
+  recent: [],
+  earliest: [],
+  popular: []
+})
+
+watch(() => digestStore.digestList, () => {
+  updateDigestHistory()
+}, { deep: true, immediate: true })
 
 const handleDigestClick = (post) => {
   digestStore.updateCurrentDigest(post.digest)
@@ -56,18 +65,12 @@ const handleDigestClick = (post) => {
   toastStore.success('文摘内容已更新至文本框')
 }
 
-const categories = ref({
-  recent: [],
-  earliest: [],
-  popular: []
-})
-
-onMounted(() => {
-  const digests = JSON.parse(localStorage.getItem(DIGEST_TEXT) || '[]')
+function updateDigestHistory() {
+  const digests = digestStore.digestList
   const sortedDigests = [...digests].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
 
   // 最近的摘要
-  categories.value.recent = sortedDigests.slice(0, 5).map((item, index) => ({
+  digestHistory.value.recent = sortedDigests.slice(0, 5).map((item, index) => ({
     digest: item.text,
     hash: item.hash,
     click: item.click,
@@ -75,7 +78,7 @@ onMounted(() => {
   }))
 
   // 最早的摘要
-  categories.value.earliest = [...sortedDigests].reverse().slice(0, 5).map((item, index) => ({
+  digestHistory.value.earliest = [...sortedDigests].reverse().slice(0, 5).map((item, index) => ({
     digest: item.text,
     hash: item.hash,
     click: item.click,
@@ -83,7 +86,7 @@ onMounted(() => {
   }))
 
   // 最流行的摘要（根据 click 数值）
-  categories.value.popular = [...digests]
+  digestHistory.value.popular = [...digests]
     .sort((a, b) => b.click - a.click)
     .slice(0, 5)
     .map((item, index) => ({
@@ -92,5 +95,5 @@ onMounted(() => {
       click: item.click,
       date: new Date(item.timestamp).toLocaleString(),
     }))
-})
+}
 </script>
