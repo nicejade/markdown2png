@@ -31,7 +31,7 @@ export function getCurrentDate() {
   const year = date.getFullYear()
   const month = `${date.getMonth() + 1}`
   const day = `${date.getDate()}`
-  return [year, month.padStart(2, 0), day.padStart(2, 0)].join('-')
+  return [year, month.padStart(2, '0'), day.padStart(2, '0')].join('-')
 }
 
 export function deepClone(obj: Object) {
@@ -51,4 +51,14 @@ const parseJSONSafely = (str: string) => {
 export function getStorageItem (key: string) {
   const value: any = localStorage.getItem(key)
   return parseJSONSafely(value)
+}
+
+export const generateHash = (str: string) => {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = ((hash << 5) - hash) + char
+    hash = hash & hash
+  }
+  return Math.abs(hash).toString(16)
 }

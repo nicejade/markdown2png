@@ -23,16 +23,24 @@
       </div>
       <!-- Canvas content -->
       <canvas id="digest" ref="canvasRef" width="500" height="660" :style="{ borderRadius: `${roundedRadius}px` }"
-        class="w-full border"></canvas>
+        class="w-full border">
+      </canvas>
+      <DigestHistory />
     </div>
 
     <div class="w-2/5 md:w-full">
       <!-- 文字样式设置 -->
       <div class="w-full px-6 py-6 mx-auto space-y-6 bg-white shadow-lg rounded-xl">
-        <strong class="text-lg font-medium">编辑文字</strong>
+        <div class="flex flex-row items-center justify-between">
+          <strong class="text-lg font-medium">编辑文字</strong>
+          <button class="space-x-2 general-btn" @click="onSaveText2Storage">
+            <SvgIcon name="save" />
+            <span>保存</span>
+          </button>
+        </div>
         <!-- 编辑区域 -->
         <div class="mb-4">
-          <textarea v-model="text" rows="5" maxlength="1000"
+          <textarea v-model.trim="digest" rows="5" maxlength="1000"
             class="w-full min-h-[120px] p-4 rounded-lg border border-gray-200 resize-none focus:outline-none focus:border-gray-300"
             placeholder="请输入想要呈现的文字...">
           </textarea>
@@ -114,8 +122,7 @@
             :class="{ 'ring-2 ring-blue-500 shadow-lg': selectedBg === index }" @click="selectedBg = index"
             role="button" :aria-label="`选择文摘背景图片 ${index + 1}`" :title="`背景图片 ${index + 1}`">
             <img :src="bg" class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
-              loading="lazy" :alt="`文摘背景图片 ${index + 1}`" @error="handleImageError(index)"
-              @load="handleImageLoad(index)" />
+              loading="lazy" :alt="`文摘背景图片 ${index + 1}`" @error="handleImageError(index)" @load="handleImageLoad()" />
           </div>
         </div>
 
@@ -141,7 +148,7 @@
       </div>
 
       <div class="w-full px-2 py-2 mx-auto my-4 space-y-6 bg-white shadow-sm rounded-xl">
-        <div class="flex flex-row items-center w-full px-2 py-2 justify-evenly md:space-y-6 md:flex-col" role="group">
+        <div class="flex flex-row items-center w-full px-2 py-2 justify-evenly" role="group">
           <button class="space-x-2 general-btn" @click="onCopyImage">
             <SvgIcon name="copy" />
             <span>复制图片</span>
@@ -159,21 +166,21 @@
 <script setup lang="ts">
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
-import { download2png } from './../helper/util'
+import DigestHistory from './../components/DigestHistory.vue'
+import { download2png, generateHash } from './../helper/util'
 import { useToastStore } from './../stores/toast'
+import { useDigestStore } from './../stores/digest'
 
-const toast = useToastStore()
-const text = ref(`庐山烟雨浙江潮，
-未至千般恨不消。
-到得还来别无事，
-庐山烟雨浙江潮。
-──〔北宋〕· 苏轼《观潮》`)
+const toastStore = useToastStore()
+const digestStore = useDigestStore()
+
+const digest = ref(digestStore.currentDigest)
 const fontFamily = ref('system-ui')
 const fontSize = ref(16)
 const lineHeight = ref(2)
 const letterSpacing = ref(100)
-const edgePadding = ref(50)
-const roundedRadius = ref(30)
+const edgePadding = ref(80)
+const roundedRadius = ref(0)
 const fontWeight = ref('normal')
 const textColor = ref('#000000')
 const selectedBg = ref(0)
@@ -207,14 +214,21 @@ const backgrounds = ref([
 const canvasRef = ref(null)
 const ctx = ref(null)
 
-const options = {
-  quality: 1.0,
-  pixelRatio: window.devicePixelRatio,
-  skipAutoScale: true,
-  filter: (node) => {
-    return !node.classList || !node.classList.contains('exclude-from-image')
+// 监听所有样式变化
+watch(
+  [digest, fontFamily, fontSize, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg],
+  () => {
+    loadBackgroundImage()
+  },
+  { deep: true }
+)
+
+watch(
+  () => digestStore.currentDigest,
+  (newValue) => {
+    digest.value = newValue
   }
-}
+)
 
 onMounted(() => {
   ctx.value = canvasRef.value.getContext('2d')
@@ -230,7 +244,7 @@ const loadBackgroundImage = () => {
     isLoading.value = false
   }
   img.onerror = () => {
-    toast.error('背景图片加载失败')
+    toastStore.error('背景图片加载失败')
     isLoading.value = false
   }
   img.src = backgrounds.value[selectedBg.value]
@@ -241,7 +255,6 @@ const drawCanvas = async (backgroundImage) => {
   const context = ctx.value
 
   context.clearRect(0, 0, canvas.width, canvas.height)
-
   // 绘制背景
   context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
 
@@ -280,7 +293,7 @@ const drawCanvas = async (backgroundImage) => {
   }
 
   // 处理每一段文本
-  const paragraphs = text.value.split('\n')
+  const paragraphs = digest.value.split('\n')
   const allLines = []
   paragraphs.forEach(para => {
     allLines.push(...wrapText(para))
@@ -315,22 +328,13 @@ const drawCanvas = async (backgroundImage) => {
   })
 }
 
-// 监听所有样式变化
-watch(
-  [text, fontFamily, fontSize, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg],
-  () => {
-    loadBackgroundImage()
-  },
-  { deep: true }
-)
-
 function onCopyImage() {
   // 检测是否为 iOS 或 Safari, iOS/Safari 环境下使用替代方案
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
   if (isIOS || isSafari) {
-    toast.info('iOS/Safari 环境请选择"保存图片"')
+    toastStore.info('iOS/Safari 环境请选择"保存图片"')
     return
   }
 
@@ -345,12 +349,12 @@ function onCopyImage() {
       })
     ])
       .then(() => {
-        toast.show('已复制图片至您的剪切板')
+        toastStore.success('已复制图片至您的剪切板')
         proxy.$reortGaEvent('copy-image', 'digest')
       })
       .catch((error) => {
         console.error('复制图片失败:', error)
-        toast.error('复制图片失败，请重试')
+        toastStore.error('复制图片失败，请重试')
         proxy.$reortGaEvent('copy-image-failed', 'digest')
       })
   }, 'image/png')
@@ -363,7 +367,7 @@ function onSave2Image() {
     canvas.toBlob((blob) => {
       if (blob) {
         download2png(blob)
-        toast.show('已成功为你保存图片')
+        toastStore.success('已成功为你保存图片')
         proxy.$reortGaEvent('save-image', 'digest')
       } else {
         throw new Error('生成图片失败')
@@ -371,9 +375,28 @@ function onSave2Image() {
     }, 'image/png')
   } catch (error) {
     console.error('保存图片失败:', error)
-    toast.error('保存图片失败，请重试')
+    toastStore.error('保存图片失败，请重试')
     proxy.$reortGaEvent('save-image-failed', 'digest')
   }
+}
+
+// 修改保存函数
+function onSaveText2Storage() {
+  proxy.$reortGaEvent('save-digest', 'digest')
+  const hash = generateHash(digest.value)
+
+  // 检查是否已存在相同内容
+  if (digestStore.digestList.some(item => item.hash === hash)) {
+    return toastStore.info('该书摘内容已被保存过')
+  }
+
+  digestStore.addDigest({
+    hash,
+    text: digest.value,
+    timestamp: Date.now(),
+    click: 0
+  })
+  toastStore.success('已成功为你保存书摘')
 }
 
 // 处理图片上传
@@ -383,7 +406,7 @@ const handleImageUpload = (event: Event) => {
 
   // 检查文件类型
   if (!file.type.startsWith('image/')) {
-    toast.info('请上传图片格式文件')
+    toastStore.info('请上传图片格式文件')
     return
   }
 
@@ -408,7 +431,7 @@ function handleSelectFont(item) {
 const handleImageError = (index: number) => {
   const message = `背景图片 ${index + 1} 加载失败`
   console.debug(message)
-  toast.error(message)
+  toastStore.error(message)
   proxy.$reortGaEvent('load-bg-failed', 'digest')
 }
 

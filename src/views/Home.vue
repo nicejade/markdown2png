@@ -64,7 +64,7 @@ import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
 
-const toast = useToastStore()
+const toastStore = useToastStore()
 
 interface Theme {
 	id: string
@@ -231,7 +231,7 @@ async function onCopyImage() {
 		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
 
 		if (isIOS || isSafari) {
-			toast.info('iOS/Safari 环境请选择"保存图片"')
+			toastStore.info('iOS/Safari 环境请选择"保存图片"')
 			return
 		}
 
@@ -244,11 +244,11 @@ async function onCopyImage() {
 					'image/png': imageBlob
 				})
 			])
-			toast.show('已复制图片至您的剪切板')
+			toastStore.success('已复制图片至您的剪切板')
 		}
 	} catch (error) {
 		console.error('复制图片失败:', error)
-		toast.error('复制图片失败，请重试')
+		toastStore.error('复制图片失败，请重试')
 	} finally {
 		isCopying.value = false
 	}
@@ -269,11 +269,11 @@ async function onSave2Image() {
 		}
 		if (imageBlob) {
 			download2png(imageBlob)
-			toast.show('已成功为你保存图片')
+			toastStore.success('已成功为你保存图片')
 		}
 	} catch (error) {
 		console.error('保存图片失败:', error)
-		toast.error('保存图片失败，请重试')
+		toastStore.error('保存图片失败，请重试')
 	} finally {
 		isSaving.value = false
 	}

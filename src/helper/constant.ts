@@ -6,6 +6,14 @@ export const CURRENT_THEME = 'current-theme'
 
 export const CURRENT_SIZE = 'current-size'
 
+export const DIGEST_TEXT = 'digest-text'
+
+export const TAB_LABELS = {
+	recent: "最近",
+  earliest: "最早",
+  popular: "热门",
+}
+
 export const THEME_ARR = [
 	{ name: '元气', id: 'vitality' },
 	{ name: '便签', id: 'note' },
