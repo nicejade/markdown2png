@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full px-2 py-4 my-4 sm:px-0">
+  <div class="w-full px-2 py-4 my-4 overflow-y-scroll sm:px-0 max-h-128">
     <TabGroup>
       <TabList class="flex p-1 space-x-1 bg-gray-300 rounded-xl">
         <Tab v-for="category in Object.keys(digestHistory)" as="template" :key="category" v-slot="{ selected }">
