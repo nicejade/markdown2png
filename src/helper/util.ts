@@ -1,3 +1,5 @@
+import { STYLE_STORAGE_KEY, DEFAULT_STYLE_SETTINGS } from './constant'
+
 export const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay || 1000))
 
 const randomString = (length: number) => {
@@ -61,4 +63,27 @@ export const generateHash = (str: string) => {
     hash = hash & hash
   }
   return Math.abs(hash).toString(16)
+}
+
+// 从 localStorage 获取样式设置
+export const getStyleSettings = () => {
+  let savedSettings = localStorage.getItem(STYLE_STORAGE_KEY)
+  savedSettings = savedSettings ? JSON.parse(savedSettings) : {}
+  return Object.assign({}, DEFAULT_STYLE_SETTINGS, savedSettings)
+}
+
+// 保存样式设置到 localStorage
+export const setStyleSettings = (settings: any) => {
+  const currentSettings = {
+    fontFamily: settings.fontFamily.value,
+    fontSize: settings.fontSize.value,
+    lineHeight: settings.lineHeight.value,
+    letterSpacing: settings.letterSpacing.value,
+    edgePadding: settings.edgePadding.value,
+    roundedRadius: settings.roundedRadius.value,
+    fontWeight: settings.fontWeight.value,
+    textColor: settings.textColor.value,
+    selectedBg: settings.selectedBg.value
+  }
+  localStorage.setItem(STYLE_STORAGE_KEY, JSON.stringify(currentSettings))
 }

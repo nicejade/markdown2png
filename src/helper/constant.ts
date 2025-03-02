@@ -55,3 +55,18 @@ export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)，简
 
 在 Foucs 状态，输入您的内容（支持 \`Markdown\` 格式）；在 Blur 状态，查看预览效果；点击「保存图片」，即可将内容生成图片并下载至本地。
 `
+
+export const STYLE_STORAGE_KEY = 'digest-style-settings'
+
+// 默认样式设置
+export const DEFAULT_STYLE_SETTINGS = {
+  fontFamily: 'system-ui',
+  fontSize: 16,
+  lineHeight: 2,
+  letterSpacing: 100,
+  edgePadding: 80,
+  roundedRadius: 0,
+  fontWeight: 'normal',
+  textColor: '#000000',
+  selectedBg: 0
+}
