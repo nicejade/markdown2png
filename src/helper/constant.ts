@@ -61,7 +61,8 @@ export const STYLE_STORAGE_KEY = 'digest-style-settings'
 // 默认样式设置
 export const DEFAULT_STYLE_SETTINGS = {
   fontFamily: 'system-ui',
-  fontSize: 16,
+	fontSize: 16,
+	textAlign: 'center',
   lineHeight: 2,
   letterSpacing: 100,
   edgePadding: 80,
