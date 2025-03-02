@@ -181,7 +181,7 @@
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import DigestHistory from './../components/DigestHistory.vue'
-import { download2png, generateHash, getStyleSettings, setStyleSettings } from './../helper/util'
+import { download2png, debounce, generateHash, getStyleSettings, setStyleSettings } from './../helper/util'
 import { useToastStore } from './../stores/toast'
 import { useDigestStore } from './../stores/digest'
 
@@ -253,16 +253,20 @@ const backgrounds = ref([
 const canvasRef = ref(null)
 const ctx = ref(null)
 
+const debouncedUpdate = debounce(() => {
+  loadBackgroundImage()
+  const settings = {
+    fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding,
+    fontWeight, textColor, selectedBg, roundedRadius, selectedRatio
+  }
+  setStyleSettings(settings)
+}, 300)
+
 // 监听所有样式变化
 watch(
   [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, roundedRadius, canvasWidth, canvasHeight],
   () => {
-    loadBackgroundImage()
-    const settings = {
-      fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding,
-      fontWeight, textColor, selectedBg, roundedRadius, canvasWidth, canvasHeight
-    }
-    setStyleSettings(settings)
+    debouncedUpdate()
   },
   { deep: true }
 )
@@ -284,7 +288,6 @@ onMounted(() => {
   loadBackgroundImage()
 })
 
-// 修改 loadBackgroundImage 函数
 const loadBackgroundImage = () => {
   isLoading.value = true
   const img = new Image()
@@ -501,7 +504,6 @@ const handleSelectRatio = (item) => {
     // 重新加载背景图片以更新画布
     loadBackgroundImage()
   }
-
   proxy.$reortGaEvent('select-ratio', 'digest')
 }
 

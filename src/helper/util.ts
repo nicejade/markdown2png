@@ -65,6 +65,25 @@ export const generateHash = (str: string) => {
   return Math.abs(hash).toString(16)
 }
 
+/**
+ * 创建一个防抖函数
+ * @param fn 需要防抖的函数
+ * @param delay 延迟时间(ms)
+ * @returns 防抖后的函数
+ */
+export const debounce = <T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void => {
+  let timer: NodeJS.Timeout | null = null
+  
+  return function (this: any, ...args: Parameters<T>) {
+    if (timer) clearTimeout(timer)
+    
+    timer = setTimeout(() => {
+      fn.apply(this, args)
+      timer = null
+    }, delay)
+  }
+}
+
 // 从 localStorage 获取样式设置
 export const getStyleSettings = () => {
   let savedSettings = localStorage.getItem(STYLE_STORAGE_KEY)
