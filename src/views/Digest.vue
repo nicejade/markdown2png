@@ -1,13 +1,13 @@
 <template>
   <div class="w-[80rem] md:w-full flex md:flex-col items-start justify-between p-6 md:p-0">
 
-    <div class="relative w-3/5 mb-4 mr-8 bg-transparent md:w-full">
+    <div class="relative mr-8 mb-4 w-3/5 bg-transparent md:w-full">
       <!-- Skeleton loading -->
       <div v-if="isLoading" class="absolute top-0 w-full aspect-[500/660] rounded-xl overflow-hidden bg-gray-50">
         <!-- 主体骨架 -->
         <div class="absolute inset-0 bg-gradient-to-br from-gray-200 to-gray-100"></div>
         <!-- 文字区域骨架 -->
-        <div class="absolute inset-0 flex flex-col items-center justify-center p-8 space-y-4">
+        <div class="flex absolute inset-0 flex-col justify-center items-center p-8 space-y-4">
           <div class="w-1/2 h-4 bg-gray-300 rounded animate-pulse"></div>
           <div class="w-2/3 h-4 bg-gray-300 rounded animate-pulse"></div>
           <div class="w-2/3 h-4 bg-gray-300 rounded animate-pulse"></div>
@@ -22,16 +22,16 @@
         </div>
       </div>
       <!-- Canvas content -->
-      <canvas id="digest" ref="canvasRef" width="500" height="660" :style="{ borderRadius: `${roundedRadius}px` }"
-        class="w-full border">
+      <canvas id="digest" ref="canvasRef" :width="canvasWidth" :height="canvasHeight"
+        :style="{ borderRadius: `${roundedRadius}px` }" class="w-full border">
       </canvas>
       <DigestHistory />
     </div>
 
     <div class="w-2/5 md:w-full">
       <!-- 文字样式设置 -->
-      <div class="w-full px-6 py-6 mx-auto space-y-6 bg-white shadow-lg rounded-xl">
-        <div class="flex flex-row items-center justify-between">
+      <div class="px-6 py-6 mx-auto space-y-6 w-full bg-white rounded-xl shadow-lg">
+        <div class="flex flex-row justify-between items-center">
           <strong class="text-lg font-medium">编辑文字</strong>
           <button class="space-x-2 general-btn" @click="onSaveText2Storage">
             <SvgIcon name="save" />
@@ -55,7 +55,7 @@
           <!-- 字号 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字号</label>
-            <div class="flex items-center justify-center h-10">
+            <div class="flex justify-center items-center h-10">
               <input type="range" v-model="fontSize" min="12" max="72" class="flex-1 mr-4" />
               <span class="text-sm">{{ fontSize }}px</span>
             </div>
@@ -63,6 +63,11 @@
         </div>
 
         <div class="grid grid-cols-2 gap-6 md:grid-cols-1">
+          <!-- 对齐方式 -->
+          <div>
+            <label class="block mb-2 text-sm font-medium text-gray-400">比例</label>
+            <HeadlessSelect className="w-full" :sourceArr="ratios" defaultId="default" @selected="handleSelectRatio" />
+          </div>
           <!-- 对齐方式 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">对齐</label>
@@ -93,14 +98,14 @@
         <div class="grid grid-cols-2 gap-6 md:grid-cols-1">
           <div class="w-full">
             <label class="block mb-2 text-sm font-medium text-gray-400">弧度</label>
-            <div class="flex items-center justify-center h-10">
+            <div class="flex justify-center items-center h-10">
               <input type="range" v-model="roundedRadius" min="0" max="250" class="flex-1 mr-4" />
               <span class="text-sm">{{ roundedRadius }}px</span>
             </div>
           </div>
           <div class="w-full">
             <label class="block mb-2 text-sm font-medium text-gray-400">边距</label>
-            <div class="flex items-center justify-center h-10">
+            <div class="flex justify-center items-center h-10">
               <input type="range" v-model="edgePadding" min="20" max="200" class="flex-1 mr-4" />
               <span class="text-sm">{{ edgePadding }}px</span>
             </div>
@@ -117,17 +122,17 @@
           <!-- 文字颜色 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">文字颜色</label>
-            <input type="color" v-model="textColor" class="w-full h-10 border border-gray-200 rounded-lg" />
+            <input type="color" v-model="textColor" class="w-full h-10 rounded-lg border border-gray-200" />
           </div>
         </div>
       </div>
 
-      <div class="w-full px-6 py-6 mx-auto my-4 space-y-6 bg-white shadow-lg rounded-xl">
+      <div class="px-6 py-6 mx-auto my-4 space-y-6 w-full bg-white rounded-xl shadow-lg">
         <!-- 背景选择部分的修改 -->
         <strong class="text-lg font-medium">选择背景</strong>
         <div class="grid grid-cols-3 gap-6 md:grid-cols-2 md:justify-items-center">
           <div v-for="(bg, index) in backgrounds" :key="index"
-            class="w-24 h-24 overflow-hidden transition-all duration-200 border rounded-lg cursor-pointer group hover:shadow-md"
+            class="overflow-hidden w-24 h-24 rounded-lg border transition-all duration-200 cursor-pointer group hover:shadow-md"
             :class="{ 'ring-2 ring-blue-500 shadow-lg': selectedBg === index }" @click="selectedBg = index"
             role="button" :aria-label="`选择文摘背景图片 ${index + 1}`" :title="`背景图片 ${index + 1}`">
             <img :src="bg" class="object-cover w-full h-full transition-transform duration-300 group-hover:scale-110"
@@ -136,14 +141,14 @@
         </div>
 
         <!-- 上传按钮改为虚线框风格 -->
-        <div class="relative w-full h-24 my-4 group">
+        <div class="relative my-4 w-full h-24 group">
           <input type="file" accept="image/*" class="absolute inset-0 z-10 w-full h-full opacity-0 cursor-pointer"
             @change="handleImageUpload" />
           <div
-            class="flex flex-col items-center justify-center w-full h-full border border-gray-300 border-dashed rounded-lg">
-            <div class="flex flex-col items-center justify-center p-2 text-gray-500">
+            class="flex flex-col justify-center items-center w-full h-full rounded-lg border border-gray-300 border-dashed">
+            <div class="flex flex-col justify-center items-center p-2 text-gray-500">
               <div class="flex items-center text-xs text-center text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mb-1 text-gray-400" fill="none"
+                <svg xmlns="http://www.w3.org/2000/svg" class="mb-1 w-6 h-6 text-gray-400" fill="none"
                   viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                     d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -156,8 +161,8 @@
         </div>
       </div>
 
-      <div class="w-full px-2 py-2 mx-auto my-4 space-y-6 bg-white shadow-sm rounded-xl">
-        <div class="flex flex-row items-center w-full px-2 py-2 justify-evenly" role="group">
+      <div class="px-2 py-2 mx-auto my-4 space-y-6 w-full bg-white rounded-xl shadow-sm">
+        <div class="flex flex-row justify-evenly items-center px-2 py-2 w-full" role="group">
           <button class="space-x-2 general-btn" @click="onCopyImage">
             <SvgIcon name="copy" />
             <span>复制图片</span>
@@ -197,6 +202,9 @@ const roundedRadius = ref(savedSettings.roundedRadius)
 const fontWeight = ref(savedSettings.fontWeight)
 const textColor = ref(savedSettings.textColor)
 const selectedBg = ref(savedSettings.selectedBg)
+const selectedRatio = ref(savedSettings.selectedRatio)
+const canvasWidth = ref(500)
+const canvasHeight = ref(660)
 const isLoading = ref(true)
 const { proxy } = getCurrentInstance() as any
 
@@ -223,6 +231,16 @@ const alignments = [
   { id: 'right', name: '右对齐' }
 ]
 
+// 添加比例选项配置
+const ratios = [
+  { id: 'default', name: '默认比例', width: 500, height: 660 },
+  { id: 'xiaohongshu', name: '小红书', width: 540, height: 720 },
+  { id: 'douyin', name: '抖音', width: 540, height: 768 },
+  { id: 'iphone', name: 'iPhone', width: 645, height: 1398 },
+  { id: 'square', name: '正方形', width: 600, height: 600 },
+  { id: 'weixin', name: '微信', width: 900, height: 500 },
+]
+
 const backgrounds = ref([
   '/share/bg0.png',
   '/share/bg1.png',
@@ -237,10 +255,13 @@ const ctx = ref(null)
 
 // 监听所有样式变化
 watch(
-  [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, roundedRadius],
+  [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, roundedRadius, canvasWidth, canvasHeight],
   () => {
     loadBackgroundImage()
-    const settings = { fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, roundedRadius }
+    const settings = {
+      fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding,
+      fontWeight, textColor, selectedBg, roundedRadius, canvasWidth, canvasHeight
+    }
     setStyleSettings(settings)
   },
   { deep: true }
@@ -254,6 +275,11 @@ watch(
 )
 
 onMounted(() => {
+  // 根据保存的比例ID设置初始宽高
+  const selectedRatioObj = ratios.find(r => r.id === selectedRatio.value) || ratios[0]
+  canvasWidth.value = selectedRatioObj.width
+  canvasHeight.value = selectedRatioObj.height
+
   ctx.value = canvasRef.value.getContext('2d')
   loadBackgroundImage()
 })
@@ -461,6 +487,22 @@ function handleSelectFont(item) {
 const handleSelectAlignment = (item) => {
   textAlign.value = item.id
   proxy.$reortGaEvent('select-alignment', 'digest')
+}
+
+const handleSelectRatio = (item) => {
+  selectedRatio.value = item.id
+  canvasWidth.value = item.width
+  canvasHeight.value = item.height
+
+  // 更新 canvas 尺寸
+  if (canvasRef.value) {
+    canvasRef.value.width = item.width
+    canvasRef.value.height = item.height
+    // 重新加载背景图片以更新画布
+    loadBackgroundImage()
+  }
+
+  proxy.$reortGaEvent('select-ratio', 'digest')
 }
 
 const handleImageError = (index: number) => {

@@ -62,7 +62,10 @@ export const STYLE_STORAGE_KEY = 'digest-style-settings'
 export const DEFAULT_STYLE_SETTINGS = {
   fontFamily: 'system-ui',
 	fontSize: 16,
+	selectedRatio: "default",
 	textAlign: 'center',
+	canvasWidth: 500,
+	canvasHeight: 500,
   lineHeight: 2,
   letterSpacing: 100,
   edgePadding: 80,

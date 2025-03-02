@@ -77,6 +77,7 @@ export const setStyleSettings = (settings: any) => {
   const currentSettings = {
     fontFamily: settings.fontFamily.value,
     fontSize: settings.fontSize.value,
+    selectedRatio: settings.selectedRatio.value,
     textAlign: settings.textAlign.value, 
     lineHeight: settings.lineHeight.value,
     letterSpacing: settings.letterSpacing.value,
