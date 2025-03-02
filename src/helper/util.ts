@@ -95,12 +95,12 @@ export const getStyleSettings = () => {
 export const setStyleSettings = (settings: any) => {
   const currentSettings = {
     fontFamily: settings.fontFamily.value,
-    fontSize: settings.fontSize.value,
+    fontSize: Number(settings.fontSize.value),
     selectedRatio: settings.selectedRatio.value,
     textAlign: settings.textAlign.value, 
-    lineHeight: settings.lineHeight.value,
+    lineHeight: Number(settings.lineHeight.value),
     letterSpacing: settings.letterSpacing.value,
-    edgePadding: settings.edgePadding.value,
+    edgePadding: Number(settings.edgePadding.value),
     roundedRadius: settings.roundedRadius.value,
     fontWeight: settings.fontWeight.value,
     textColor: settings.textColor.value,

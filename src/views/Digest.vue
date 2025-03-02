@@ -264,7 +264,7 @@ const debouncedUpdate = debounce(() => {
 
 // 监听所有样式变化
 watch(
-  [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, roundedRadius, canvasWidth, canvasHeight],
+  [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, roundedRadius],
   () => {
     debouncedUpdate()
   },
@@ -374,7 +374,7 @@ const drawCanvas = async (backgroundImage) => {
     if (textAlign.value === 'left') {
       currentX = Number(edgePadding.value)
     } else if (textAlign.value === 'right') {
-      currentX = canvas.width - totalLineWidth - edgePadding.value
+      currentX = canvas.width - totalLineWidth - Number(edgePadding.value)
     } else {
       currentX = (canvas.width - totalLineWidth) / 2
     }
@@ -501,15 +501,15 @@ const handleSelectRatio = (item) => {
   if (canvasRef.value) {
     canvasRef.value.width = item.width
     canvasRef.value.height = item.height
-    // 重新加载背景图片以更新画布
-    loadBackgroundImage()
   }
+
+  // 重新加载背景图片以更新画布
+  loadBackgroundImage()
   proxy.$reortGaEvent('select-ratio', 'digest')
 }
 
 const handleImageError = (index: number) => {
   const message = `背景图片 ${index + 1} 加载失败`
-  console.debug(message)
   toastStore.error(message)
   proxy.$reortGaEvent('load-bg-failed', 'digest')
 }
