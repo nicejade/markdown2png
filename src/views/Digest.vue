@@ -49,7 +49,7 @@
         <div class="grid grid-cols-2 gap-6 md:grid-cols-1">
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字体</label>
-            <HeadlessSelect className="w-full" :sourceArr="fontFamilys" defaultId="system-ui"
+            <HeadlessSelect className="w-full" :sourceArr="fontFamilys" :defaultId="fontFamily"
               @selected="handleSelectFont" />
           </div>
           <!-- 字号 -->
@@ -66,12 +66,13 @@
           <!-- 对齐方式 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">比例</label>
-            <HeadlessSelect className="w-full" :sourceArr="ratios" defaultId="default" @selected="handleSelectRatio" />
+            <HeadlessSelect className="w-full" :sourceArr="ratios" :defaultId="selectedRatio"
+              @selected="handleSelectRatio" />
           </div>
           <!-- 对齐方式 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">对齐</label>
-            <HeadlessSelect className="w-full" :sourceArr="alignments" defaultId="center"
+            <HeadlessSelect className="w-full" :sourceArr="alignments" :defaultId="textAlign"
               @selected="handleSelectAlignment" />
           </div>
         </div>
@@ -116,7 +117,7 @@
           <!-- 字重 -->
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字重</label>
-            <HeadlessSelect className="w-full" :sourceArr="fontWeights" defaultId="normal"
+            <HeadlessSelect className="w-full" :sourceArr="fontWeights" :defaultId="fontWeight"
               @selected="handleSelectWeight" />
           </div>
           <!-- 文字颜色 -->
