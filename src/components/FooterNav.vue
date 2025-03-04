@@ -22,6 +22,7 @@
 		</div>
 		<div class="flex flex-row flex-wrap justify-center items-center w-full text-sm">
 			<span class="mx-3 text-gray-400">{{ copyright }}</span>
+			<span class="px-2.5 py-0.5 text-sm bg-gray-200 rounded-md me-2">{{ version }}</span>
 			<a target="_blank" class="text-gray-400 cursor-pointer hover:text-amber-500"
 				@click="$reortGaEvent('jeffjade', 'footer')" rel="external noopener"
 				:href="assembleExternalLink('https://www.jeffjade.com')">晚晴幽草轩</a>出品<br class="show-on-mobile" />
@@ -35,6 +36,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { version } from '../../package.json'
 const copyright = ref(`Copyright © ${new Date().getFullYear()}`)
 
 const assembleExternalLink = (url: string) => {
