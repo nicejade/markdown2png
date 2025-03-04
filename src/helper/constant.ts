@@ -67,7 +67,7 @@ export const DEFAULT_STYLE_SETTINGS = {
 	canvasWidth: 500,
 	canvasHeight: 500,
   lineHeight: 2,
-  letterSpacing: 100,
+  letterSpacing: 20,
   edgePadding: 80,
   roundedRadius: 0,
   fontWeight: 'normal',

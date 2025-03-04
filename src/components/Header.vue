@@ -1,16 +1,16 @@
 <template>
-	<header class="top-0 left-0 flex flex-col items-center w-screen">
-		<nav class="flex items-center justify-between w-full px-6 py-2">
+	<header class="flex top-0 left-0 flex-col items-center w-screen">
+		<nav class="flex justify-between items-center px-6 py-2 w-full">
 			<RouterLink class="inline-flex flex-row items-center space-x-2 link"
 				@click.native="$reortGaEvent('recommand', 'footer')" to="/">
 				<img src="./../assets/images/logo.png" alt="玉桃文飨轩 Logo" width="50" height="50" />
 				<h1 class="text-xl font-bold rainbow-text">玉桃文飨轩</h1>
 			</RouterLink>
-			<div class="flex flex-row items-center justify-center space-x-6">
+			<div class="flex flex-row justify-center items-center space-x-6">
 				<RouterLink to="/digest" class="text-lg">文摘</RouterLink>
 				<RouterLink to="/about" class="text-lg">关于</RouterLink>
-				<a class="social-link md:hidden" target="_blank" rel="noopener" href="https://x.com/MarshalXuan"
-					title="轩帅(MarshalXuan) @ X.com">
+				<a class="social-link md:hidden" target="_blank" rel="noopener"
+					href="https://x.com/intent/user?screen_name=MarshalXuan" title="轩帅(MarshalXuan) @ X.com">
 					<svg aria-hidden="true" class="w-6 h-6" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
 						style="--sl-icon-size: 1em;">
 						<path

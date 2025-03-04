@@ -1,6 +1,6 @@
 <template>
 	<footer class="z-0 my-4 text-center text-gray-400">
-		<div class="flex flex-row flex-wrap items-center justify-center mt-2 mb-2 text-sm friends">
+		<div class="flex flex-row flex-wrap justify-center items-center mt-2 mb-2 text-sm friends">
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://www.thebettersites.com/')"
 				@click="$reortGaEvent('wechat-jeffjade-com', 'footer')">清风明月轩</a>
@@ -20,7 +20,7 @@
 				:href="assembleExternalLink('https://forum.lovejade.cn/')"
 				@click="$reortGaEvent('forum-lovejade', 'footer')">悠然宜想亭</a>
 		</div>
-		<div class="flex flex-row flex-wrap items-center justify-center w-full text-sm">
+		<div class="flex flex-row flex-wrap justify-center items-center w-full text-sm">
 			<span class="mx-3 text-gray-400">{{ copyright }}</span>
 			<a target="_blank" class="text-gray-400 cursor-pointer hover:text-amber-500"
 				@click="$reortGaEvent('jeffjade', 'footer')" rel="external noopener"

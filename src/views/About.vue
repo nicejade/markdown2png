@@ -1,5 +1,5 @@
 <template>
-  <div id="about" class="my-4 w-full max-w-xl">
+  <div id="about" class="my-4 w-full max-w-3xl">
     <div class="markdown" v-html="aboutHtml"></div>
   </div>
 </template>

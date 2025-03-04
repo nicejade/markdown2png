@@ -90,7 +90,7 @@
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">间距</label>
             <div class="flex items-center">
-              <input type="range" v-model="letterSpacing" min="0" max="200" class="flex-1 mr-4" />
+              <input type="range" v-model="letterSpacing" min="0" max="100" class="flex-1 mr-4" />
               <span class="text-sm">{{ letterSpacing }}</span>
             </div>
           </div>
@@ -227,9 +227,8 @@ const fontFamilys = [
 
 // 添加对齐方式选项配置
 const alignments = [
-  { id: 'left', name: '左对齐' },
+  { id: 'left', name: '居左对齐' },
   { id: 'center', name: '居中对齐' },
-  { id: 'right', name: '右对齐' }
 ]
 
 // 添加比例选项配置
@@ -237,7 +236,6 @@ const ratios = [
   { id: 'default', name: '默认比例', width: 500, height: 660 },
   { id: 'xiaohongshu', name: '小红书', width: 540, height: 720 },
   { id: 'douyin', name: '抖音', width: 540, height: 768 },
-  { id: 'iphone', name: 'iPhone', width: 645, height: 1398 },
   { id: 'square', name: '正方形', width: 600, height: 600 },
   { id: 'weixin', name: '微信', width: 900, height: 500 },
 ]
@@ -379,14 +377,13 @@ const drawCanvas = async (backgroundImage) => {
     chars.forEach(char => {
       totalLineWidth += context.measureText(char).width + spacing
     })
+    totalLineWidth = Math.min(totalLineWidth, canvas.width - (edgePadding.value * 2))
 
     // 根据对齐方式计算起始 X 坐标
     let currentX
     if (textAlign.value === 'left') {
-      currentX = Number(edgePadding.value)
-    } else if (textAlign.value === 'right') {
-      currentX = canvas.width - totalLineWidth - Number(edgePadding.value)
-    } else {
+      currentX = edgePadding.value
+    } else if (textAlign.value === 'center') {
       currentX = (canvas.width - totalLineWidth) / 2
     }
 
