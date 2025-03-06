@@ -7,7 +7,7 @@
 				<h1 class="text-xl font-bold rainbow-text">玉桃文飨轩</h1>
 			</RouterLink>
 			<div class="flex flex-row justify-center items-center space-x-6">
-				<RouterLink to="/digest" class="text-lg">文摘</RouterLink>
+				<RouterLink to="/digest" class="text-lg font-bold rainbow-text">文摘</RouterLink>
 				<RouterLink to="/about" class="text-lg">关于</RouterLink>
 				<a class="social-link md:hidden" target="_blank" rel="noopener"
 					href="https://x.com/intent/user?screen_name=MarshalXuan" title="轩帅(MarshalXuan) @ X.com">
@@ -40,12 +40,12 @@
 		border: none !important;
 		outline: none !important;
 	}
+}
 
-	.rainbow-text {
-		color: transparent;
-		background: linear-gradient(to top left, #ff8177, #ff867a, #ff8c7f, #f99185, #cf556c, #b12a5b);
-		background-clip: text;
-		-webkit-background-clip: text;
-	}
+.rainbow-text {
+	color: transparent;
+	background: linear-gradient(to top left, #ff8177, #ff867a, #ff8c7f, #f99185, #cf556c, #b12a5b);
+	background-clip: text;
+	-webkit-background-clip: text;
 }
 </style>

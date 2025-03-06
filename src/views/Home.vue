@@ -1,5 +1,5 @@
 <template>
-	<section class="flex justify-center w-full m-auto my-4">
+	<section class="flex justify-center m-auto my-4 w-full">
 		<div id="container" class="container" :style="currentSizeObj.style" :class="`${currentThemeObj.id}-box`">
 			<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
 			<div class="content" :class="currentThemeObj.id">
@@ -10,29 +10,27 @@
 		</div>
 	</section>
 
-	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
-		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
-			<div class="flex justify-between flex-auto mobile-adjust">
-				<div class="flex flex-col items-center justify-between h-20">
+	<div class="flex flex-col items-center px-4 py-4 mx-auto my-4 w-full bg-white rounded-md shadow-lg operate-area">
+		<div class="flex flex-wrap justify-between space-x-6 w-full item-center">
+			<div class="flex flex-auto justify-between mobile-adjust">
+				<div class="flex flex-col justify-between items-center h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
 						@selected="handleSelectTheme" />
 				</div>
-				<div class="flex flex-col items-center justify-between h-20 select-zize">
+				<div class="flex flex-col justify-between items-center h-20 select-zize">
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
 						@selected="handleSelectSize" />
 				</div>
-				<div class="flex flex-col items-center justify-between w-24 h-20">
+				<div class="flex flex-col justify-between items-center w-24 h-20">
 					<p class="pb-2 font-medium text-gray-400">日期</p>
 					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
 				</div>
 			</div>
 		</div>
-		<div
-			class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0 md:space-y-6 md:flex-col"
-			role="group">
-			<button class="general-btn" @click="onPreviewImage">
+		<div class="flex flex-row justify-evenly items-center px-4 py-4 space-x-6 w-full md:space-x-0" role="group">
+			<button class="general-btn md:hidden" @click="onPreviewImage">
 				预览图片
 			</button>
 			<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
@@ -461,7 +459,6 @@ async function onSave2Image() {
 
 		.mobile-adjust {
 			padding: 0;
-			margin-bottom: 1rem;
 		}
 
 		.mobile-w-full {
