@@ -49,11 +49,18 @@ export const SIZES_ARR = [
 	},
 ]
 
-export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)，简单好用的在线文本工具；支持将 Markdown、rich text、word 等格式内容，快速转化为 png、pdf、html、PPT 等文件，并支持一键下载、社交分享、自定义设置等功能。
+export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)🍑 ，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。 基于 Vue3、Vite、Pinia、TailwindCSS、TypeScript 等技术栈构建。
 
 ## 如何使用？
 
 在 Foucs 状态，输入您的内容（支持 \`Markdown\` 格式）；在 Blur 状态，查看预览效果；点击「保存图片」，即可将内容生成图片并下载至本地。
+
+## 核心功能
+
+- ✨ 一键将文本内容转换为高清图片，支持 Markdown 语法渲染；
+- 🔒 所有数据本地处理，无需上传服务器，确保内容安全与隐私；
+- 📱 灵活调整输出尺寸，完美适配手机、平板、电脑等多种设备；
+- ⚡️ 一键复制图片至剪切板或下载图片，即时分享到各大社交平台；
 `
 
 export const STYLE_STORAGE_KEY = 'digest-style-settings'

@@ -329,7 +329,7 @@ async function onSave2Image() {
 </script>
 
 <template>
-	<section class="flex justify-center w-full m-auto my-4">
+	<section class="flex justify-center w-full m-auto">
 		<div id="container" class="container" :style="currentSizeObj.style">
 			<div :class="`${currentThemeObj.id}-box warpper`">
 				<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
