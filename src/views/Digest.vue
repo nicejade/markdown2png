@@ -261,7 +261,7 @@ const debouncedUpdate = debounce(() => {
     fontWeight, textColor, selectedBg, roundedRadius, selectedRatio
   }
   setStyleSettings(settings)
-}, 300)
+}, 100)
 
 // 监听所有样式变化
 watch(

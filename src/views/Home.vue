@@ -1,57 +1,8 @@
-<template>
-	<section class="flex justify-center w-full m-auto my-4">
-		<div id="container" class="container" :style="currentSizeObj.style" :class="`${currentThemeObj.id}-box`">
-			<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
-			<div class="content" :class="currentThemeObj.id">
-				<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
-					contenteditable="true">
-				</div>
-			</div>
-		</div>
-	</section>
-
-	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
-		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
-			<div class="flex justify-between flex-auto mobile-adjust">
-				<div class="flex flex-col items-center justify-between h-20">
-					<p class="pb-2 font-medium text-gray-400">选择主题</p>
-					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
-						@selected="handleSelectTheme" />
-				</div>
-				<div class="flex flex-col items-center justify-between h-20 select-zize">
-					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
-					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
-						@selected="handleSelectSize" />
-				</div>
-				<div class="flex flex-col items-center justify-between w-24 h-20">
-					<p class="pb-2 font-medium text-gray-400">日期</p>
-					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
-				</div>
-			</div>
-		</div>
-		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0" role="group">
-			<button class="general-btn md:hidden" @click="onPreviewImage">
-				预览图片
-			</button>
-			<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
-				<Spinner v-if="isCopying" :size="20" />
-				<span>{{ isCopying ? '复制中...' : '复制图片' }}</span>
-			</button>
-			<button class="space-x-1 general-btn" :disabled="isSaving" @click="onSave2Image">
-				<Spinner v-if="isSaving" :size="20" />
-				<span>{{ isSaving ? '保存中...' : '保存图片' }}</span>
-			</button>
-		</div>
-	</div>
-	<PreviewDialog :visble="visble" @change="onPreviewDialogChange" />
-	<Recommand />
-</template>
-
 <script setup lang="ts">
 import { computed, ref, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
-import { toBlob } from 'html-to-image'
+import * as domtoimage from 'dom-to-image'
 import { useToastStore } from './../stores/toast'
 import Switch from './../components/Switch.vue'
 import Spinner from './../components/Spinner.vue'
@@ -87,19 +38,14 @@ let isGeneratingBlob = false
 let genBlobPromise: Promise<void> | null = null
 // 添加缓存相关变量
 let lastContentHash = ''
-let lastStyleHash = ''
 const { proxy } = getCurrentInstance() as any
 
-// 优化后的选项配置
+// 优化后的选项配置 (dom-to-image)
 const options = {
 	quality: 0.9,
-	pixelRatio: window.devicePixelRatio || 1,
-	skipAutoScale: false,
+	bgcolor: '#ffffff',
 	cacheBust: false,
-	backgroundColor: '#ffffff',
-	useCORS: true,
-	allowTaint: false,
-	filter: (node) => {
+	filter: (node: HTMLElement) => {
 		return !node.classList?.contains('exclude-from-image')
 	},
 }
@@ -165,43 +111,6 @@ function handlePasteEvent() {
 	})
 }
 
-/* -------------------On Event Callback------------------- */
-function handleDate(value: boolean) {
-	contentStore.updateWithDate(value)
-	updatePreview()
-	imageBlob = null // 清除缓存
-	setTimeout(preGenerateBlob, 100)
-}
-
-function handleSelectTheme(item: Theme) {
-	contentStore.updateCurrentTheme(item.id)
-	proxy.$reortGaEvent('item', 'main')
-	imageBlob = null // 清除缓存
-	setTimeout(preGenerateBlob, 100)
-}
-
-function handleSelectSize(item: Size) {
-	contentStore.updateCurrentSize(item.id)
-	proxy.$reortGaEvent('size', 'main')
-	imageBlob = null // 清除缓存
-	setTimeout(preGenerateBlob, 100)
-}
-
-function onEditorFocus() {
-	switch2editor()
-	proxy.$reortGaEvent('focus', 'main')
-}
-
-function onEditorBlur() {
-	contentStore.updateContent(editor.value.innerText)
-	switch2preview()
-	updatePreview()
-	proxy.$reortGaEvent('blur', 'main')
-
-	// 延迟预生成图片，避免阻塞UI
-	setTimeout(preGenerateBlob, 100)
-}
-
 function onPreviewImage() {
 	visble.value = true
 }
@@ -233,7 +142,7 @@ async function generateBlob() {
 				document.fonts.ready,
 				...Array.from(container.querySelectorAll('img')).map(img => {
 					if (img.complete) return Promise.resolve()
-					return new Promise((resolve, reject) => {
+					return new Promise((resolve) => {
 						img.onload = resolve
 						img.onerror = resolve // 即使图片加载失败也继续
 						setTimeout(resolve, 1000) // 1秒超时
@@ -259,12 +168,7 @@ async function generateBlob() {
 			container.offsetHeight
 
 			// 使用优化的选项生成图片
-			imageBlob = await toBlob(container, {
-				...options,
-				// 添加性能优化选项
-				skipFonts: false,
-				preferredFontFormat: 'woff2'
-			})
+			imageBlob = await domtoimage.toBlob(container, options)
 
 			// 恢复原始样式
 			Object.assign(container.style, originalStyles)
@@ -324,6 +228,43 @@ function preGenerateBlob() {
 	if (!isGeneratingBlob && !imageBlob) {
 		generateBlob().catch(console.error)
 	}
+}
+
+/* -------------------On Event Callback------------------- */
+function handleDate(value: boolean) {
+	contentStore.updateWithDate(value)
+	updatePreview()
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
+}
+
+function handleSelectTheme(item: Theme) {
+	contentStore.updateCurrentTheme(item.id)
+	proxy.$reortGaEvent('item', 'main')
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
+}
+
+function handleSelectSize(item: Size) {
+	contentStore.updateCurrentSize(item.id)
+	proxy.$reortGaEvent('size', 'main')
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
+}
+
+function onEditorFocus() {
+	switch2editor()
+	proxy.$reortGaEvent('focus', 'main')
+}
+
+function onEditorBlur() {
+	contentStore.updateContent(editor.value.innerText)
+	switch2preview()
+	updatePreview()
+	proxy.$reortGaEvent('blur', 'main')
+
+	// 延迟预生成图片，避免阻塞UI
+	setTimeout(preGenerateBlob, 100)
 }
 
 async function onCopyImage() {
@@ -387,13 +328,66 @@ async function onSave2Image() {
 }
 </script>
 
+<template>
+	<section class="flex justify-center w-full m-auto my-4">
+		<div id="container" class="container" :style="currentSizeObj.style">
+			<div :class="`${currentThemeObj.id}-box warpper`">
+				<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
+				<div class="content" :class="currentThemeObj.id">
+					<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
+						contenteditable="true">
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
+		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
+			<div class="flex justify-between flex-auto mobile-adjust">
+				<div class="flex flex-col items-center justify-between h-20">
+					<p class="pb-2 font-medium text-gray-400">选择主题</p>
+					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
+						@selected="handleSelectTheme" />
+				</div>
+				<div class="flex flex-col items-center justify-between h-20 select-zize">
+					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
+					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
+						@selected="handleSelectSize" />
+				</div>
+				<div class="flex flex-col items-center justify-between w-24 h-20">
+					<p class="pb-2 font-medium text-gray-400">日期</p>
+					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
+				</div>
+			</div>
+		</div>
+		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0" role="group">
+			<button class="general-btn md:hidden" @click="onPreviewImage">
+				预览图片
+			</button>
+			<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
+				<Spinner v-if="isCopying" :size="20" />
+				<span>{{ isCopying ? '复制中...' : '复制图片' }}</span>
+			</button>
+			<button class="space-x-1 general-btn" :disabled="isSaving" @click="onSave2Image">
+				<Spinner v-if="isSaving" :size="20" />
+				<span>{{ isSaving ? '保存中...' : '保存图片' }}</span>
+			</button>
+		</div>
+	</div>
+	<PreviewDialog :visble="visble" @change="onPreviewDialogChange" />
+	<Recommand />
+</template>
+
 <style lang="scss" scoped>
 .container {
-	padding: 3rem;
-	box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
 	transition: box-shadow 1s ease-out;
 	transition-delay: 2s;
-	background-color: transparent;
+
+	.warpper {
+		padding: 3rem;
+		box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
+	}
 
 	.content {
 		position: relative;
