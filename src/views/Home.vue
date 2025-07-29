@@ -1,5 +1,5 @@
 <template>
-	<section class="flex justify-center m-auto my-4 w-full">
+	<section class="flex justify-center w-full m-auto my-4">
 		<div id="container" class="container" :style="currentSizeObj.style" :class="`${currentThemeObj.id}-box`">
 			<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
 			<div class="content" :class="currentThemeObj.id">
@@ -10,26 +10,26 @@
 		</div>
 	</section>
 
-	<div class="flex flex-col items-center px-4 py-4 mx-auto my-4 w-full bg-white rounded-md shadow-lg operate-area">
-		<div class="flex flex-wrap justify-between space-x-6 w-full item-center">
-			<div class="flex flex-auto justify-between mobile-adjust">
-				<div class="flex flex-col justify-between items-center h-20">
+	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
+		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
+			<div class="flex justify-between flex-auto mobile-adjust">
+				<div class="flex flex-col items-center justify-between h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
 						@selected="handleSelectTheme" />
 				</div>
-				<div class="flex flex-col justify-between items-center h-20 select-zize">
+				<div class="flex flex-col items-center justify-between h-20 select-zize">
 					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
 						@selected="handleSelectSize" />
 				</div>
-				<div class="flex flex-col justify-between items-center w-24 h-20">
+				<div class="flex flex-col items-center justify-between w-24 h-20">
 					<p class="pb-2 font-medium text-gray-400">日期</p>
 					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-row justify-evenly items-center px-4 py-4 space-x-6 w-full md:space-x-0" role="group">
+		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0" role="group">
 			<button class="general-btn md:hidden" @click="onPreviewImage">
 				预览图片
 			</button>
@@ -83,19 +83,34 @@ let visble = ref(false) as any
 const isCopying = ref(false) as any
 const isSaving = ref(false) as any
 let imageBlob = null
-let isGeneratingBlob = false // 添加标记位
-let genBlobPromise: Promise<void> | null = null // 用于存储当前的 Promise
+let isGeneratingBlob = false
+let genBlobPromise: Promise<void> | null = null
+// 添加缓存相关变量
+let lastContentHash = ''
+let lastStyleHash = ''
 const { proxy } = getCurrentInstance() as any
 
+// 优化后的选项配置
 const options = {
-	quality: 0.8,
-	pixelRatio: 1,
-	skipAutoScale: true,
+	quality: 0.9,
+	pixelRatio: window.devicePixelRatio || 1,
+	skipAutoScale: false,
 	cacheBust: false,
 	backgroundColor: '#ffffff',
+	useCORS: true,
+	allowTaint: false,
 	filter: (node) => {
 		return !node.classList?.contains('exclude-from-image')
 	},
+}
+
+// 生成内容和样式的哈希值用于缓存判断
+function generateContentHash() {
+	const content = editor.value?.innerHTML || ''
+	const theme = currentTheme.value
+	const size = currentSize.value
+	const withDate = contentStore.isWithDate
+	return btoa(encodeURIComponent(`${content}-${theme}-${size}-${withDate}`)).slice(0, 16)
 }
 
 onMounted(() => {
@@ -154,16 +169,22 @@ function handlePasteEvent() {
 function handleDate(value: boolean) {
 	contentStore.updateWithDate(value)
 	updatePreview()
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
 }
 
 function handleSelectTheme(item: Theme) {
 	contentStore.updateCurrentTheme(item.id)
 	proxy.$reortGaEvent('item', 'main')
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
 }
 
 function handleSelectSize(item: Size) {
 	contentStore.updateCurrentSize(item.id)
 	proxy.$reortGaEvent('size', 'main')
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
 }
 
 function onEditorFocus() {
@@ -176,14 +197,24 @@ function onEditorBlur() {
 	switch2preview()
 	updatePreview()
 	proxy.$reortGaEvent('blur', 'main')
+
+	// 延迟预生成图片，避免阻塞UI
+	setTimeout(preGenerateBlob, 100)
 }
 
 function onPreviewImage() {
 	visble.value = true
 }
 
+// 优化的 generateBlob 函数
 async function generateBlob() {
-	imageBlob = null
+	const currentContentHash = generateContentHash()
+
+	// 如果内容和样式没有变化，直接返回缓存的 blob
+	if (imageBlob && lastContentHash === currentContentHash) {
+		return
+	}
+
 	if (isGeneratingBlob) {
 		if (genBlobPromise) {
 			await genBlobPromise
@@ -196,27 +227,103 @@ async function generateBlob() {
 		try {
 			const container = document.getElementById('container')
 			const editorEl: HTMLInputElement = container.querySelector('#editor')
-			// 临时移除所有动画和过渡效果 & 临时禁用 contenteditable
+
+			// 预处理：确保所有字体和图片已加载
+			await Promise.all([
+				document.fonts.ready,
+				...Array.from(container.querySelectorAll('img')).map(img => {
+					if (img.complete) return Promise.resolve()
+					return new Promise((resolve, reject) => {
+						img.onload = resolve
+						img.onerror = resolve // 即使图片加载失败也继续
+						setTimeout(resolve, 1000) // 1秒超时
+					})
+				})
+			])
+
+			// 临时优化样式
+			const originalStyles = {
+				transition: container.style.transition,
+				animation: container.style.animation,
+				contentEditable: editorEl.contentEditable,
+				transform: container.style.transform
+			}
+
+			// 应用优化样式
 			container.style.transition = 'none'
 			container.style.animation = 'none'
+			container.style.transform = 'translateZ(0)' // 启用硬件加速
 			editorEl.contentEditable = 'false'
-			// 使用 requestAnimationFrame 确保样式更新已应
-			await new Promise(resolve => requestAnimationFrame(resolve))
-			imageBlob = await toBlob(container, options)
-			// 恢复原始状态 & 恢复 contenteditable
-			container.style.transition = ''
-			container.style.animation = ''
-			editorEl.contentEditable = 'true'
+
+			// 强制重排和重绘
+			container.offsetHeight
+
+			// 使用优化的选项生成图片
+			imageBlob = await toBlob(container, {
+				...options,
+				// 添加性能优化选项
+				skipFonts: false,
+				preferredFontFormat: 'woff2'
+			})
+
+			// 恢复原始样式
+			Object.assign(container.style, originalStyles)
+			editorEl.contentEditable = originalStyles.contentEditable
+
+			// 更新缓存哈希
+			lastContentHash = currentContentHash
+
 			resolve()
 		} catch (error) {
 			console.error('生成图片 blob 失败:', error)
-			reject(error)
+			// 降级方案：使用 Canvas API
+			try {
+				imageBlob = await fallbackCanvasGeneration()
+				lastContentHash = currentContentHash
+				resolve()
+			} catch (fallbackError) {
+				console.error('降级方案也失败:', fallbackError)
+				reject(fallbackError)
+			}
 		} finally {
 			isGeneratingBlob = false
 			genBlobPromise = null
 		}
 	})
 	await genBlobPromise
+}
+
+// Canvas 降级方案
+async function fallbackCanvasGeneration() {
+	const container = document.getElementById('container')
+	const canvas = document.createElement('canvas')
+	const ctx = canvas.getContext('2d')
+
+	// 获取容器尺寸
+	const rect = container.getBoundingClientRect()
+	canvas.width = rect.width * (window.devicePixelRatio || 1)
+	canvas.height = rect.height * (window.devicePixelRatio || 1)
+
+	// 设置白色背景
+	ctx.fillStyle = '#ffffff'
+	ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+	// 简化的文本渲染（作为最后的降级方案）
+	const text = editor.value?.innerText || ''
+	ctx.fillStyle = '#000000'
+	ctx.font = '16px system-ui'
+	ctx.fillText(text, 20, 50)
+
+	return new Promise(resolve => {
+		canvas.toBlob(resolve, 'image/png', 0.9)
+	})
+}
+
+// 预生成图片（在用户可能点击复制前）
+function preGenerateBlob() {
+	if (!isGeneratingBlob && !imageBlob) {
+		generateBlob().catch(console.error)
+	}
 }
 
 async function onCopyImage() {
@@ -233,9 +340,11 @@ async function onCopyImage() {
 			return
 		}
 
-		if (!imageBlob) {
+		// 如果没有缓存的图片或内容已变化，生成新图片
+		if (!imageBlob || lastContentHash !== generateContentHash()) {
 			await generateBlob()
 		}
+
 		if (imageBlob) {
 			await navigator.clipboard.write([
 				new ClipboardItem({
