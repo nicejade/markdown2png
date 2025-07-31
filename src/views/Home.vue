@@ -2,7 +2,7 @@
 import { computed, ref, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
-import * as domtoimage from 'dom-to-image'
+import { snapdom } from '@zumer/snapdom'
 import { useToastStore } from './../stores/toast'
 import Switch from './../components/Switch.vue'
 import Spinner from './../components/Spinner.vue'
@@ -40,11 +40,11 @@ let genBlobPromise: Promise<void> | null = null
 let lastContentHash = ''
 const { proxy } = getCurrentInstance() as any
 
-// 优化后的选项配置 (dom-to-image)
-const options = {
-	quality: 0.9,
-	bgcolor: '#ffffff',
-	cacheBust: false,
+// snapdom 配置选项
+const snapdomOptions = {
+	backgroundColor: '#ffffff',
+	quality: 1,
+	type: 'png',
 	filter: (node: HTMLElement) => {
 		return !node.classList?.contains('exclude-from-image')
 	},
@@ -167,8 +167,8 @@ async function generateBlob() {
 			// 强制重排和重绘
 			container.offsetHeight
 
-			// 使用优化的选项生成图片
-			imageBlob = await domtoimage.toBlob(container, options)
+			// 使用 snapdom 生成图片
+			imageBlob = await snapdom.toBlob(container, snapdomOptions)
 
 			// 恢复原始样式
 			Object.assign(container.style, originalStyles)
@@ -180,47 +180,13 @@ async function generateBlob() {
 			resolve()
 		} catch (error) {
 			console.error('生成图片 blob 失败:', error)
-			// 降级方案：使用 Canvas API
-			try {
-				imageBlob = await fallbackCanvasGeneration()
-				lastContentHash = currentContentHash
-				resolve()
-			} catch (fallbackError) {
-				console.error('降级方案也失败:', fallbackError)
-				reject(fallbackError)
-			}
+			reject(error)
 		} finally {
 			isGeneratingBlob = false
 			genBlobPromise = null
 		}
 	})
 	await genBlobPromise
-}
-
-// Canvas 降级方案
-async function fallbackCanvasGeneration() {
-	const container = document.getElementById('container')
-	const canvas = document.createElement('canvas')
-	const ctx = canvas.getContext('2d')
-
-	// 获取容器尺寸
-	const rect = container.getBoundingClientRect()
-	canvas.width = rect.width * (window.devicePixelRatio || 1)
-	canvas.height = rect.height * (window.devicePixelRatio || 1)
-
-	// 设置白色背景
-	ctx.fillStyle = '#ffffff'
-	ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-	// 简化的文本渲染（作为最后的降级方案）
-	const text = editor.value?.innerText || ''
-	ctx.fillStyle = '#000000'
-	ctx.font = '16px system-ui'
-	ctx.fillText(text, 20, 50)
-
-	return new Promise(resolve => {
-		canvas.toBlob(resolve, 'image/png', 0.9)
-	})
 }
 
 // 预生成图片（在用户可能点击复制前）
@@ -287,6 +253,7 @@ async function onCopyImage() {
 		}
 
 		if (imageBlob) {
+			debugger
 			await navigator.clipboard.write([
 				new ClipboardItem({
 					'image/png': imageBlob
@@ -344,7 +311,7 @@ async function onSave2Image() {
 
 	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto my-4 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
-			<div class="flex justify-between flex-auto mobile-adjust">
+			<div class="flex justify-between flex-auto mobile-adjust md:justify-evenly">
 				<div class="flex flex-col items-center justify-between h-20">
 					<p class="pb-2 font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
