@@ -1,8 +1,8 @@
 <template>
 	<footer class="z-0 my-4 text-center text-gray-400">
-		<div class="flex flex-row flex-wrap justify-center items-center mt-2 mb-2 text-sm friends">
+		<div class="flex flex-row flex-wrap items-center justify-center mt-2 mb-2 text-sm friends">
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
-				:href="assembleExternalLink('https://www.thebettersites.com/')"
+				:href="assembleExternalLink('https://www.lovejade.cn/')"
 				@click="$reortGaEvent('wechat-jeffjade-com', 'footer')">清风明月轩</a>
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500"
 				:href="assembleExternalLink('https://www.niceshare.site/')"
@@ -20,7 +20,7 @@
 				:href="assembleExternalLink('https://forum.lovejade.cn/')"
 				@click="$reortGaEvent('forum-lovejade', 'footer')">悠然宜想亭</a>
 		</div>
-		<div class="flex flex-row flex-wrap justify-center items-center w-full text-sm">
+		<div class="flex flex-row flex-wrap items-center justify-center w-full text-sm">
 			<span class="mx-3 text-gray-400">{{ copyright }}</span>
 			<span class="px-2.5 py-0.5 text-sm bg-gray-200 rounded-md me-2">{{ version }}</span>
 			<a target="_blank" class="text-gray-400 cursor-pointer hover:text-amber-500"

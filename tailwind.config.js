@@ -17,7 +17,7 @@ module.exports = {
     colors: colors,
     screens: {
       sm: { max: '640px' },
-      md: { max: '768px' },
+      md: { max: '1200px' },
     },
   },
   variants: {
