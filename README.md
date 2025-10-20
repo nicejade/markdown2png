@@ -30,7 +30,7 @@
     alt="Gitmoji"
   />
 </a>
-  <a href="https://niceshare.site/">
+  <a href="https://www.niceshare.site/">
     <img src="https://img.shields.io/badge/Author-nicejade-%23a696c8.svg" alt="Author nicejade">
   </a>
 </div>
@@ -52,7 +52,7 @@
 
 ## 相关链接
 
-- [清风明月轩](https://www.thebettersites.com/?ref=github.com)
+- [清风明月轩](https://www.lovejade.cn//?ref=github.com)
 - [逍遥自在轩](https://niceshare.site/?ref=github.com)
 - [晚晴幽草轩](https://www.jeffjade.com/nicelinks?ref=github.com)
 - [缘知随心庭](https://fine.niceshare.site/?ref=github.com)
