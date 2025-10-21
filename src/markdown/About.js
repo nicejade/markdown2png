@@ -30,8 +30,8 @@ export default `
 
 ## 相关链接
 
-- [清风明月轩](https://www.thebettersites.com/)
 - [逍遥自在轩](https://www.niceshare.site/)
+- [清风明月轩](https://www.lovejade.cn/)
 - [晚晴幽草轩](https://www.jeffjade.com/nicelinks)
 - [缘知随心庭](https://fine.niceshare.site/)
 - [静轩之别苑](https://quickapp.lovejade.cn/)
