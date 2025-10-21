@@ -1,4 +1,4 @@
-import{d as t,p as s,c as a,a as o,u as n,o as c}from"./index-DM7PZLuw.js";const d=`
+import{d as t,p as a,c as s,a as o,u as n,o as c}from"./index-C3eCM_Dm.js";const d=`
 [玉桃文飨轩🍑](https://share.lovejade.cn/?utm_source=about)，专业的文本转图片工具。一键将 [Markdown](https://site.lovejade.cn/tags/Markdown) 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。项目基于 [Vue3](https://site.lovejade.cn/post/5b1a221c0526c920d6dfaada) 、 [Vite](https://site.lovejade.cn/post/6010e1b10c71de1fb957b64e) 、 [Pinia](https://site.lovejade.cn/post/631813c3c0922e0e572bde81) 、 [TailwindCSS](https://site.lovejade.cn/post/5fd20cb4c06d6302c1907ec7) 、 [TypeScript](https://site.lovejade.cn/post/6278fdeaac00ce3f9b11a8ef) 等技术栈构建，并在 [Github 开源](https://github.com/nicejade/markdown2png)。
 
 ![玉桃文飨轩 | 应用桌面端截图](https://share.lovejade.cn/screenshots/desktop.png)
@@ -30,8 +30,8 @@ import{d as t,p as s,c as a,a as o,u as n,o as c}from"./index-DM7PZLuw.js";const
 
 ## 相关链接
 
-- [清风明月轩](https://www.thebettersites.com/)
 - [逍遥自在轩](https://www.niceshare.site/)
+- [清风明月轩](https://www.lovejade.cn/)
 - [晚晴幽草轩](https://www.jeffjade.com/nicelinks)
 - [缘知随心庭](https://fine.niceshare.site/)
 - [静轩之别苑](https://quickapp.lovejade.cn/)
@@ -39,4 +39,4 @@ import{d as t,p as s,c as a,a as o,u as n,o as c}from"./index-DM7PZLuw.js";const
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
 - [X（Twitter）](https://x.com/MarshalXuan)
 
-2023 年 11 月 27 日补录于〔深圳福田〕`,p={id:"about",class:"my-4 w-full max-w-3xl"},r=["innerHTML"],m=t({__name:"About",setup(i){let e=s(d,{breaks:!0});return(h,l)=>(c(),a("div",p,[o("div",{class:"markdown",innerHTML:n(e)},null,8,r)]))}});export{m as default};
+2023 年 11 月 27 日补录于〔深圳福田〕`,p={id:"about",class:"my-4 w-full max-w-3xl"},r=["innerHTML"],m=t({__name:"About",setup(i){let e=a(d,{breaks:!0});return(h,l)=>(c(),s("div",p,[o("div",{class:"markdown",innerHTML:n(e)},null,8,r)]))}});export{m as default};
