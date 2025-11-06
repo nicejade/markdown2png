@@ -19,13 +19,63 @@ const genFileName = () => {
   return [year, month, day, ramdom].join('-')
 }
 
+// 检测是否为 Safari 浏览器
+function isSafari(): boolean {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.userAgent)
+}
+
 export function download2png(blob: Blob) {
+  const fileName = `玉桃文飨轩-${genFileName()}.png`
+  
+  // Safari 特殊处理
+  if (isSafari()) {
+    // Safari 需要使用 Data URL 方式
+    const reader = new FileReader()
+    reader.onloadend = function() {
+      const dataUrl = reader.result as string
+      const link = document.createElement('a')
+      link.href = dataUrl
+      link.download = fileName
+      link.style.display = 'none'
+      
+      // 必须将 link 添加到 DOM 中，Safari 才能触发下载
+      document.body.appendChild(link)
+      link.click()
+      
+      // 延迟移除，确保下载已开始
+      setTimeout(() => {
+        document.body.removeChild(link)
+      }, 100)
+    }
+    reader.onerror = function() {
+      console.error('读取 Blob 失败')
+      // 降级方案：使用 Blob URL
+      fallbackDownload(blob, fileName)
+    }
+    reader.readAsDataURL(blob)
+  } else {
+    // 其他浏览器使用标准方式
+    fallbackDownload(blob, fileName)
+  }
+}
+
+// 降级下载方案
+function fallbackDownload(blob: Blob, fileName: string) {
   const url = window.URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href = url
-  link.download = `玉桃文飨轩-${genFileName()}.png`
+  link.download = fileName
+  link.style.display = 'none'
+  
+  // 添加到 DOM 以确保兼容性
+  document.body.appendChild(link)
   link.click()
-  window.URL.revokeObjectURL(url)
+  
+  // 延迟清理
+  setTimeout(() => {
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  }, 100)
 }
 
 export function getCurrentDate() {

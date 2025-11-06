@@ -44,7 +44,7 @@ const { proxy } = getCurrentInstance() as any
 const snapdomOptions = {
 	backgroundColor: '#ffffff',
 	quality: 1,
-	type: 'png',
+	type: 'png' as const,
 	filter: (node: HTMLElement) => {
 		return !node.classList?.contains('exclude-from-image')
 	},
@@ -119,7 +119,6 @@ function onPreviewImage() {
 async function generateBlob() {
 	const currentContentHash = generateContentHash()
 
-	// 如果内容和样式没有变化，直接返回缓存的 blob
 	if (imageBlob && lastContentHash === currentContentHash) {
 		return
 	}
@@ -133,10 +132,9 @@ async function generateBlob() {
 
 	isGeneratingBlob = true
 	genBlobPromise = new Promise(async (resolve, reject) => {
+		const container = document.getElementById('container')
+		const editorEl: HTMLInputElement = container.querySelector('#editor')
 		try {
-			const container = document.getElementById('container')
-			const editorEl: HTMLInputElement = container.querySelector('#editor')
-
 			// 预处理：确保所有字体和图片已加载
 			await Promise.all([
 				document.fonts.ready,
@@ -179,7 +177,8 @@ async function generateBlob() {
 
 			resolve()
 		} catch (error) {
-			console.error('生成图片 blob 失败:', error)
+			editorEl.contentEditable = 'true'
+			console.error('Failed to generate the image blob:', error)
 			reject(error)
 		} finally {
 			isGeneratingBlob = false
@@ -229,7 +228,7 @@ function onEditorBlur() {
 	updatePreview()
 	proxy.$reortGaEvent('blur', 'main')
 
-	// 延迟预生成图片，避免阻塞UI
+	// 延迟预生成图片，避免阻塞 UI
 	setTimeout(preGenerateBlob, 100)
 }
 
@@ -240,10 +239,9 @@ async function onCopyImage() {
 
 	try {
 		const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-		const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-
-		if (isIOS || isSafari) {
-			toastStore.info('iOS/Safari 环境请选择"保存图片"')
+		// 桌面 Safari 允许尝试复制，iOS Safari 基本不支持图片写入剪贴板
+		if (isIOS) {
+			toastStore.info('iOS 环境暂不支持复制图片，请选择"保存图片"')
 			return
 		}
 
@@ -253,12 +251,13 @@ async function onCopyImage() {
 		}
 
 		if (imageBlob) {
-			debugger
-			await navigator.clipboard.write([
-				new ClipboardItem({
-					'image/png': imageBlob
-				})
-			])
+			// 能力检测：仅在支持 ClipboardItem 与 clipboard.write 时尝试
+			if (!('clipboard' in navigator) || !(window as any).ClipboardItem) {
+				throw new Error('当前浏览器不支持图片复制 API')
+			}
+			const pngBlob = imageBlob.type === 'image/png' ? imageBlob : new Blob([imageBlob], { type: 'image/png' })
+			const item = new (window as any).ClipboardItem({ 'image/png': pngBlob })
+			await navigator.clipboard.write([item])
 			toastStore.success('已复制图片至您的剪切板')
 		}
 	} catch (error) {
@@ -279,12 +278,17 @@ async function onSave2Image() {
 	proxy.$reortGaEvent('save-img', 'main')
 
 	try {
-		if (!imageBlob) {
+		// 如果没有缓存的图片或内容已变化，生成新图片
+		if (!imageBlob || lastContentHash !== generateContentHash()) {
 			await generateBlob()
 		}
 		if (imageBlob) {
+			// 确保在用户交互上下文中调用下载
 			download2png(imageBlob)
-			toastStore.success('已成功为你保存图片')
+			// 延迟显示成功消息，给 Safari 更多时间处理下载
+			setTimeout(() => {
+				toastStore.success('已成功为你保存图片')
+			}, 200)
 		}
 	} catch (error) {
 		console.error('保存图片失败:', error)
