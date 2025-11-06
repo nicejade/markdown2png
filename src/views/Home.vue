@@ -297,7 +297,7 @@ async function onSave2Image() {
 
 <template>
 	<section class="flex justify-center w-full m-auto">
-		<div id="container" class="container" :style="currentSizeObj.style">
+		<div id="container" class="container" style="text-autospace: normal;" :style="currentSizeObj.style">
 			<div :class="`${currentThemeObj.id}-box warpper`">
 				<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
 				<div class="content" :class="currentThemeObj.id">
@@ -309,8 +309,7 @@ async function onSave2Image() {
 		</div>
 	</section>
 
-	<div
-		class="flex flex-col items-center w-full px-4 py-4 mx-auto mt-8 mb-4 bg-white rounded-md shadow-lg operate-area">
+	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto mt-8 mb-4 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust md:justify-evenly">
 				<div class="flex flex-col items-center justify-between h-20">
