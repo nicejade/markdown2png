@@ -182,7 +182,8 @@
 import { getCurrentInstance, ref, onMounted, watch } from 'vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import DigestHistory from './../components/DigestHistory.vue'
-import { download2png, debounce, generateHash, getStyleSettings, setStyleSettings } from './../helper/util'
+import { download2png, debounce, generateHash, getStyleSettings, setStyleSettings, getStorageItem } from './../helper/util'
+import { BACKGROUNDS_STORAGE_KEY } from './../helper/constant'
 import { useToastStore } from './../stores/toast'
 import { useDigestStore } from './../stores/digest'
 
@@ -280,6 +281,19 @@ watch(
 )
 
 onMounted(() => {
+  // 从 localStorage 中加载用户保存的背景图片（Data URL 列表）
+  try {
+    const saved = getStorageItem(BACKGROUNDS_STORAGE_KEY)
+    if (Array.isArray(saved) && saved.length > 0) {
+      // 将用户上传的图片放到默认背景前面，便于优先选择
+      backgrounds.value = [...saved, ...backgrounds.value]
+      // 若存在用户保存的图片，默认选中新上传的第一张
+      selectedBg.value = 0
+    }
+  } catch (e) {
+    console.warn('加载已保存背景失败', e)
+  }
+
   // 根据保存的比例 ID 设置初始宽高
   const selectedRatioObj = ratios.find(r => r.id === selectedRatio.value) || ratios[0]
   updateCanvasSize(selectedRatioObj)
@@ -287,6 +301,18 @@ onMounted(() => {
   ctx.value = canvasRef.value.getContext('2d')
   loadBackgroundImage()
 })
+
+// 保存用户上传的背景图片（只保存 data: 开头的图片，防止把内置资源写入 localStorage）
+const saveBackgroundsToStorage = () => {
+  try {
+    const dataUrls = backgrounds.value.filter(b => typeof b === 'string' && b.startsWith('data:'))
+    // 只保留最近 10 张，防止占用过多 localStorage
+    const trimmed = dataUrls.slice(0, 10)
+    localStorage.setItem(BACKGROUNDS_STORAGE_KEY, JSON.stringify(trimmed))
+  } catch (e) {
+    console.warn('保存背景图片失败', e)
+  }
+}
 
 const updateCanvasSize = (item) => {
   canvasWidth.value = item.width
@@ -470,7 +496,8 @@ function onSaveText2Storage() {
 
 // 处理图片上传
 const handleImageUpload = (event: Event) => {
-  const file = (event.target as HTMLInputElement).files?.[0]
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
   if (!file) return
 
   // 检查文件类型
@@ -479,13 +506,30 @@ const handleImageUpload = (event: Event) => {
     return
   }
 
-  const imageUrl = URL.createObjectURL(file)
-  backgrounds.value.unshift(imageUrl)
-  // 选中新上传的图片
-  selectedBg.value = 0;
-  // 清空 input，允许重复上传同一张图片
-  (event.target as HTMLInputElement).value = ''
+  // 读取为 Data URL（可序列化到 localStorage）
+  const reader = new FileReader()
+  reader.onload = () => {
+    const result = reader.result as string
+    if (result) {
+      backgrounds.value.unshift(result)
+      // 选中新上传的图片
+      selectedBg.value = 0
+      // 持久化用户上传的图片（只保存 data URL）
+      saveBackgroundsToStorage()
+    }
+    // 清空 input，允许重复上传同一张图片
+    input.value = ''
+  }
+  reader.onerror = () => {
+    toastStore.error('读取图片失败')
+  }
+  reader.readAsDataURL(file)
 }
+
+// 当 backgrounds 变化时，自动保存用户上传的 data URL
+watch(backgrounds, () => {
+  saveBackgroundsToStorage()
+}, { deep: true })
 
 function handleSelectWeight(item) {
   fontWeight.value = item.id

@@ -65,6 +65,9 @@ export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)🍑 �
 
 export const STYLE_STORAGE_KEY = 'digest-style-settings'
 
+// 存储用户上传的背景图片（Data URL 列表）
+export const BACKGROUNDS_STORAGE_KEY = 'digest-backgrounds'
+
 // 默认样式设置
 export const DEFAULT_STYLE_SETTINGS = {
   fontFamily: 'system-ui',
