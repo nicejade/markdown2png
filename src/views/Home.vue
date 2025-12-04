@@ -201,32 +201,34 @@ function handleDate(value: boolean) {
 	updatePreview()
 	imageBlob = null // 清除缓存
 	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-date-change', 'main')
 }
 
 function handleSelectTheme(item: Theme) {
 	contentStore.updateCurrentTheme(item.id)
-	proxy.$reortGaEvent('item', 'main')
 	imageBlob = null // 清除缓存
 	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-theme', 'main')
+	proxy.$reortGaEvent(`home-theme-${item.name}`, 'main')
 }
 
 function handleSelectSize(item: Size) {
 	contentStore.updateCurrentSize(item.id)
-	proxy.$reortGaEvent('size', 'main')
 	imageBlob = null // 清除缓存
 	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-size', 'main')
 }
 
 function onEditorFocus() {
 	switch2editor()
-	proxy.$reortGaEvent('focus', 'main')
+	proxy.$reortGaEvent('home-focus', 'main')
 }
 
 function onEditorBlur() {
 	contentStore.updateContent(editor.value.innerText)
 	switch2preview()
 	updatePreview()
-	proxy.$reortGaEvent('blur', 'main')
+	proxy.$reortGaEvent('home-blur', 'main')
 
 	// 延迟预生成图片，避免阻塞 UI
 	setTimeout(preGenerateBlob, 100)
@@ -235,7 +237,6 @@ function onEditorBlur() {
 async function onCopyImage() {
 	if (isCopying.value) return
 	isCopying.value = true
-	proxy.$reortGaEvent('save-img', 'main')
 
 	try {
 		const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
@@ -259,23 +260,26 @@ async function onCopyImage() {
 			const item = new (window as any).ClipboardItem({ 'image/png': pngBlob })
 			await navigator.clipboard.write([item])
 			toastStore.success('已复制图片至您的剪切板')
+			proxy.$reortGaEvent('copy-img-success', 'main')
 		}
 	} catch (error) {
 		console.error('复制图片失败:', error)
 		toastStore.error('复制图片失败，请重试')
+		proxy.$reortGaEvent('copy-img-failed', 'main')
 	} finally {
+		proxy.$reortGaEvent(`copy-img-${currentTheme.value}`, 'main')
 		isCopying.value = false
 	}
 }
 
 function onPreviewDialogChange(state: boolean) {
 	visble.value = state
+	proxy.$reortGaEvent('preview-dialog-change', 'main')
 }
 
 async function onSave2Image() {
 	if (isSaving.value) return
 	isSaving.value = true
-	proxy.$reortGaEvent('save-img', 'main')
 
 	try {
 		// 如果没有缓存的图片或内容已变化，生成新图片
@@ -290,9 +294,11 @@ async function onSave2Image() {
 				toastStore.success('已成功为你保存图片')
 			}, 200)
 		}
+		proxy.$reortGaEvent('save-img-success', 'main')
 	} catch (error) {
 		console.error('保存图片失败:', error)
 		toastStore.error('保存图片失败，请重试')
+		proxy.$reortGaEvent('save-img-failed', 'main')
 	} finally {
 		isSaving.value = false
 	}
@@ -313,7 +319,7 @@ async function onSave2Image() {
 		</div>
 	</section>
 
-	<div class="flex flex-col items-center w-full px-4 py-4 mx-auto mt-8 mb-4 bg-white rounded-md shadow-lg operate-area">
+	<div class="flex flex-col items-center w-full px-6 py-4 mx-auto mt-8 mb-4 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust md:justify-evenly">
 				<div class="flex flex-col items-center justify-between h-20">
@@ -332,7 +338,8 @@ async function onSave2Image() {
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-row items-center w-full px-4 py-4 space-x-6 justify-evenly md:space-x-0" role="group">
+		<div class="flex flex-row items-center justify-between w-full px-0 py-4 space-x-6 md:justify-evenly md:space-x-0"
+			role="group">
 			<button class="general-btn md:hidden" @click="onPreviewImage">
 				预览图片
 			</button>
