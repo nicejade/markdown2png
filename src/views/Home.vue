@@ -522,6 +522,247 @@ async function onSave2Image() {
 	}
 }
 
+.sakura-box {
+	background-image: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff9a9e 100%);
+
+	.sakura {
+		background-color: transparent;
+
+		.editor {
+			color: #5a3d2b;
+			background-color: rgba(255, 255, 255, 0.7);
+			border-radius: 0.75rem;
+			backdrop-filter: blur(4px);
+		}
+	}
+}
+
+.ocean-box {
+	background-image: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+
+	.ocean {
+		background-color: transparent;
+
+		.editor {
+			color: #ffffff;
+			background-color: rgba(255, 255, 255, 0.15);
+			border-radius: 1rem;
+			backdrop-filter: blur(8px);
+		}
+	}
+}
+
+.forest-box {
+	background-image: linear-gradient(to bottom, #a8edea 0%, #fed6e3 25%, #d299c2 50%, #fef9d7 75%, #89f7fe 100%);
+
+	.forest {
+		background-color: transparent;
+
+		.editor {
+			color: #2d5016;
+			background-color: rgba(255, 255, 255, 0.85);
+			border-radius: 0.5rem;
+		}
+	}
+}
+
+.starry-box {
+	background-image: radial-gradient(ellipse at center, #1e3c72 0%, #2a5298 35%, #1a1a2e 100%);
+
+	.starry {
+		background-color: transparent;
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-image:
+				radial-gradient(2px 2px at 20% 30%, white, transparent),
+				radial-gradient(2px 2px at 60% 70%, white, transparent),
+				radial-gradient(1px 1px at 50% 50%, white, transparent),
+				radial-gradient(1px 1px at 80% 10%, white, transparent),
+				radial-gradient(2px 2px at 90% 60%, white, transparent);
+			background-size: 200% 200%;
+			opacity: 0.6;
+			animation: twinkle 20s infinite;
+		}
+
+		.editor {
+			color: #e8eaf6;
+			background-color: rgba(0, 0, 0, 0.3);
+			border-radius: 0.75rem;
+			backdrop-filter: blur(4px);
+		}
+	}
+}
+
+@keyframes twinkle {
+
+	0%,
+	100% {
+		background-position: 0% 0%;
+	}
+
+	50% {
+		background-position: 100% 100%;
+	}
+}
+
+.aurora-box {
+	background-image: linear-gradient(45deg,
+			#667eea 0%,
+			#764ba2 20%,
+			#f093fb 40%,
+			#4facfe 60%,
+			#00f2fe 80%,
+			#43e97b 100%);
+	background-size: 400% 400%;
+	animation: aurora 15s ease infinite;
+
+	.aurora {
+		background-color: transparent;
+
+		.editor {
+			color: #1a1a1a;
+			background-color: rgba(255, 255, 255, 0.9);
+			border-radius: 1rem;
+			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+		}
+	}
+}
+
+@keyframes aurora {
+	0% {
+		background-position: 0% 50%;
+	}
+
+	50% {
+		background-position: 100% 50%;
+	}
+
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+.mint-box {
+	background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+
+	.mint {
+		background-color: transparent;
+
+		.editor {
+			color: #0d4f3c;
+			background-color: rgba(255, 255, 255, 0.8);
+			border-radius: 1rem;
+		}
+	}
+}
+
+.sunset-box {
+	background-image: linear-gradient(to bottom, #fa709a 0%, #fee140 50%, #ff6b6b 100%);
+
+	.sunset {
+		background-color: transparent;
+
+		.editor {
+			color: #3d1f00;
+			background-color: rgba(255, 255, 255, 0.85);
+			border-radius: 0.75rem;
+			box-shadow: 0 2px 10px rgba(250, 112, 154, 0.3);
+		}
+	}
+}
+
+.purple-box {
+	background-image: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+
+	.purple {
+		background-color: transparent;
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			top: -50%;
+			left: -50%;
+			width: 200%;
+			height: 200%;
+			background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+			background-size: 50px 50px;
+			animation: float 20s linear infinite;
+		}
+
+		.editor {
+			color: #ffffff;
+			background-color: rgba(118, 75, 162, 0.4);
+			border-radius: 1rem;
+			backdrop-filter: blur(6px);
+		}
+	}
+}
+
+@keyframes float {
+	0% {
+		transform: translate(0, 0) rotate(0deg);
+	}
+
+	100% {
+		transform: translate(50px, 50px) rotate(360deg);
+	}
+}
+
+.minimal-box {
+	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+	.minimal {
+		background-color: #ffffff;
+		border: 1px solid #e0e0e0;
+		border-radius: 0.5rem;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+		.editor {
+			color: #333333;
+			background-color: transparent;
+		}
+	}
+}
+
+.tech-box {
+	background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image:
+			linear-gradient(90deg, transparent 79px, rgba(0, 255, 255, 0.03) 81px, rgba(0, 255, 255, 0.03) 82px, transparent 84px),
+			linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+		background-size: 100px 20px;
+		opacity: 0.5;
+	}
+
+	.tech {
+		background-color: transparent;
+
+		.editor {
+			color: #00ffff;
+			background-color: rgba(0, 0, 0, 0.4);
+			border-radius: 0.25rem;
+			box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+			text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+		}
+	}
+}
+
 .operate-area {
 	width: 40rem;
 

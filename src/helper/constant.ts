@@ -24,6 +24,16 @@ export const THEME_ARR = [
 	{ name: '纸屑', id: 'bbburst' },
 	{ name: '公务', id: 'official' },
 	{ name: '芒黄', id: 'yellow' },
+	{ name: '樱花', id: 'sakura' },
+	{ name: '海洋', id: 'ocean' },
+	{ name: '森林', id: 'forest' },
+	{ name: '星空', id: 'starry' },
+	{ name: '极光', id: 'aurora' },
+	{ name: '薄荷', id: 'mint' },
+	{ name: '日落', id: 'sunset' },
+	{ name: '紫霞', id: 'purple' },
+	{ name: '极简', id: 'minimal' },
+	{ name: '科技', id: 'tech' },
 ]
 
 export const SIZES_ARR = [
