@@ -15,13 +15,13 @@ export const TAB_LABELS = {
 }
 
 export const THEME_ARR = [
-	{ name: '元气', id: 'vitality' },
 	{ name: '便签', id: 'note' },
+	{ name: '元气', id: 'vitality' },
+	{ name: '渐变', id: 'gradient' },
 	{ name: '古风', id: 'antiquity' },
 	{ name: '经典', id: 'classic' },
 	{ name: '暗黑', id: 'dark' },
 	{ name: '纸屑', id: 'bbburst' },
-	{ name: '渐变', id: 'gradient' },
 	{ name: '公务', id: 'official' },
 	{ name: '芒黄', id: 'yellow' },
 ]
