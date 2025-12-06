@@ -472,7 +472,7 @@ const drawCanvas = async (backgroundImage) => {
       }
 
       // 检查是否需要换行
-      if (currentLineWidth + charWidth > maxWidth && currentLine.length > 0) {
+      if (currentLineWidth + charWidth > maxWidth && (currentLine.length > 0 || currentLineText !== '')) {
         // 保存当前行
         if (currentLineText) {
           currentLine.push({ ...currentStyle, text: currentLineText })
