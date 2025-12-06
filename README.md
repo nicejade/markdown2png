@@ -37,7 +37,8 @@
 
 ## 如何访问
 
-在线访问地址：[https://share.lovejade.cn/](https://share.lovejade.cn/ '玉桃文飨轩')。
+- 在线访问地址：[https://share.lovejade.cn/](https://share.lovejade.cn/ '玉桃文飨轩')。
+- `书摘模式`地址：[https://share.lovejade.cn/digest](https://share.lovejade.cn/digest '书摘模式')。
 
 ## 核心功能
 
@@ -62,6 +63,10 @@
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
 - [X（Twitter）](https://x.com/MarshalXuan)
 - [Facebook](https://www.facebook.com/nice.jade.yang)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=nicejade/markdown2png&type=date&legend=top-left)](https://www.star-history.com/#nicejade/markdown2png&type=date&legend=top-left)
 
 ## 许可执照
 
