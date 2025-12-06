@@ -4,12 +4,12 @@
       <TabList class="flex p-1 space-x-1 bg-gray-300 rounded-xl">
         <Tab v-for="category in Object.keys(digestHistory)" as="template" :key="category" v-slot="{ selected }">
           <button :class="[
-          'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-          'ring-white/60 ring-offset-2 ring-offset-gray-300 focus:outline-none focus:ring-2',
-          selected
-            ? 'bg-white text-[#ea552d] shadow'
-            : 'text-black hover:bg-white/[0.12] hover:text-white',
-        ]">
+            'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+            'ring-white/60 ring-offset-2 ring-offset-gray-300 focus:outline-none focus:ring-2',
+            selected
+              ? 'bg-white text-[#ea552d] shadow'
+              : 'text-black hover:bg-white/[0.12] hover:text-white',
+          ]">
             {{ TAB_LABELS[category] }}
           </button>
         </Tab>
@@ -32,7 +32,7 @@
             </li>
           </ul>
           <div v-else class="flex items-center justify-center w-full my-4">
-            <SvgIcon name="empty" width="92" height="76" />
+            <SvgIcon name="empty" :width="92" :height="76" />
           </div>
         </TabPanel>
       </TabPanels>
