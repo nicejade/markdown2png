@@ -410,9 +410,13 @@ const drawCanvas = async (backgroundImage) => {
   // 绘制背景
   context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
 
+  // 优化字体加载：添加超时机制，避免无限期等待外部字体
   try {
-    await document.fonts.ready
-    await document.fonts.load(`${fontSize.value}px ${fontFamily.value}`)
+    const fontLoadTimeout = new Promise((resolve) => setTimeout(resolve, 800))
+    const fontLoad = document.fonts.load(`${fontSize.value}px ${fontFamily.value}`)
+
+    // 使用 Promise.race 实现超时控制，最多等待 800ms
+    await Promise.race([fontLoad, fontLoadTimeout])
   } catch (e) {
     console.warn('字体加载失败，将使用后备字体:', e)
   }
