@@ -42,7 +42,7 @@
         <div class="mb-4">
           <textarea v-model.trim="digest" rows="5" maxlength="1000"
             class="w-full min-h-[120px] p-4 rounded-lg border border-gray-200 resize-none focus:outline-none focus:border-gray-300"
-            placeholder="请输入想要呈现的文字...">
+            placeholder="请输入要呈现的文字，支持 Markdown 语法: &#10;**加粗**&#10;__下划线__&#10;==高亮==&#10;~~删除线~~">
           </textarea>
         </div>
 
@@ -339,6 +339,69 @@ const loadBackgroundImage = () => {
   img.src = backgrounds.value[selectedBg.value]
 }
 
+// 解析 Markdown 语法，返回文本片段数组
+const parseMarkdown = (text: string) => {
+  const segments: Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
+  let i = 0
+
+  while (i < text.length) {
+    // 检查各种标记
+    if (text.substring(i, i + 2) === '**' && text.indexOf('**', i + 2) !== -1) {
+      // 加粗 **text**
+      const endIndex = text.indexOf('**', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), bold: true })
+        i = endIndex + 2
+        continue
+      }
+    } else if (text.substring(i, i + 2) === '__' && text.indexOf('__', i + 2) !== -1) {
+      // 下划线 __text__
+      const endIndex = text.indexOf('__', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), underline: true })
+        i = endIndex + 2
+        continue
+      }
+    } else if (text.substring(i, i + 2) === '==' && text.indexOf('==', i + 2) !== -1) {
+      // 高亮 ==text==
+      const endIndex = text.indexOf('==', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), mark: true })
+        i = endIndex + 2
+        continue
+      }
+    } else if (text.substring(i, i + 2) === '~~' && text.indexOf('~~', i + 2) !== -1) {
+      // 删除线 ~~text~~
+      const endIndex = text.indexOf('~~', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), strikethrough: true })
+        i = endIndex + 2
+        continue
+      }
+    }
+
+    // 普通文本，找到下一个标记的开始位置
+    let nextMarkIndex = text.length
+    const marks = ['**', '__', '==', '~~']
+    marks.forEach(mark => {
+      const index = text.indexOf(mark, i)
+      if (index !== -1 && index < nextMarkIndex) {
+        nextMarkIndex = index
+      }
+    })
+
+    if (nextMarkIndex > i) {
+      segments.push({ text: text.substring(i, nextMarkIndex) })
+      i = nextMarkIndex
+    } else {
+      segments.push({ text: text.substring(i) })
+      break
+    }
+  }
+
+  return segments
+}
+
 const drawCanvas = async (backgroundImage) => {
   const canvas = canvasRef.value
   const context = ctx.value
@@ -353,39 +416,151 @@ const drawCanvas = async (backgroundImage) => {
   } catch (e) {
     console.warn('字体加载失败，将使用后备字体:', e)
   }
-  // 设置文字样式
-  context.font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
-  context.fillStyle = textColor.value
-  context.textAlign = textAlign.value
 
-  // 文本换行处理函数
-  const wrapText = (text) => {
-    const words = text.split('')
-    const lines = []
-    let currentLine = ''
-    const maxWidth = canvas.width - (edgePadding.value * 2) // 考虑左右内边距
+  // 文本换行处理函数（处理已解析的片段）
+  const wrapTextSegments = (segments) => {
+    const lines: Array<Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }>> = []
+    const maxWidth = canvas.width - (edgePadding.value * 2)
+    const spacing = letterSpacing.value / 50
 
-    words.forEach(char => {
-      const testLine = currentLine + char
-      const metrics = context.measureText(testLine)
-      const testWidth = metrics.width
-
-      if (testWidth > maxWidth && currentLine !== '') {
-        lines.push(currentLine)
-        currentLine = char
-      } else {
-        currentLine = testLine
-      }
+    // 将片段展开为字符数组（保留样式信息）
+    const charSegments: Array<{ char: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
+    segments.forEach(segment => {
+      segment.text.split('').forEach(char => {
+        charSegments.push({
+          char,
+          bold: segment.bold,
+          underline: segment.underline,
+          mark: segment.mark,
+          strikethrough: segment.strikethrough
+        })
+      })
     })
-    lines.push(currentLine)
+
+    // 按字符换行
+    let currentLine: Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
+    let currentLineText = ''
+    let currentLineWidth = 0
+    let currentStyle = null
+
+    charSegments.forEach((charSeg, index) => {
+      const char = charSeg.char
+      const style = {
+        bold: charSeg.bold,
+        underline: charSeg.underline,
+        mark: charSeg.mark,
+        strikethrough: charSeg.strikethrough
+      }
+
+      // 检查样式是否改变
+      const styleChanged = !currentStyle ||
+        currentStyle.bold !== style.bold ||
+        currentStyle.underline !== style.underline ||
+        currentStyle.mark !== style.mark ||
+        currentStyle.strikethrough !== style.strikethrough
+
+      // 设置字体以测量
+      const testFont = style.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+      context.font = testFont
+      const charWidth = context.measureText(char).width + spacing
+
+      // 如果样式改变或行宽超限，需要换行或开始新片段
+      if (styleChanged && currentLineText) {
+        // 保存当前片段
+        currentLine.push({ ...currentStyle, text: currentLineText })
+        currentLineText = ''
+      }
+
+      // 检查是否需要换行
+      if (currentLineWidth + charWidth > maxWidth && currentLine.length > 0) {
+        // 保存当前行
+        if (currentLineText) {
+          currentLine.push({ ...currentStyle, text: currentLineText })
+        }
+        lines.push(currentLine)
+        currentLine = []
+        currentLineText = ''
+        currentLineWidth = 0
+        currentStyle = null
+      }
+
+      // 添加字符到当前行
+      if (!currentStyle || styleChanged) {
+        currentStyle = { ...style }
+        if (currentLineText) {
+          currentLine.push({ ...currentStyle, text: currentLineText })
+          currentLineText = ''
+        }
+      }
+
+      currentLineText += char
+      currentLineWidth += charWidth
+    })
+
+    // 添加最后一行
+    if (currentLineText) {
+      currentLine.push({ ...currentStyle, text: currentLineText })
+    }
+    if (currentLine.length > 0) {
+      lines.push(currentLine)
+    }
+
     return lines
+  }
+
+  // 笔刷质感的高亮绘制（用于 ==text==）
+  const drawBrushMark = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, size: number) => {
+    const paddingX = Math.max(2, size * 0.12)
+    const paddingY = Math.max(1, size * 0.1)
+    const markHeight = size * 0.9
+    const startX = x - paddingX
+    const startY = y - markHeight + paddingY * 0.3
+    const markWidth = width + paddingX * 2
+
+    // 简单的可重复“随机”数，避免每次渲染抖动
+    const rand = (seed: number) => {
+      const s = Math.sin(seed * 12.9898) * 43758.5453
+      return s - Math.floor(s)
+    }
+
+    ctx.save()
+    ctx.globalAlpha = 0.9
+    const gradient = ctx.createLinearGradient(startX, startY, startX, startY + markHeight)
+    gradient.addColorStop(0, '#fff176')
+    gradient.addColorStop(1, '#ffd54f')
+    ctx.fillStyle = gradient
+
+    const roughness = Math.max(1.5, size * 0.06)
+    const topJitter = roughness * (0.5 + rand(startX + y))
+    const bottomJitter = roughness * (0.8 + rand(markWidth + y))
+
+    // 不规则多边形，模拟笔刷边缘
+    ctx.beginPath()
+    ctx.moveTo(startX, startY + topJitter)
+    ctx.lineTo(startX + markWidth, startY + topJitter * 0.7)
+    ctx.lineTo(startX + markWidth - roughness * rand(startX + markWidth), startY + markHeight - bottomJitter)
+    ctx.lineTo(startX + roughness * rand(y + markWidth), startY + markHeight + bottomJitter * 0.5)
+    ctx.closePath()
+    ctx.fill()
+
+    // 轻微覆涂，增加纹理层次
+    ctx.globalAlpha = 0.15
+    ctx.fillRect(startX + markWidth * 0.08, startY + markHeight * 0.3, markWidth * 0.35, roughness)
+    ctx.fillRect(startX + markWidth * 0.5, startY + markHeight * 0.65, markWidth * 0.28, roughness * 0.9)
+    ctx.restore()
   }
 
   // 处理每一段文本
   const paragraphs = digest.value.split('\n')
-  const allLines = []
+  const allLines: Array<Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }>> = []
   paragraphs.forEach(para => {
-    allLines.push(...wrapText(para))
+    if (para.trim()) {
+      const segments = parseMarkdown(para)
+      allLines.push(...wrapTextSegments(segments))
+    } else {
+      // 空行
+      allLines.push([])
+    }
   })
 
   // 计算行高和总高度
@@ -397,28 +572,86 @@ const drawCanvas = async (backgroundImage) => {
 
   // 绘制文本
   allLines.forEach(line => {
-    const chars = line.split('')
-    const spacing = letterSpacing.value / 50
+    if (line.length === 0) {
+      startY += lineHeightPx
+      return
+    }
 
-    // 计算这一行文本的总宽度
+    const spacing = letterSpacing.value / 50
+    let currentX = edgePadding.value
+
+    // 先计算整行宽度（用于居中对齐）
     let totalLineWidth = 0
-    chars.forEach(char => {
-      totalLineWidth += context.measureText(char).width + spacing
+    context.font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+    line.forEach(segment => {
+      const segmentFont = segment.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+      context.font = segmentFont
+      const chars = segment.text.split('')
+      chars.forEach(char => {
+        totalLineWidth += context.measureText(char).width + spacing
+      })
     })
     totalLineWidth = Math.min(totalLineWidth, canvas.width - (edgePadding.value * 2))
 
     // 根据对齐方式计算起始 X 坐标
-    let currentX
     if (textAlign.value === 'left') {
       currentX = edgePadding.value
     } else if (textAlign.value === 'center') {
       currentX = (canvas.width - totalLineWidth) / 2
     }
 
-    chars.forEach(char => {
-      context.fillText(char, currentX, startY)
-      currentX += context.measureText(char).width + spacing
+    // 绘制每个片段
+    line.forEach(segment => {
+      const segmentFont = segment.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+      context.font = segmentFont
+      context.fillStyle = textColor.value
+      context.textAlign = 'left'
+
+      const chars = segment.text.split('')
+      const segmentStartX = currentX
+      let segmentWidth = 0
+
+      // 先计算片段宽度
+      chars.forEach(char => {
+        segmentWidth += context.measureText(char).width + spacing
+      })
+
+      // 先绘制高亮背景（如果有）
+      if (segment.mark) {
+        const markWidth = Math.max(segmentWidth - spacing, 0)
+        drawBrushMark(context, segmentStartX, startY, markWidth, fontSize.value)
+        context.fillStyle = textColor.value
+      }
+
+      // 绘制文字
+      chars.forEach(char => {
+        context.fillText(char, currentX, startY)
+        const charWidth = context.measureText(char).width
+        currentX += charWidth + spacing
+      })
+
+      // 绘制下划线
+      if (segment.underline) {
+        context.strokeStyle = textColor.value
+        context.lineWidth = Math.max(1, fontSize.value / 20)
+        context.beginPath()
+        context.moveTo(segmentStartX, startY + 4) // 距离文字更远 2px（从 +2 改为 +4）
+        context.lineTo(segmentStartX + segmentWidth - spacing, startY + 4)
+        context.stroke()
+      }
+
+      // 绘制删除线
+      if (segment.strikethrough) {
+        context.strokeStyle = textColor.value
+        context.lineWidth = Math.max(1, fontSize.value / 20)
+        context.beginPath()
+        const strikeY = startY - fontSize.value * 0.3
+        context.moveTo(segmentStartX, strikeY)
+        context.lineTo(segmentStartX + segmentWidth - spacing, strikeY)
+        context.stroke()
+      }
     })
+
     startY += lineHeightPx
   })
 }
