@@ -15,14 +15,17 @@
     content="玉桃文飨轩,Markdown 转图片,文本转图片工具,书摘生成器,文字转长图,Markdown 一键转换,社交图片制作,读书笔记工具,文章配图工具,微信公众号配图,朋友圈文字转图,在线图片生成器,文字转精美图片" />
   <meta name="author" content="玉桃文飨轩" />
   <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://share.lovejade.cn/" />
 
   <!-- 社交媒体标签 -->
   <meta property="og:title" content="玉桃文飨轩 - 一键将文本转换为精美图片 | Markdown 转图片工具" />
   <meta property="og:description"
     content="玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。" />
   <meta property="og:image" content="https://share.lovejade.cn/screenshots/desktop.png" />
-  <meta property="og:url" content="hhttps://share.lovejade.cn/" />
+  <meta property="og:url" content="https://share.lovejade.cn/" />
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:site_name" content="玉桃文飨轩" />
 
   <!-- Twitter Card 标签 -->
   <meta name="twitter:card" content="summary_large_image" />
@@ -35,6 +38,8 @@
   <link rel="manifest" href="/manifest.json" />
   <meta name="theme-color" content="#ffffff" />
   <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="玉桃文飨轩" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
   <!-- 图标相关 -->
@@ -44,9 +49,13 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
   <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
 
-  <!-- DNS 预解析 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://www.googletagmanager.com" />
+  <!-- DNS 预解析和预连接 - 优化外部资源加载 -->
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+  <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+
+  <!-- 关键字体预加载 - 优化字体加载性能 -->
+  <link rel="preload" href="/assets/fonts/ShouJinTi.woff2" as="font" type="font/woff2" crossorigin />
 
   <!-- 结构化数据 -->
   <script type="application/ld+json">
@@ -54,34 +63,94 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "玉桃文飨轩",
+      "alternateName": "Markdown转图片工具",
+      "url": "https://share.lovejade.cn/",
       "description": "玉桃文飨轩，简单好用的在线文本工具；支持将 Markdown、Rich Text 等格式内容，快速转化为 PNG、PDF、HTML 等文件，并支持自定义设置、一键下载等功能。基于 Vue3 、 Vite 、 Pinia 、 TailwindCSS 、 TypeScript 构建。",
-      "applicationCategory": "工具软件",
+      "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
       "offers": {
         "@type": "Offer",
         "price": "0",
         "priceCurrency": "CNY"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "玉桃文飨轩"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "ratingCount": "1"
       }
     }
-    </script>
-
-  <!-- Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-YK4GP1073G"></script>
-  <script>
-    window.dataLayer = window.dataLayer || []
-    function gtag() { dataLayer.push(arguments) }
-    gtag('js', new Date())
-    gtag('config', 'G-YK4GP1073G')
   </script>
 
-  <script data-ad-client="ca-pub-8586652723015758" async
-    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-  <script type="module" crossorigin src="/assets/index-C88pw0Bu.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Czwm56hW.css">
+  <!-- Analytics - 异步加载优化 -->
+  <script>
+    // 延迟加载 Google Analytics
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-YK4GP1073G');
+    
+    // 延迟加载 GA 脚本
+    (function() {
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-YK4GP1073G';
+      // 页面加载完成后再加载分析脚本
+      if (document.readyState === 'complete') {
+        document.head.appendChild(script);
+      } else {
+        window.addEventListener('load', function() {
+          document.head.appendChild(script);
+        });
+      }
+    })();
+    
+    // 延迟加载 AdSense
+    window.addEventListener('load', function() {
+      var adScript = document.createElement('script');
+      adScript.async = true;
+      adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+      adScript.setAttribute('data-ad-client', 'ca-pub-8586652723015758');
+      document.head.appendChild(adScript);
+    });
+  </script>
+
+  <!-- 初始加载样式 - 优化 FCP -->
+  <style>
+    /* 关键 CSS - 优化首屏渲染 */
+    #app {
+      min-height: 100vh;
+    }
+    /* 防止 FOUC (Flash of Unstyled Content) */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    /* 加载指示器 */
+    .app-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      font-size: 18px;
+      color: #666;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/js/index-D2DXZJP-.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/js/vue-vendor-BBGCU1Wn.js">
+  <link rel="stylesheet" crossorigin href="/assets/css/index-BIwmERjI.css">
 </head>
 
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <div class="app-loading">加载中...</div>
+  </div>
 </body>
 
 </html>
