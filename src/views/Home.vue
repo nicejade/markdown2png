@@ -434,6 +434,11 @@ async function onSave2Image() {
 		.editor {
 			color: #f2f2f2;
 			background-color: transparent;
+
+			:deep(pre) {
+				color: #f2f2f2 !important;
+				background-color: rgba(255, 255, 255, 0.1) !important;
+			}
 		}
 	}
 }
@@ -507,6 +512,10 @@ async function onSave2Image() {
 		.editor {
 			color: #f2f2f2;
 			background-color: transparent;
+
+			:deep(pre) {
+				color: #333333;
+			}
 		}
 	}
 }
@@ -548,6 +557,11 @@ async function onSave2Image() {
 			background-color: rgba(255, 255, 255, 0.15);
 			border-radius: 1rem;
 			backdrop-filter: blur(8px);
+
+			:deep(pre) {
+				color: #ffffff !important;
+				background-color: rgba(0, 0, 0, 0.3) !important;
+			}
 		}
 	}
 }
@@ -596,6 +610,11 @@ async function onSave2Image() {
 			background-color: rgba(0, 0, 0, 0.3);
 			border-radius: 0.75rem;
 			backdrop-filter: blur(4px);
+
+			:deep(pre) {
+				color: #e8eaf6 !important;
+				background-color: rgba(255, 255, 255, 0.1) !important;
+			}
 		}
 	}
 }
@@ -702,6 +721,11 @@ async function onSave2Image() {
 			background-color: rgba(118, 75, 162, 0.4);
 			border-radius: 1rem;
 			backdrop-filter: blur(6px);
+
+			:deep(pre) {
+				color: #ffffff !important;
+				background-color: rgba(0, 0, 0, 0.3) !important;
+			}
 		}
 	}
 }
@@ -759,6 +783,11 @@ async function onSave2Image() {
 			border-radius: 0.25rem;
 			box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
 			text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+
+			:deep(pre) {
+				color: #00ffff !important;
+				background-color: rgba(0, 0, 0, 0.2) !important;
+			}
 		}
 	}
 }
