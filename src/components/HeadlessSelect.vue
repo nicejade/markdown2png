@@ -43,7 +43,8 @@ import {
 	ListboxOptions,
 	ListboxOption,
 } from '@headlessui/vue'
-import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid'
+import { CheckIcon } from '@heroicons/vue/24/solid'
+import { ChevronUpDownIcon as SelectorIcon } from '@heroicons/vue/24/outline'
 
 interface Item {
 	id: string

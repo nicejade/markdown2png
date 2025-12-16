@@ -4,7 +4,10 @@
 set -e
 
 # 生成静态文件
-yarn build-only
+pnpm build-only
+
+# 生成 sitemap.xml
+pnpm generate:sitemap
 
 # 进入生成的文件夹
 cd ./dist

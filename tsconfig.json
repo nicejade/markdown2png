@@ -1,10 +1,14 @@
 {
-	"include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+	"extends": "@vue/tsconfig/tsconfig.dom.json",
+	"include": ["env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+	"exclude": ["node_modules", "dist", "src/**/*.js", "scripts/**/*"],
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"]
-		}
+		},
+		"allowJs": true,
+		"checkJs": false
 	},
 
 	"references": [

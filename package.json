@@ -1,20 +1,22 @@
 {
   "name": "markdown2png",
-  "version": "1.6.0",
+  "version": "1.8.0",
   "packageManager": "pnpm@9.14.2",
   "scripts": {
     "start": "pnpm vite",
     "dev": "vite",
-    "build": "run-p type-check build-only",
+    "build": "run-p type-check build-only && pnpm generate:sitemap",
     "deploy": "bash deploy.sh",
     "preview": "vite preview --port 4173",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit"
+    "type-check": "vue-tsc --noEmit",
+    "generate:sitemap": "node scripts/generate-sitemap.js",
+    "analyze": "vite-bundle-visualizer"
   },
   "dependencies": {
     "@headlessui/tailwindcss": "^0.2.0",
     "@headlessui/vue": "^1.7.16",
-    "@heroicons/vue": "^1.0.6",
+    "@heroicons/vue": "^2.1.1",
     "@silvia-odwyer/photon": "^0.3.2",
     "@zumer/snapdom": "^1.9.7",
     "html2canvas": "^1.4.1",
