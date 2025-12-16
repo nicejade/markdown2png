@@ -33,14 +33,14 @@ const editor = ref(null) as any
 let visble = ref(false) as any
 const isCopying = ref(false) as any
 const isSaving = ref(false) as any
-let imageBlob = null
+let imageBlob: Blob | null = null
 let isGeneratingBlob = false
 let genBlobPromise: Promise<void> | null = null
 // 添加缓存相关变量
 let lastContentHash = ''
 const { proxy } = getCurrentInstance() as any
 
-// snapdom 配置选项
+// snapdom options
 const snapdomOptions = {
 	backgroundColor: '#ffffff',
 	quality: 1,
@@ -132,8 +132,8 @@ async function generateBlob() {
 
 	isGeneratingBlob = true
 	genBlobPromise = new Promise(async (resolve, reject) => {
-		const container = document.getElementById('container')
-		const editorEl: HTMLInputElement = container.querySelector('#editor')
+		const container = document.getElementById('container')!
+		const editorEl = container.querySelector('#editor') as HTMLInputElement
 		try {
 			// 预处理：确保所有字体和图片已加载
 			await Promise.all([
@@ -166,7 +166,7 @@ async function generateBlob() {
 			container.offsetHeight
 
 			// 使用 snapdom 生成图片
-			imageBlob = await snapdom.toBlob(container, snapdomOptions)
+			imageBlob = await snapdom.toBlob(container, snapdomOptions as any)
 
 			// 恢复原始样式
 			Object.assign(container.style, originalStyles)
