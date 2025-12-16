@@ -40,22 +40,22 @@ export const SIZES_ARR = [
 	{
 		name: '电脑端',
 		id: 'laptop',
-		style: 'width: 50rem;',
+		style: 'width: 50rem; --wrapper-padding: 3rem;',
 	},
 	{
 		name: '移动端',
 		id: 'mobile',
-		style: 'width: 20rem;',
+		style: 'width: 20rem; --wrapper-padding: 1.2rem;',
 	},
 	{
 		name: '平板端',
 		id: 'tablet',
-		style: 'width: 37.5rem;',
+		style: 'width: 37.5rem; --wrapper-padding: 2rem;',
 	},
 	{
 		name: '超级屏',
 		id: 'desktop',
-		style: 'width: 60rem;',
+		style: 'width: 60rem; --wrapper-padding: 4rem;',
 	},
 ]
 

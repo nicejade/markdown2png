@@ -363,7 +363,7 @@ async function onSave2Image() {
 	transition-delay: 2s;
 
 	.warpper {
-		padding: 3rem;
+		padding: var(--wrapper-padding, 3rem);
 		box-shadow: 0 2px 5px rgb(0 0 25 / 10%), 0 5px 75px 1px rgb(0 0 50 / 20%);
 	}
 
