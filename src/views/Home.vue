@@ -547,7 +547,7 @@ async function onSave2Image() {
 }
 
 .ocean-box {
-	background-image: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+	background-image: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 50%, #06b6d4 100%);
 
 	.ocean {
 		background-color: transparent;
