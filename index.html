@@ -81,7 +81,7 @@
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "5",
-        "ratingCount": "1"
+        "ratingCount": "11"
       }
     }
   </script>
@@ -89,68 +89,42 @@
   <!-- Analytics - 异步加载优化 -->
   <script>
     // 延迟加载 Google Analytics
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
+    window.dataLayer = window.dataLayer || []
+    function gtag() { dataLayer.push(arguments) }
+    gtag('js', new Date())
     gtag('config', 'G-YK4GP1073G');
-    
+
     // 延迟加载 GA 脚本
-    (function() {
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-YK4GP1073G';
+    (function () {
+      var script = document.createElement('script')
+      script.async = true
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-YK4GP1073G'
       // 页面加载完成后再加载分析脚本
       if (document.readyState === 'complete') {
-        document.head.appendChild(script);
+        document.head.appendChild(script)
       } else {
-        window.addEventListener('load', function() {
-          document.head.appendChild(script);
-        });
+        window.addEventListener('load', function () {
+          document.head.appendChild(script)
+        })
       }
-    })();
-    
+    })()
+
     // 延迟加载 AdSense
-    window.addEventListener('load', function() {
-      var adScript = document.createElement('script');
-      adScript.async = true;
-      adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
-      adScript.setAttribute('data-ad-client', 'ca-pub-8586652723015758');
-      document.head.appendChild(adScript);
+    window.addEventListener('load', function () {
+      var adScript = document.createElement('script')
+      adScript.async = true
+      adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
+      adScript.setAttribute('data-ad-client', 'ca-pub-8586652723015758')
+      document.head.appendChild(adScript)
     });
   </script>
-
-  <!-- 初始加载样式 - 优化 FCP -->
-  <style>
-    /* 关键 CSS - 优化首屏渲染 */
-    #app {
-      min-height: 100vh;
-    }
-    /* 防止 FOUC (Flash of Unstyled Content) */
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    /* 加载指示器 */
-    .app-loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      font-size: 18px;
-      color: #666;
-    }
-  </style>
-  <script type="module" crossorigin src="/assets/js/index-zm-PZ3Ul.js"></script>
+  <script type="module" crossorigin src="/assets/js/index-3RYmobiV.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/js/vue-vendor-BBGCU1Wn.js">
-  <link rel="stylesheet" crossorigin href="/assets/css/index-BIwmERjI.css">
+  <link rel="stylesheet" crossorigin href="/assets/css/index-BJzMsxB5.css">
 </head>
 
 <body>
-  <div id="app">
-    <div class="app-loading">加载中...</div>
-  </div>
+  <div id="app"></div>
 </body>
 
 </html>
