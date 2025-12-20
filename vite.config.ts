@@ -1,13 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import wasm from 'vite-plugin-wasm'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import * as path from 'path'
 
 export default defineConfig({
   plugins: [
     vue(),
-    wasm(),
     createSvgIconsPlugin({
       // 指定需要缓存的图标文件夹
       iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
@@ -33,24 +31,19 @@ export default defineConfig({
         manualChunks: {
           // 将 Vue 相关库单独打包
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          // 将大型第三方库单独打包
-          'markdown-vendor': ['marked', 'html2canvas'],
-          // 图像处理相关
-          'image-vendor': ['@silvia-odwyer/photon', '@zumer/snapdom'],
           // UI 组件库
-          'ui-vendor': ['@headlessui/vue', '@heroicons/vue']
+          'ui-vendor': ['@headlessui/vue', '@heroicons/vue'],
+          // 核心插件（Markdown 解析与 DOM 处理）
+          'libs-vendor': ['marked', '@zumer/snapdom']
         }
       }
     },
-    // 压缩选项
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        // 生产环境移除 console
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    // 生产环境压缩配置
+    minify: 'esbuild'
+  },
+  // esbuild 特有配置：移除 console 和 debugger
+  esbuild: {
+    drop: ['console', 'debugger']
   },
   resolve: {
     // 配置路径别名
@@ -74,8 +67,7 @@ export default defineConfig({
       'pinia',
       'marked',
       '@headlessui/vue'
-    ],
-    exclude: ['@silvia-odwyer/photon']
+    ]
   },
   // 性能优化
   server: {

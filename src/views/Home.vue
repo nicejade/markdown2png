@@ -8,7 +8,6 @@ import Switch from './../components/Switch.vue'
 import Spinner from './../components/Spinner.vue'
 import HeadlessSelect from './../components/HeadlessSelect.vue'
 import Recommand from './../components/Recommand.vue'
-import PreviewDialog from './../components/PreviewDialog.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
 import { THEME_ARR, SIZES_ARR } from './../helper/constant'
@@ -272,11 +271,6 @@ async function onCopyImage() {
 	}
 }
 
-function onPreviewDialogChange(state: boolean) {
-	visble.value = state
-	proxy.$reortGaEvent('preview-dialog-change', 'main')
-}
-
 async function onSave2Image() {
 	if (isSaving.value) return
 	isSaving.value = true
@@ -340,9 +334,6 @@ async function onSave2Image() {
 		</div>
 		<div class="flex flex-row items-center justify-between w-full px-0 py-4 space-x-6 md:justify-evenly md:space-x-0"
 			role="group">
-			<button class="general-btn md:hidden" @click="onPreviewImage">
-				预览图片
-			</button>
 			<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
 				<Spinner v-if="isCopying" :size="20" />
 				<span>{{ isCopying ? '复制中...' : '复制图片' }}</span>
@@ -353,7 +344,6 @@ async function onSave2Image() {
 			</button>
 		</div>
 	</div>
-	<PreviewDialog :visble="visble" @change="onPreviewDialogChange" />
 	<Recommand />
 </template>
 

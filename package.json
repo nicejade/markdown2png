@@ -17,9 +17,7 @@
     "@headlessui/tailwindcss": "^0.2.0",
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.1.1",
-    "@silvia-odwyer/photon": "^0.3.2",
     "@zumer/snapdom": "^1.9.7",
-    "html2canvas": "^1.4.1",
     "marked": "^10.0.0",
     "pinia": "^2.1.7",
     "vue": "^3.3.9",
@@ -38,7 +36,6 @@
     "typescript": "~5.3.2",
     "vite": "^5.0.2",
     "vite-plugin-svg-icons": "^2.0.1",
-    "vite-plugin-wasm": "^3.2.2",
     "vue-tsc": "^1.8.22"
   }
 }
