@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { DEFAULT_TEXT, CURRENT_CONTENT, HAVE_DATE, CURRENT_THEME, CURRENT_SIZE, THEME_ARR, SIZES_ARR } from './../helper/constant'
+import { DEFAULT_TEXT, CURRENT_CONTENT, HAVE_DATE, HAVE_WATERMARK, CURRENT_THEME, CURRENT_SIZE, THEME_ARR, SIZES_ARR } from './../helper/constant'
 
 export const useContentStore = defineStore({
   id: 'content',
@@ -8,6 +8,7 @@ export const useContentStore = defineStore({
     const defaultSizeIdx = window.innerWidth >= 960 ? 'laptop' : 'mobile'
     return {
       isWithDate: !!localStorage.getItem(HAVE_DATE),
+      isWithWatermark: !!localStorage.getItem(HAVE_WATERMARK),
       content: localStorage.getItem(CURRENT_CONTENT) || DEFAULT_TEXT,
       currentTheme: localStorage.getItem(CURRENT_THEME) || THEME_ARR[0].id,
       currentSize: localStorage.getItem(CURRENT_SIZE) || defaultSizeIdx,
@@ -27,6 +28,11 @@ export const useContentStore = defineStore({
     updateWithDate(isWith: boolean) {
       this.isWithDate = isWith
       localStorage.setItem(HAVE_DATE, isWith ? '1' : '')
+    },
+
+    updateWithWatermark(isWith: boolean) {
+      this.isWithWatermark = isWith
+      localStorage.setItem(HAVE_WATERMARK, isWith ? '1' : '')
     },
 
     updateCurrentTheme(id: string) {

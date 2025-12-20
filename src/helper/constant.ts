@@ -2,6 +2,8 @@ export const CURRENT_CONTENT = 'current-content'
 
 export const HAVE_DATE = 'is-with-date'
 
+export const HAVE_WATERMARK = 'is-with-watermark'
+
 export const CURRENT_THEME = 'current-theme'
 
 export const CURRENT_SIZE = 'current-size'

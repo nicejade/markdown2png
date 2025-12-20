@@ -55,7 +55,8 @@ function generateContentHash() {
 	const theme = currentTheme.value
 	const size = currentSize.value
 	const withDate = contentStore.isWithDate
-	return btoa(encodeURIComponent(`${content}-${theme}-${size}-${withDate}`)).slice(0, 16)
+	const withWatermark = contentStore.isWithWatermark
+	return btoa(encodeURIComponent(`${content}-${theme}-${size}-${withDate}-${withWatermark}`)).slice(0, 16)
 }
 
 onMounted(() => {
@@ -76,14 +77,23 @@ const currentThemeObj = computed(() => {
 function updatePreview() {
 	if (!editor.value) return
 
-	let dateDomNode: any = document.getElementById('date-time')
-	if (dateDomNode) return dateDomNode.remove()
+	const dateDomNode = document.getElementById('date-time')
+	if (dateDomNode) dateDomNode.remove()
 
-	if (!contentStore.isWithDate) return
+	const watermarkDomNode = document.getElementById('home-watermark')
+	if (watermarkDomNode) watermarkDomNode.remove()
+
 	if (!editor.value.innerHTML) return
 
-	dateDomNode = `<p id='date-time' style='text-align: right;'><time>${getCurrentDate()}</time></p>`
-	editor.value.innerHTML += dateDomNode
+	if (contentStore.isWithDate) {
+		const dateHtml = `<p id='date-time' style='text-align: right;'><time>${getCurrentDate()}</time></p>`
+		editor.value.innerHTML += dateHtml
+	}
+
+	if (contentStore.isWithWatermark) {
+		const watermarkHtml = `<p id='home-watermark' style='text-align: center;' class='rainbow-text home-watermark font-bold ${currentThemeObj.value.id}'>「玉桃文飨轩」</p>`
+		editor.value.innerHTML += watermarkHtml
+	}
 }
 
 function switch2preview() {
@@ -203,8 +213,17 @@ function handleDate(value: boolean) {
 	proxy.$reortGaEvent('home-date-change', 'main')
 }
 
+function handleWatermark(value: boolean) {
+	contentStore.updateWithWatermark(value)
+	updatePreview()
+	imageBlob = null // 清除缓存
+	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-watermark-change', 'main')
+}
+
 function handleSelectTheme(item: Theme) {
 	contentStore.updateCurrentTheme(item.id)
+	updatePreview()
 	imageBlob = null // 清除缓存
 	setTimeout(preGenerateBlob, 100)
 	proxy.$reortGaEvent('home-theme', 'main')
@@ -213,6 +232,7 @@ function handleSelectTheme(item: Theme) {
 
 function handleSelectSize(item: Size) {
 	contentStore.updateCurrentSize(item.id)
+	updatePreview()
 	imageBlob = null // 清除缓存
 	setTimeout(preGenerateBlob, 100)
 	proxy.$reortGaEvent('home-size', 'main')
@@ -313,35 +333,45 @@ async function onSave2Image() {
 		</div>
 	</section>
 
-	<div class="flex flex-col items-center w-full px-6 py-4 mx-auto mt-8 mb-4 bg-white rounded-md shadow-lg operate-area">
+	<div class="flex flex-col items-center w-full px-6 py-4 mx-auto mt-8 mb-4 space-y-2 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust md:justify-evenly">
 				<div class="flex flex-col items-center justify-between h-20">
-					<p class="pb-2 font-medium text-gray-400">选择主题</p>
+					<p class="font-medium text-gray-400">选择主题</p>
 					<HeadlessSelect className="w-24" :sourceArr="THEME_ARR" :defaultId="currentTheme"
 						@selected="handleSelectTheme" />
 				</div>
-				<div class="flex flex-col items-center justify-between h-20 select-zize">
-					<p class="pb-2 font-medium text-gray-400">选择尺寸</p>
+				<div class="flex flex-col items-center justify-between h-20 md:hidden">
+					<p class="font-medium text-gray-400">选择尺寸</p>
 					<HeadlessSelect className="w-28" :sourceArr="SIZES_ARR" :defaultId="currentSize"
 						@selected="handleSelectSize" />
 				</div>
-				<div class="flex flex-col items-center justify-between w-24 h-20">
-					<p class="pb-2 font-medium text-gray-400">日期</p>
+				<div class="flex flex-col items-center justify-between w-20 h-20">
+					<p class="font-medium text-gray-400">日期</p>
 					<Switch :state="contentStore.isWithDate" @check="handleDate" class="block"></Switch>
 				</div>
 			</div>
 		</div>
 		<div class="flex flex-row items-center justify-between w-full px-0 py-4 space-x-6 md:justify-evenly md:space-x-0"
 			role="group">
-			<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
-				<Spinner v-if="isCopying" :size="20" />
-				<span>{{ isCopying ? '复制中...' : '复制图片' }}</span>
-			</button>
-			<button class="space-x-1 general-btn" :disabled="isSaving" @click="onSave2Image">
-				<Spinner v-if="isSaving" :size="20" />
-				<span>{{ isSaving ? '保存中...' : '保存图片' }}</span>
-			</button>
+			<div class="flex flex-col items-center justify-between h-20">
+				<p class="font-medium text-gray-400">选择操作</p>
+				<button class="space-x-1 general-btn" :disabled="isCopying" @click="onCopyImage">
+					<Spinner v-if="isCopying" :size="20" />
+					<span>{{ isCopying ? '复制中...' : '复制图片' }}</span>
+				</button>
+			</div>
+			<div class="flex flex-col items-center justify-between h-20">
+				<p class="font-medium text-gray-400">选择操作</p>
+				<button class="space-x-1 general-btn" :disabled="isSaving" @click="onSave2Image">
+					<Spinner v-if="isSaving" :size="20" />
+					<span>{{ isSaving ? '保存中...' : '保存图片' }}</span>
+				</button>
+			</div>
+			<div class="flex flex-col items-center justify-between w-24 h-20 md:hidden">
+				<p class="font-medium text-gray-400">水印</p>				
+				<Switch :state="contentStore.isWithWatermark" @check="handleWatermark" class="block" />
+			</div>
 		</div>
 	</div>
 	<Recommand />
@@ -769,6 +799,30 @@ async function onSave2Image() {
 	}
 }
 
+:deep(.home-watermark) {
+	background-color: transparent;
+	text-align: center;
+	font-size: 1rem;
+	margin-top: 1rem;
+	opacity: 0.9;
+
+	&.note,
+	&.classic,
+	&.antiquity,
+	&.minimal{
+		color: #1f2937;
+	}
+
+	&.dark,
+	&.official,
+	&.ocean,
+	&.starry,
+	&.purple,
+	&.tech {
+		color: #e5e7eb;
+	}
+}
+
 .operate-area {
 	width: 40rem;
 
@@ -796,10 +850,6 @@ async function onSave2Image() {
 
 		.mobile-w-full+.mobile-w-full {
 			margin-top: 1rem;
-		}
-
-		.select-zize {
-			display: none;
 		}
 	}
 }
