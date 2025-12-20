@@ -309,7 +309,7 @@ async function onSave2Image() {
 	<section class="flex justify-center w-full m-auto">
 		<div id="container" class="container" style="text-autospace: normal;" :style="currentSizeObj.style">
 			<div :class="`${currentThemeObj.id}-box warpper`">
-				<div class="bg exclude-from-image" v-if="currentThemeObj.id === 'official'"></div>
+				<!-- <div class="bg" v-if="currentThemeObj.id === 'official'"></div> -->
 				<div class="content" :class="currentThemeObj.id">
 					<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
 						contenteditable="true">
@@ -493,19 +493,6 @@ async function onSave2Image() {
 				#04629d 0,
 				#037dcc 49.48%,
 				#0289e0 100%);
-	}
-
-	.bg {
-		position: absolute;
-		z-index: -1;
-		left: 0;
-		top: -6.6rem;
-		right: 0;
-		bottom: 0;
-		background: url(./../assets/images/official.svg);
-		background-size: 80% auto;
-		background-position: center top;
-		background-repeat: no-repeat;
 	}
 
 	.official {
