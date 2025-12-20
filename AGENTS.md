@@ -61,6 +61,8 @@ bash deploy.sh    # Deploy to GitHub Pages
 
 ### Development Standards
 - **Code Comments**: All comments must be in English
+- **Naming Conventions**: Follow best practices for naming - use descriptive, semantic names for variables, functions, and components
+- **Code Quality**: Write clean, maintainable code following industry best practices and conventions
 - **Code Simplicity**: Prefer simple and straightforward implementations, avoid over-engineering
 - **Change Documentation**: After completing features, changes must be documented in `CHANGELOG.md`
 
