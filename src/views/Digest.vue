@@ -280,7 +280,14 @@ watch(
   }
 )
 
-onMounted(() => {
+onMounted(async () => {
+  // 确保 canvas 元素已经挂载
+  if (!canvasRef.value) {
+    console.error('Canvas 元素未找到')
+    toastStore.error('页面初始化失败，请刷新重试')
+    return
+  }
+
   // 从 localStorage 中加载用户保存的背景图片（Data URL 列表）
   try {
     const saved = getStorageItem(BACKGROUNDS_STORAGE_KEY)
@@ -298,7 +305,29 @@ onMounted(() => {
   const selectedRatioObj = ratios.find(r => r.id === selectedRatio.value) || ratios[0]
   updateCanvasSize(selectedRatioObj)
 
-  ctx.value = canvasRef.value.getContext('2d')
+  // 获取 canvas 上下文
+  try {
+    ctx.value = canvasRef.value.getContext('2d')
+    if (!ctx.value) {
+      throw new Error('无法获取 Canvas 2D 上下文')
+    }
+  } catch (e) {
+    console.error('Canvas 初始化失败:', e)
+    toastStore.error('Canvas 初始化失败，请刷新重试')
+    return
+  }
+
+  // 预加载字体（可选，不阻塞渲染）
+  try {
+    await Promise.race([
+      document.fonts.ready,
+      new Promise(resolve => setTimeout(resolve, 1000))
+    ])
+  } catch (e) {
+    console.warn('字体预加载失败:', e)
+  }
+
+  // 加载背景图片
   loadBackgroundImage()
 })
 
