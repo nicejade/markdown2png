@@ -91,7 +91,7 @@ function updatePreview() {
 	}
 
 	if (contentStore.isWithWatermark) {
-		const watermarkHtml = `<p id='home-watermark' style='text-align: center;' class='rainbow-text home-watermark font-bold ${currentThemeObj.value.id}'>「玉桃文飨轩」</p>`
+		const watermarkHtml = `<p id='home-watermark' style='text-align: center;padding-bottom: 1rem;' class='rainbow-text home-watermark font-bold ${currentThemeObj.value.id}'>「玉桃文飨轩」</p>`
 		editor.value.innerHTML += watermarkHtml
 	}
 }
@@ -803,7 +803,7 @@ async function onSave2Image() {
 	background-color: transparent;
 	text-align: center;
 	font-size: 1rem;
-	margin-top: 1rem;
+	margin: 0;
 	opacity: 0.9;
 
 	&.note,
