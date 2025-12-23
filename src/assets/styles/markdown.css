@@ -15,9 +15,13 @@
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   font-size: var(--markdown-font-size, 1rem);
   line-height: 1.6;
-  word-wrap: break-word;
   padding: 0;
-  text-align: left;
+  /* 优化中英文混排的换行与对齐效果 */
+  text-align: justify;
+  text-justify: inter-character;
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
   -webkit-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
   color: #161823;

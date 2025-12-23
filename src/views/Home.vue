@@ -368,7 +368,7 @@ async function onSave2Image() {
 					<span>{{ isSaving ? '保存中...' : '保存图片' }}</span>
 				</button>
 			</div>
-			<div class="flex flex-col items-center justify-between w-24 h-20 md:hidden">
+			<div class="flex flex-col items-center justify-between w-20 h-20 md:hidden">
 				<p class="font-medium text-gray-400">水印</p>				
 				<Switch :state="contentStore.isWithWatermark" @check="handleWatermark" class="block" />
 			</div>
