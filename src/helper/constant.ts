@@ -47,7 +47,7 @@ export const SIZES_ARR = [
 	{
 		name: '移动端',
 		id: 'mobile',
-		style: 'width: 20rem; --wrapper-padding: 1.2rem;',
+		style: 'width: 20rem; --wrapper-padding: 1.2rem; --markdown-font-size: 0.9rem;',
 	},
 	{
 		name: '平板端',

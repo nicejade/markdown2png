@@ -13,7 +13,7 @@
 .markdown {
   font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
     sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
-  font-size: 1rem;
+  font-size: var(--markdown-font-size, 1rem);
   line-height: 1.6;
   word-wrap: break-word;
   padding: 0;
@@ -44,7 +44,7 @@
 .markdown h5,
 .markdown h6 {
   margin-top: 1em;
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
   font-weight: bold;
   line-height: 1.4;
 }
@@ -57,39 +57,39 @@
 .markdown table,
 .markdown pre {
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 1em;
 }
 
 .markdown h1 {
-  margin: 1rem 0;
+  margin: 1em 0;
   padding: 0;
-  font-size: 1.8rem;
-  line-height: 2rem;
+  font-size: 1.8em;
+  line-height: 2em;
 }
 
 .markdown h2 {
-  font-size: 1.6rem;
-  line-height: 1.8rem;
+  font-size: 1.6em;
+  line-height: 1.8em;
 }
 
 .markdown h3 {
-  font-size: 1.4rem;
-  line-height: 1.6rem;
+  font-size: 1.4em;
+  line-height: 1.6em;
 }
 
 .markdown h4 {
-  font-size: 1.25rem;
-  line-height: 1.4rem;
+  font-size: 1.25em;
+  line-height: 1.4em;
 }
 
 .markdown h5 {
-  font-size: 1.125rem;
-  line-height: 1.2rem;
+  font-size: 1.125em;
+  line-height: 1.2em;
 }
 
 .markdown h6 {
-  font-size: 1.125rem;
-  line-height: 1.2rem;
+  font-size: 1.125em;
+  line-height: 1.2em;
   color: #777777;
 }
 
