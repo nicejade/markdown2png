@@ -221,12 +221,11 @@ const fontWeights = [
 const fontFamilys = [
   { id: 'system-ui', name: '系统默认' },
   { id: 'Noto Sans SC', name: '思源黑体' },
-  { id: 'ShouJinTi', name: '瘦金体' },
+  { id: 'ChillKai', name: '寒蝉正楷' },
   { id: 'Playfair Display', name: 'Playfair Display' },
   { id: 'Montserrat', name: 'Montserrat' },
   { id: 'Dancing Script', name: 'Dancing Script' },
   { id: 'Huiwen-Fangsong', name: '汇文仿宋' },
-  { id: 'ChillKai', name: '寒蝉正楷' },
   { id: 'PING FANG ZHUI FENG', name: '平方追风' },
   { id: 'PING FANG SHAO HUA', name: '手写韶华' },
 ]
@@ -855,26 +854,9 @@ input[type="range"]::-webkit-slider-thumb {
 .animate-shimmer {
   animation: shimmer 1.5s infinite;
 }
-
-@font-face {
-  font-family: 'ShouJinTi';
-  font-style: normal;
-  font-weight: 500;
-  font-display: block;
-  src: url('./../assets/fonts/ShouJinTi.woff2') format('woff2');
-  unicode-range: U+2E80-2EFF,
-    U+2F00-2FDF,
-    U+2FF0-2FFF,
-    U+3000-303F,
-    U+31C0-31EF,
-    U+3200-4DBF,
-    U+4E00-9FFF,
-    U+F900-FAFF,
-    U+FE30-FE4F;
-}
 </style>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Dancing+Script:wght@400..700&display=swap');
 @import url('https://static.zeoseven.com/zsft/440/main/result.css');
 @import url('https://static.zeoseven.com/zsft/5/main/result.css');
