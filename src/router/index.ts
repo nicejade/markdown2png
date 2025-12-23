@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import Digest from '../views/Digest.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,7 @@ const router = createRouter({
     {
       path: '/digest',
       name: 'digest',
-      component: () => import('../views/Digest.vue'),
+      component: Digest,
       meta: {
         title: '书摘模式 - 玉桃文飨轩 | 精美书摘图片生成器',
         description: '使用玉桃文飨轩的书摘模式，将您的读书笔记和精彩书摘转换为精美的分享图片。支持多种排版样式和背景选择。',
