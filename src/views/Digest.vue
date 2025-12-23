@@ -858,8 +858,8 @@ input[type="range"]::-webkit-slider-thumb {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Dancing+Script:wght@400..700&display=swap');
-@import url('https://static.zeoseven.com/zsft/440/main/result.css');
-@import url('https://static.zeoseven.com/zsft/5/main/result.css');
-@import url('https://static.zeoseven.com/zsft/495/main/result.css');
-@import url('https://static.zeoseven.com/zsft/157/main/result.css');
+@import url('https://fontsapi.zeoseven.com/440/main/result.css');
+@import url('https://fontsapi.zeoseven.com/5/main/result.css');
+@import url('https://fontsapi.zeoseven.com/495/main/result.css');
+@import url('https://fontsapi.zeoseven.com/157/main/result.css');
 </style>
