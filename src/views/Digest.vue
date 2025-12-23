@@ -222,6 +222,9 @@ const fontFamilys = [
   { id: 'system-ui', name: '系统默认' },
   { id: 'Noto Sans SC', name: '思源黑体' },
   { id: 'ShouJinTi', name: '瘦金体' },
+  { id: 'Playfair Display', name: 'Playfair Display' },
+  { id: 'Montserrat', name: 'Montserrat' },
+  { id: 'Dancing Script', name: 'Dancing Script' },
   { id: 'Huiwen-Fangsong', name: '汇文仿宋' },
   { id: 'ChillKai', name: '寒蝉正楷' },
   { id: 'PING FANG ZHUI FENG', name: '平方追风' },
@@ -872,7 +875,7 @@ input[type="range"]::-webkit-slider-thumb {
 </style>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Dancing+Script:wght@400..700&display=swap');
 @import url('https://static.zeoseven.com/zsft/440/main/result.css');
 @import url('https://static.zeoseven.com/zsft/5/main/result.css');
 @import url('https://static.zeoseven.com/zsft/495/main/result.css');
