@@ -705,12 +705,17 @@ async function onSave2Image() {
 }
 
 .purple-box {
-	background-image: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+	background-image: 
+		radial-gradient(circle at 20% 80%, rgba(186, 85, 211, 0.15) 0%, transparent 50%),
+		radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.12) 0%, transparent 50%),
+		linear-gradient(135deg, #8b5cf6 0%, #a855f7 25%, #c026d3 50%, #d946ef 75%, #f0abfc 100%);
 
 	.purple {
 		background-color: transparent;
 		position: relative;
+		overflow: hidden;
 
+		/* Floating particles effect */
 		&::before {
 			content: '';
 			position: absolute;
@@ -718,34 +723,63 @@ async function onSave2Image() {
 			left: -50%;
 			width: 200%;
 			height: 200%;
-			background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-			background-size: 50px 50px;
-			animation: float 20s linear infinite;
+			background-image:
+				radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 1px),
+				radial-gradient(circle, rgba(240, 171, 252, 0.6) 1px, transparent 1px);
+			background-size: 80px 80px, 120px 120px;
+			background-position: 0 0, 40px 60px;
+			opacity: 0.4;
+			z-index: 1;
+		}
+
+		/* Dreamy mist effect */
+		&::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: 
+				radial-gradient(ellipse at 30% 40%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+				radial-gradient(ellipse at 70% 60%, rgba(217, 70, 239, 0.12) 0%, transparent 45%),
+				radial-gradient(ellipse at 50% 80%, rgba(240, 171, 252, 0.1) 0%, transparent 50%);
+			z-index: 0;
 		}
 
 		.editor {
+			position: relative;
+			z-index: 2;
 			color: #ffffff;
-			background-color: rgba(118, 75, 162, 0.4);
-			border-radius: 1rem;
-			backdrop-filter: blur(6px);
+			background: linear-gradient(135deg, 
+				rgba(139, 92, 246, 0.25) 0%, 
+				rgba(168, 85, 247, 0.30) 50%,
+				rgba(192, 38, 211, 0.25) 100%);
+			border-radius: 1.25rem;
+			backdrop-filter: blur(12px) saturate(1.2);
+			box-shadow: 
+				0 8px 32px rgba(139, 92, 246, 0.15),
+				inset 0 1px 0 rgba(255, 255, 255, 0.15),
+				inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+			border: 1px solid rgba(255, 255, 255, 0.18);
 
 			:deep(pre) {
-				color: #ffffff !important;
-				background-color: rgba(0, 0, 0, 0.3) !important;
+				color: #f3e8ff !important;
+				background: linear-gradient(135deg,
+					rgba(88, 28, 135, 0.35) 0%,
+					rgba(107, 33, 168, 0.4) 100%) !important;
+				border-radius: 0.75rem;
+				border: 1px solid rgba(168, 85, 247, 0.25);
+				backdrop-filter: blur(8px);
+			}
+
+			:deep(code) {
+				text-shadow: 0 0 8px rgba(240, 171, 252, 0.3);
 			}
 		}
 	}
 }
 
-@keyframes float {
-	0% {
-		transform: translate(0, 0) rotate(0deg);
-	}
-
-	100% {
-		transform: translate(50px, 50px) rotate(360deg);
-	}
-}
 
 .minimal-box {
 	background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
