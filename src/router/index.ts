@@ -1,6 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 
+const baseUrl = 'https://share.lovejade.cn'
+const defaultOgImage = `${baseUrl}/screenshots/desktop.png`
+const defaultImageAlt = '玉桃文飨轩 - Markdown 转图片工具界面预览'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -11,7 +15,12 @@ const router = createRouter({
       meta: {
         title: '玉桃文飨轩 - 一键将文本转换为精美图片 | Markdown 转图片工具',
         description: '玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全。',
-        keywords: '玉桃文飨轩,Markdown转图片,文本转图片工具,书摘生成器,文字转长图'
+        keywords: '玉桃文飨轩,Markdown转图片,文本转图片工具,书摘生成器,文字转长图',
+        canonical: `${baseUrl}/`,
+        ogImage: defaultOgImage,
+        ogImageAlt: defaultImageAlt,
+        ogType: 'website',
+        twitterCard: 'summary_large_image'
       }
     },
     {
@@ -21,7 +30,12 @@ const router = createRouter({
       meta: {
         title: '书摘模式 - 玉桃文飨轩 | 精美书摘图片生成器',
         description: '使用玉桃文飨轩的书摘模式，将您的读书笔记和精彩书摘转换为精美的分享图片。支持多种排版样式和背景选择。',
-        keywords: '书摘生成器,读书笔记工具,书摘转图片,文章配图工具'
+        keywords: '书摘生成器,读书笔记工具,书摘转图片,文章配图工具',
+        canonical: `${baseUrl}/digest`,
+        ogImage: defaultOgImage,
+        ogImageAlt: '玉桃文飨轩书摘模式 - 精美书摘图片生成器',
+        ogType: 'website',
+        twitterCard: 'summary_large_image'
       }
     },
     {
@@ -31,7 +45,12 @@ const router = createRouter({
       meta: {
         title: '关于我们 - 玉桃文飨轩',
         description: '了解玉桃文飨轩的功能特性、使用方法和技术实现。基于 Vue3、Vite、TailwindCSS 构建的现代化文本转图片工具。',
-        keywords: '关于玉桃文飨轩,工具介绍,使用说明'
+        keywords: '关于玉桃文飨轩,工具介绍,使用说明',
+        canonical: `${baseUrl}/about`,
+        ogImage: defaultOgImage,
+        ogImageAlt: '玉桃文飨轩 - 产品介绍与使用说明',
+        ogType: 'website',
+        twitterCard: 'summary_large_image'
       }
     }
   ],
@@ -62,6 +81,12 @@ router.beforeEach((to, from, next) => {
   if (keywordsMeta && to.meta.keywords) {
     keywordsMeta.setAttribute('content', to.meta.keywords as string)
   }
+
+  // 更新 canonical
+  const canonicalLink = document.querySelector('link[rel="canonical"]')
+  if (canonicalLink && to.meta.canonical) {
+    canonicalLink.setAttribute('href', to.meta.canonical as string)
+  }
   
   // 更新 Open Graph 标签
   const ogTitle = document.querySelector('meta[property="og:title"]')
@@ -72,6 +97,52 @@ router.beforeEach((to, from, next) => {
   const ogDescription = document.querySelector('meta[property="og:description"]')
   if (ogDescription && to.meta.description) {
     ogDescription.setAttribute('content', to.meta.description as string)
+  }
+
+  const ogUrl = document.querySelector('meta[property="og:url"]')
+  if (ogUrl && to.meta.canonical) {
+    ogUrl.setAttribute('content', to.meta.canonical as string)
+  }
+
+  const ogImage = document.querySelector('meta[property="og:image"]')
+  if (ogImage) {
+    ogImage.setAttribute('content', (to.meta.ogImage as string) || defaultOgImage)
+  }
+
+  const ogImageAlt = document.querySelector('meta[property="og:image:alt"]')
+  if (ogImageAlt) {
+    ogImageAlt.setAttribute('content', (to.meta.ogImageAlt as string) || defaultImageAlt)
+  }
+
+  const ogType = document.querySelector('meta[property="og:type"]')
+  if (ogType && to.meta.ogType) {
+    ogType.setAttribute('content', to.meta.ogType as string)
+  }
+
+  // 更新 Twitter 标签
+  const twitterTitle = document.querySelector('meta[name="twitter:title"]')
+  if (twitterTitle && to.meta.title) {
+    twitterTitle.setAttribute('content', to.meta.title as string)
+  }
+
+  const twitterDescription = document.querySelector('meta[name="twitter:description"]')
+  if (twitterDescription && to.meta.description) {
+    twitterDescription.setAttribute('content', to.meta.description as string)
+  }
+
+  const twitterImage = document.querySelector('meta[name="twitter:image"]')
+  if (twitterImage) {
+    twitterImage.setAttribute('content', (to.meta.ogImage as string) || defaultOgImage)
+  }
+
+  const twitterImageAlt = document.querySelector('meta[name="twitter:image:alt"]')
+  if (twitterImageAlt) {
+    twitterImageAlt.setAttribute('content', (to.meta.ogImageAlt as string) || defaultImageAlt)
+  }
+
+  const twitterCard = document.querySelector('meta[name="twitter:card"]')
+  if (twitterCard && to.meta.twitterCard) {
+    twitterCard.setAttribute('content', to.meta.twitterCard as string)
   }
   
   next()
