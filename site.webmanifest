@@ -1,6 +1,11 @@
 {
-	"name": "\u66fc\u5999\u53e5\u5b50",
-	"short_name": "\u66fc\u5999\u53e5\u5b50",
+	"name": "玉桃文飨轩",
+	"short_name": "玉桃文飨轩",
+	"description": "玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。",
+	"start_url": "/",
+	"display": "standalone",
+	"theme_color": "#ffffff",
+	"background_color": "#ffffff",
 	"icons": [
 		{
 			"src": "/android-chrome-192x192.png",
@@ -11,9 +16,11 @@
 			"src": "/android-chrome-384x384.png",
 			"sizes": "384x384",
 			"type": "image/png"
+		},
+		{
+			"src": "/apple-touch-icon.png",
+			"sizes": "180x180",
+			"type": "image/png"
 		}
-	],
-	"theme_color": "#ffffff",
-	"background_color": "#ffffff",
-	"display": "standalone"
+	]
 }

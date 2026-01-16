@@ -14,14 +14,23 @@
   <meta name="keywords"
     content="玉桃文飨轩,Markdown 转图片,文本转图片工具,书摘生成器,文字转长图,Markdown 一键转换,社交图片制作,读书笔记工具,文章配图工具,微信公众号配图,朋友圈文字转图,在线图片生成器,文字转精美图片" />
   <meta name="author" content="玉桃文飨轩" />
-  <meta name="robots" content="index, follow" />
+  <meta name="application-name" content="玉桃文飨轩" />
+  <meta http-equiv="Content-Language" content="zh-CN" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="geo.region" content="CN" />
+  <meta name="geo.placename" content="中国" />
   <link rel="canonical" href="https://share.lovejade.cn/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://share.lovejade.cn/" />
+  <link rel="alternate" hreflang="x-default" href="https://share.lovejade.cn/" />
 
   <!-- 社交媒体标签 -->
   <meta property="og:title" content="玉桃文飨轩 - 一键将文本转换为精美图片 | Markdown 转图片工具" />
   <meta property="og:description"
     content="玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。" />
   <meta property="og:image" content="https://share.lovejade.cn/screenshots/desktop.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="676" />
+  <meta property="og:image:alt" content="玉桃文飨轩 - Markdown 转图片工具界面预览" />
   <meta property="og:url" content="https://share.lovejade.cn/" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="zh_CN" />
@@ -29,10 +38,13 @@
 
   <!-- Twitter Card 标签 -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@MarshalXuan" />
+  <meta name="twitter:creator" content="@MarshalXuan" />
   <meta name="twitter:title" content="玉桃文飨轩 - 一键将文本转换为精美图片 | Markdown 转图片工具" />
   <meta name="twitter:description"
     content="玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。" />
   <meta name="twitter:image" content="https://share.lovejade.cn/screenshots/desktop.png" />
+  <meta name="twitter:image:alt" content="玉桃文飨轩 - Markdown 转图片工具界面预览" />
 
   <!-- PWA 相关标签 -->
   <link rel="manifest" href="/manifest.json" />
@@ -58,28 +70,56 @@
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "玉桃文飨轩",
-      "alternateName": "Markdown转图片工具",
-      "url": "https://share.lovejade.cn/",
-      "description": "玉桃文飨轩，简单好用的在线文本工具；支持将 Markdown、Rich Text 等格式内容，快速转化为 PNG、PDF、HTML 等文件，并支持自定义设置、一键下载等功能。基于 Vue3 、 Vite 、 Pinia 、 TailwindCSS 、 TypeScript 构建。",
-      "applicationCategory": "UtilitiesApplication",
-      "operatingSystem": "Web",
-      "browserRequirements": "Requires JavaScript. Requires HTML5.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "CNY"
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "玉桃文飨轩"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5",
-        "ratingCount": "11"
-      }
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://share.lovejade.cn/#organization",
+          "name": "玉桃文飨轩",
+          "url": "https://share.lovejade.cn/",
+          "logo": "https://share.lovejade.cn/apple-touch-icon.png",
+          "sameAs": [
+            "https://x.com/MarshalXuan",
+            "https://github.com/nicejade/markdown2png"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://share.lovejade.cn/#website",
+          "name": "玉桃文飨轩",
+          "url": "https://share.lovejade.cn/",
+          "inLanguage": "zh-CN",
+          "description": "玉桃文飨轩，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。",
+          "publisher": {
+            "@id": "https://share.lovejade.cn/#organization"
+          }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://share.lovejade.cn/#webapp",
+          "name": "玉桃文飨轩",
+          "alternateName": "Markdown 转图片工具",
+          "url": "https://share.lovejade.cn/",
+          "description": "玉桃文飨轩，简单好用的在线文本工具；支持将 Markdown、Rich Text 等格式内容，快速转化为 PNG、PDF、HTML 等文件，并支持自定义设置、一键下载等功能。基于 Vue3 、 Vite 、 Pinia 、 TailwindCSS 、 TypeScript 构建。",
+          "applicationCategory": "UtilitiesApplication",
+          "operatingSystem": "Web",
+          "browserRequirements": "Requires JavaScript. Requires HTML5.",
+          "inLanguage": "zh-CN",
+          "image": "https://share.lovejade.cn/screenshots/desktop.png",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "CNY"
+          },
+          "author": {
+            "@id": "https://share.lovejade.cn/#organization"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "5",
+            "ratingCount": "11"
+          }
+        }
+      ]
     }
   </script>
 
@@ -115,11 +155,11 @@
       document.head.appendChild(adScript)
     });
   </script>
-  <script type="module" crossorigin src="/assets/js/index-DAugaHg1.js"></script>
+  <script type="module" crossorigin src="/assets/js/index-DeBJ0J3E.js"></script>
   <link rel="modulepreload" crossorigin href="/assets/js/vue-vendor-DhcZvyQ5.js">
   <link rel="modulepreload" crossorigin href="/assets/js/libs-vendor-DrYw4QxU.js">
   <link rel="modulepreload" crossorigin href="/assets/js/ui-vendor-BhjYS1K_.js">
-  <link rel="stylesheet" crossorigin href="/assets/css/index-BMl2nuBB.css">
+  <link rel="stylesheet" crossorigin href="/assets/css/index-jgKABPf7.css">
 </head>
 
 <body>
