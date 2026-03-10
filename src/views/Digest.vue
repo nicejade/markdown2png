@@ -203,7 +203,11 @@ const edgePadding = ref(savedSettings.edgePadding)
 const roundedRadius = ref(savedSettings.roundedRadius)
 const fontWeight = ref(savedSettings.fontWeight)
 const textColor = ref(savedSettings.textColor)
-const selectedBg = ref(savedSettings.selectedBg)
+const selectedBg = ref(
+  typeof savedSettings.selectedBg === 'number' && savedSettings.selectedBg >= 0
+    ? savedSettings.selectedBg
+    : 0
+)
 const selectedRatio = ref(savedSettings.selectedRatio)
 const canvasWidth = ref(500)
 const canvasHeight = ref(660)
@@ -256,8 +260,11 @@ const backgrounds = ref([
 
 const canvasRef = ref(null)
 const ctx = ref(null)
+let isCanvasReady = false
+let loadToken = 0
 
 const debouncedUpdate = debounce(() => {
+  if (!isCanvasReady) return
   loadBackgroundImage()
   const settings = {
     fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding,
@@ -283,31 +290,26 @@ watch(
 )
 
 onMounted(async () => {
-  // 确保 canvas 元素已经挂载
   if (!canvasRef.value) {
     console.error('Canvas 元素未找到')
     toastStore.error('页面初始化失败，请刷新重试')
+    isLoading.value = false
     return
   }
 
-  // 从 localStorage 中加载用户保存的背景图片（Data URL 列表）
   try {
     const saved = getStorageItem(BACKGROUNDS_STORAGE_KEY)
     if (Array.isArray(saved) && saved.length > 0) {
-      // 将用户上传的图片放到默认背景前面，便于优先选择
       backgrounds.value = [...saved, ...backgrounds.value]
-      // 若存在用户保存的图片，默认选中新上传的第一张
       selectedBg.value = 0
     }
   } catch (e) {
     console.warn('加载已保存背景失败', e)
   }
 
-  // 根据保存的比例 ID 设置初始宽高
   const selectedRatioObj = ratios.find(r => r.id === selectedRatio.value) || ratios[0]
   updateCanvasSize(selectedRatioObj)
 
-  // 获取 canvas 上下文
   try {
     ctx.value = canvasRef.value.getContext('2d')
     if (!ctx.value) {
@@ -316,10 +318,10 @@ onMounted(async () => {
   } catch (e) {
     console.error('Canvas 初始化失败:', e)
     toastStore.error('Canvas 初始化失败，请刷新重试')
+    isLoading.value = false
     return
   }
 
-  // 预加载字体（可选，不阻塞渲染）
   try {
     await Promise.race([
       document.fonts.ready,
@@ -329,7 +331,7 @@ onMounted(async () => {
     console.warn('字体预加载失败:', e)
   }
 
-  // 加载背景图片
+  isCanvasReady = true
   loadBackgroundImage()
 })
 
@@ -357,17 +359,45 @@ const updateCanvasSize = (item) => {
 }
 
 const loadBackgroundImage = () => {
-  isLoading.value = true
-  const img = new Image()
-  img.onload = () => {
-    drawCanvas(img)
+  let index = typeof selectedBg.value === 'number' ? selectedBg.value : 0
+  if (index < 0 || index >= backgrounds.value.length) {
+    index = 0
+    selectedBg.value = 0
+  }
+
+  const src = backgrounds.value[index]
+  if (!src) {
     isLoading.value = false
+    return
+  }
+
+  const token = ++loadToken
+  isLoading.value = true
+
+  const img = new Image()
+  img.onload = async () => {
+    if (token !== loadToken) return
+    try {
+      await drawCanvas(img)
+    } catch (e) {
+      console.error('Canvas draw failed:', e)
+    } finally {
+      isLoading.value = false
+    }
   }
   img.onerror = () => {
+    if (token !== loadToken) return
     toastStore.error('背景图片加载失败')
     isLoading.value = false
   }
-  img.src = backgrounds.value[selectedBg.value]
+  img.src = src
+
+  // Fallback: force hide skeleton after 8s no matter what
+  setTimeout(() => {
+    if (token === loadToken && isLoading.value) {
+      isLoading.value = false
+    }
+  }, 8000)
 }
 
 // 解析 Markdown 语法，返回文本片段数组
