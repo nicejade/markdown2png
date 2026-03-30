@@ -14,6 +14,7 @@
     "analyze": "vite-bundle-visualizer"
   },
   "dependencies": {
+    "@chenglou/pretext": "^0.0.3",
     "@headlessui/tailwindcss": "^0.2.0",
     "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.1.1",

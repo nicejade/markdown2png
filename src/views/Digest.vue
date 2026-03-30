@@ -186,6 +186,7 @@ import { download2png, debounce, generateHash, getStyleSettings, setStyleSetting
 import { BACKGROUNDS_STORAGE_KEY } from './../helper/constant'
 import { useToastStore } from './../stores/toast'
 import { useDigestStore } from './../stores/digest'
+import { prepareWithSegments, layoutWithLines } from '@chenglou/pretext'
 
 const toastStore = useToastStore()
 const digestStore = useDigestStore()
@@ -482,93 +483,79 @@ const drawCanvas = async (backgroundImage) => {
     console.warn('字体加载失败，将使用后备字体:', e)
   }
 
-  // 文本换行处理函数（处理已解析的片段）
+  // 文本换行处理函数（使用 pretext 实现基于单词的智能换行）
   const wrapTextSegments = (segments) => {
     const lines: Array<Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }>> = []
     const maxWidth = canvas.width - (edgePadding.value * 2)
     const spacing = letterSpacing.value / 50
 
-    // 将片段展开为字符数组（保留样式信息）
-    const charSegments: Array<{ char: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
+    const font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+
+    // Step 1: Concatenate all segment texts to create a single flow for pretext
+    // This prevents pretext from breaking at segment boundaries
+    const plainText = segments.map(s => s.text).join('')
+
+    if (!plainText.trim()) return lines
+
+    // Step 2: Prepare and layout with pretext
+    context.font = font
+    const prepared = prepareWithSegments(plainText, font)
+    const { lines: pretextLines } = layoutWithLines(prepared, maxWidth, fontSize.value)
+
+    // Step 3: Map pretext lines back to styled segments
+    // We use a character-based approach to track which segment each character belongs to
+    let charIndex = 0
+    const segmentCharRanges: Array<{ start: number; end: number; style: any }> = []
     segments.forEach(segment => {
-      segment.text.split('').forEach(char => {
-        charSegments.push({
-          char,
+      const start = charIndex
+      const end = charIndex + segment.text.length
+      segmentCharRanges.push({
+        start,
+        end,
+        style: {
           bold: segment.bold,
           underline: segment.underline,
           mark: segment.mark,
           strikethrough: segment.strikethrough
-        })
+        }
       })
+      charIndex = end
     })
 
-    // 按字符换行
-    let currentLine: Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
-    let currentLineText = ''
-    let currentLineWidth = 0
-    let currentStyle = null
+    pretextLines.forEach(line => {
+      const lineSegments: Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
+      let i = line.start.segmentIndex
+      let j = line.start.graphemeIndex
 
-    charSegments.forEach((charSeg, index) => {
-      const char = charSeg.char
-      const style = {
-        bold: charSeg.bold,
-        underline: charSeg.underline,
-        mark: charSeg.mark,
-        strikethrough: charSeg.strikethrough
-      }
+      while (i < segmentCharRanges.length) {
+        const range = segmentCharRanges[i]
+        const segmentText = segments[i].text
 
-      // 检查样式是否改变
-      const styleChanged = !currentStyle ||
-        currentStyle.bold !== style.bold ||
-        currentStyle.underline !== style.underline ||
-        currentStyle.mark !== style.mark ||
-        currentStyle.strikethrough !== style.strikethrough
+        if (i > line.start.segmentIndex || (i === line.start.segmentIndex && j < segmentText.length)) {
+          const startPos = (i === line.start.segmentIndex) ? j : 0
+          const endPos = (i === line.end.segmentIndex) ? Math.min(line.end.graphemeIndex, segmentText.length) : segmentText.length
 
-      // 设置字体以测量
-      const testFont = style.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
-      context.font = testFont
-      const charWidth = context.measureText(char).width + spacing
-
-      // 如果样式改变或行宽超限，需要换行或开始新片段
-      if (styleChanged && currentLineText) {
-        // 保存当前片段
-        currentLine.push({ ...currentStyle, text: currentLineText })
-        currentLineText = ''
-      }
-
-      // 检查是否需要换行
-      if (currentLineWidth + charWidth > maxWidth && (currentLine.length > 0 || currentLineText !== '')) {
-        // 保存当前行
-        if (currentLineText) {
-          currentLine.push({ ...currentStyle, text: currentLineText })
+          if (startPos < endPos) {
+            const text = segmentText.substring(startPos, endPos)
+            lineSegments.push({
+              text,
+              bold: range.style.bold,
+              underline: range.style.underline,
+              mark: range.style.mark,
+              strikethrough: range.style.strikethrough
+            })
+          }
         }
-        lines.push(currentLine)
-        currentLine = []
-        currentLineText = ''
-        currentLineWidth = 0
-        currentStyle = null
+
+        if (i === line.end.segmentIndex) break
+        i++
+        j = 0
       }
 
-      // 添加字符到当前行
-      if (!currentStyle || styleChanged) {
-        currentStyle = { ...style }
-        if (currentLineText) {
-          currentLine.push({ ...currentStyle, text: currentLineText })
-          currentLineText = ''
-        }
+      if (lineSegments.length > 0) {
+        lines.push(lineSegments)
       }
-
-      currentLineText += char
-      currentLineWidth += charWidth
     })
-
-    // 添加最后一行
-    if (currentLineText) {
-      currentLine.push({ ...currentStyle, text: currentLineText })
-    }
-    if (currentLine.length > 0) {
-      lines.push(currentLine)
-    }
 
     return lines
   }
