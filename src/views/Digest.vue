@@ -1,3 +1,805 @@
+<script setup lang="ts">
+import { getCurrentInstance, nextTick, onMounted, ref, watch } from 'vue'
+import HeadlessSelect from './../components/HeadlessSelect.vue'
+import DigestHistory from './../components/DigestHistory.vue'
+import { download2png, debounce, generateHash, getStyleSettings, setStyleSettings, getStorageItem } from './../helper/util'
+import { BACKGROUNDS_STORAGE_KEY } from './../helper/constant'
+import { useToastStore } from './../stores/toast'
+import { useDigestStore } from './../stores/digest'
+
+const toastStore = useToastStore()
+const digestStore = useDigestStore()
+
+// 获取已保存的设置或使用默认值
+const savedSettings = getStyleSettings()
+
+const digest = ref(digestStore.currentDigest)
+const fontFamily = ref(savedSettings.fontFamily)
+const fontSize = ref(savedSettings.fontSize)
+const textAlign = ref(savedSettings.textAlign)
+const lineHeight = ref(savedSettings.lineHeight)
+const letterSpacing = ref(savedSettings.letterSpacing)
+const edgePadding = ref(savedSettings.edgePadding)
+const roundedRadius = ref(savedSettings.roundedRadius)
+const fontWeight = ref(savedSettings.fontWeight)
+const textColor = ref(savedSettings.textColor)
+const selectedBg = ref(
+  typeof savedSettings.selectedBg === 'number' && savedSettings.selectedBg >= 0
+    ? savedSettings.selectedBg
+    : 0
+)
+const selectedRatio = ref(savedSettings.selectedRatio)
+const canvasWidth = ref(500)
+const canvasHeight = ref(660)
+const isLoading = ref(true)
+const { proxy } = getCurrentInstance() as any
+
+// 添加字重选项配置
+const fontWeights = [
+  { id: 'normal', name: '常规' },
+  { id: 'medium', name: '中等' },
+  { id: 'bold', name: '粗体' }
+]
+
+// script setup 部分添加字体配置
+const fontFamilys = [
+  { id: 'system-ui', name: '系统默认' },
+  { id: 'Noto Sans SC', name: '思源黑体' },
+  { id: 'ChillKai', name: '寒蝉正楷' },
+  { id: 'Playfair Display', name: 'Playfair Display' },
+  { id: 'Montserrat', name: 'Montserrat' },
+  { id: 'Dancing Script', name: 'Dancing Script' },
+  { id: 'Huiwen-Fangsong', name: '汇文仿宋' },
+  { id: 'PING FANG ZHUI FENG', name: '平方追风' },
+  { id: 'PING FANG SHAO HUA', name: '手写韶华' },
+]
+
+// 添加对齐方式选项配置
+const alignments = [
+  { id: 'left', name: '居左对齐' },
+  { id: 'center', name: '居中对齐' },
+]
+
+// 添加比例选项配置
+type SelectOption = {
+  id: string
+  name: string
+}
+
+type RatioOption = SelectOption & {
+  width: number
+  height: number
+}
+
+const ratios: RatioOption[] = [
+  { id: 'default', name: '默认比例', width: 500, height: 660 },
+  { id: 'xiaohongshu', name: '小红书', width: 540, height: 720 },
+  { id: 'douyin', name: '抖音', width: 540, height: 768 },
+  { id: 'square', name: '正方形', width: 600, height: 600 },
+  { id: 'weixin', name: '微信', width: 900, height: 500 },
+]
+
+type DigestTextSegment = {
+  text: string
+  bold?: boolean
+  underline?: boolean
+  mark?: boolean
+  strikethrough?: boolean
+}
+
+const backgrounds = ref([
+  '/images/bg0.png',
+  '/images/bg1.png',
+  '/images/bg2.png',
+  '/images/bg3.png',
+  '/images/bg4.png',
+  '/images/bg5.png',
+])
+
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+const ctx = ref<CanvasRenderingContext2D | null>(null)
+let isCanvasReady = false
+let loadToken = 0
+
+const debouncedUpdate = debounce(() => {
+  if (!isCanvasReady) return
+  void loadBackgroundImage()
+  const settings = {
+    fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding,
+    fontWeight, textColor, selectedBg, roundedRadius, selectedRatio
+  }
+  setStyleSettings(settings)
+}, 100)
+
+// 监听所有样式变化
+watch(
+  [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, selectedRatio, roundedRadius],
+  () => {
+    debouncedUpdate()
+  },
+  { deep: true }
+)
+
+watch(
+  () => digestStore.currentDigest,
+  (newValue) => {
+    digest.value = newValue
+  }
+)
+
+onMounted(async () => {
+  if (!canvasRef.value) {
+    console.error('Canvas 元素未找到')
+    toastStore.error('页面初始化失败，请刷新重试')
+    isLoading.value = false
+    return
+  }
+
+  try {
+    const saved = getStorageItem(BACKGROUNDS_STORAGE_KEY)
+    if (Array.isArray(saved) && saved.length > 0) {
+      backgrounds.value = [...saved, ...backgrounds.value]
+      selectedBg.value = 0
+    }
+  } catch (e) {
+    console.warn('加载已保存背景失败', e)
+  }
+
+  const selectedRatioObj = ratios.find(r => r.id === selectedRatio.value) || ratios[0]
+  updateCanvasSize(selectedRatioObj)
+
+  try {
+    ctx.value = canvasRef.value.getContext('2d')
+    if (!ctx.value) {
+      throw new Error('无法获取 Canvas 2D 上下文')
+    }
+  } catch (e) {
+    console.error('Canvas 初始化失败:', e)
+    toastStore.error('Canvas 初始化失败，请刷新重试')
+    isLoading.value = false
+    return
+  }
+
+  isCanvasReady = true
+  void loadBackgroundImage()
+})
+
+// 保存用户上传的背景图片（只保存 data: 开头的图片，防止把内置资源写入 localStorage）
+const saveBackgroundsToStorage = () => {
+  try {
+    const dataUrls = backgrounds.value.filter(b => typeof b === 'string' && b.startsWith('data:'))
+    // 只保留最近 10 张，防止占用过多 localStorage
+    const trimmed = dataUrls.slice(0, 10)
+    localStorage.setItem(BACKGROUNDS_STORAGE_KEY, JSON.stringify(trimmed))
+  } catch (e) {
+    console.warn('保存背景图片失败', e)
+  }
+}
+
+const updateCanvasSize = (item: { width: number; height: number }) => {
+  canvasWidth.value = item.width
+  canvasHeight.value = item.height
+
+  // 更新 canvas 尺寸
+  if (canvasRef.value) {
+    canvasRef.value.width = item.width
+    canvasRef.value.height = item.height
+  }
+}
+
+const waitForNextPaint = () => new Promise<void>((resolve) => {
+  requestAnimationFrame(() => resolve())
+})
+
+const getSelectedBackgroundSrc = () => {
+  let index = typeof selectedBg.value === 'number' ? selectedBg.value : 0
+  if (index < 0 || index >= backgrounds.value.length) {
+    index = 0
+    selectedBg.value = 0
+  }
+
+  return backgrounds.value[index] || null
+}
+
+const waitForDigestFont = async () => {
+  try {
+    const fontLoadTimeout = new Promise((resolve) => setTimeout(resolve, 800))
+    const fontLoad = document.fonts.load(`${fontSize.value}px ${fontFamily.value}`)
+    await Promise.race([fontLoad, fontLoadTimeout])
+  } catch (e) {
+    console.warn('字体加载失败，将使用后备字体:', e)
+  }
+}
+
+const loadBackgroundAsset = (src: string, timeout = 8000): Promise<HTMLImageElement | null> => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    let settled = false
+    let timeoutId = 0
+
+    const finalize = (image: HTMLImageElement | null) => {
+      if (settled) return
+      settled = true
+      window.clearTimeout(timeoutId)
+      resolve(image)
+    }
+
+    const handleLoaded = async () => {
+      try {
+        if (typeof img.decode === 'function') {
+          await img.decode()
+        }
+      } catch (e) {
+        console.warn('Background image decode failed, continue with current frame:', e)
+      } finally {
+        finalize(img.naturalWidth > 0 ? img : null)
+      }
+    }
+
+    img.onload = () => {
+      void handleLoaded()
+    }
+    img.onerror = () => {
+      console.warn('Background image load failed, using default gray background')
+      finalize(null)
+    }
+
+    timeoutId = window.setTimeout(() => {
+      console.warn('Background image load timeout, using default gray background')
+      finalize(null)
+    }, timeout)
+
+    img.src = src
+
+    if (img.complete) {
+      void handleLoaded()
+    }
+  })
+}
+
+// 解析 Markdown 语法，返回文本片段数组
+const parseMarkdown = (text: string) => {
+  const segments: DigestTextSegment[] = []
+  let i = 0
+
+  while (i < text.length) {
+    // 检查各种标记
+    if (text.substring(i, i + 2) === '**' && text.indexOf('**', i + 2) !== -1) {
+      // 加粗 **text**
+      const endIndex = text.indexOf('**', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), bold: true })
+        i = endIndex + 2
+        continue
+      }
+    } else if (text.substring(i, i + 2) === '__' && text.indexOf('__', i + 2) !== -1) {
+      // 下划线 __text__
+      const endIndex = text.indexOf('__', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), underline: true })
+        i = endIndex + 2
+        continue
+      }
+    } else if (text.substring(i, i + 2) === '==' && text.indexOf('==', i + 2) !== -1) {
+      // 高亮 ==text==
+      const endIndex = text.indexOf('==', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), mark: true })
+        i = endIndex + 2
+        continue
+      }
+    } else if (text.substring(i, i + 2) === '~~' && text.indexOf('~~', i + 2) !== -1) {
+      // 删除线 ~~text~~
+      const endIndex = text.indexOf('~~', i + 2)
+      if (endIndex !== -1) {
+        segments.push({ text: text.substring(i + 2, endIndex), strikethrough: true })
+        i = endIndex + 2
+        continue
+      }
+    }
+
+    // 普通文本，找到下一个标记的开始位置
+    let nextMarkIndex = text.length
+    const marks = ['**', '__', '==', '~~']
+    marks.forEach(mark => {
+      const index = text.indexOf(mark, i)
+      if (index !== -1 && index < nextMarkIndex) {
+        nextMarkIndex = index
+      }
+    })
+
+    if (nextMarkIndex > i) {
+      segments.push({ text: text.substring(i, nextMarkIndex) })
+      i = nextMarkIndex
+    } else {
+      segments.push({ text: text.substring(i) })
+      break
+    }
+  }
+
+  return segments
+}
+
+const drawCanvas = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, backgroundImage: HTMLImageElement | null) => {
+  context.clearRect(0, 0, canvas.width, canvas.height)
+  // 绘制背景
+  if (backgroundImage) {
+    context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
+  } else {
+    // 使用默认灰色背景
+    context.fillStyle = '##e5e7eb'
+    context.fillRect(0, 0, canvas.width, canvas.height)
+  }
+
+  // 文本换行处理函数 - 基于单词换行，保持英文单词完整
+  const wrapTextSegments = (segments: DigestTextSegment[]) => {
+    const lines: DigestTextSegment[][] = []
+    const maxWidth = canvas.width - (edgePadding.value * 2)
+
+    // 将片段展开为单词数组（保留样式信息）
+    const wordSegments: Array<{ word: string } & Omit<DigestTextSegment, 'text'>> = []
+    segments.forEach(segment => {
+      // 按单词分割，保留空格
+      const words = segment.text.split(/(\s+)/)
+      words.forEach(word => {
+        if (word) {
+          wordSegments.push({
+            word,
+            bold: segment.bold,
+            underline: segment.underline,
+            mark: segment.mark,
+            strikethrough: segment.strikethrough
+          })
+        }
+      })
+    })
+
+    if (wordSegments.length === 0) return lines
+
+    const font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+    context.font = font
+
+    // 逐行布局
+    let currentLine: DigestTextSegment[] = []
+    let currentLineText = ''
+    let currentLineWidth = 0
+    let currentStyle: Omit<DigestTextSegment, 'text'> | null = null
+
+    const pushCurrentLineSegment = () => {
+      if (!currentLineText || !currentStyle) {
+        return
+      }
+
+      currentLine.push({ ...currentStyle, text: currentLineText })
+      currentLineText = ''
+    }
+
+    wordSegments.forEach((wordSeg) => {
+      const word = wordSeg.word
+      const style = {
+        bold: wordSeg.bold,
+        underline: wordSeg.underline,
+        mark: wordSeg.mark,
+        strikethrough: wordSeg.strikethrough
+      }
+
+      const styleChanged = !currentStyle ||
+        currentStyle.bold !== style.bold ||
+        currentStyle.underline !== style.underline ||
+        currentStyle.mark !== style.mark ||
+        currentStyle.strikethrough !== style.strikethrough
+
+      const wordFont = style.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : font
+      context.font = wordFont
+      const wordWidth = context.measureText(word).width
+
+      // 检查样式变化
+      if (styleChanged) {
+        pushCurrentLineSegment()
+      }
+
+      // 检查是否需要换行
+      if (currentLineWidth + wordWidth > maxWidth && currentLineText && currentStyle) {
+        pushCurrentLineSegment()
+        lines.push(currentLine)
+        currentLine = []
+        currentLineWidth = 0
+        currentStyle = null
+      }
+
+      // 添加单词到当前行
+      if (!currentStyle || styleChanged) {
+        currentStyle = { ...style }
+      }
+
+      currentLineText += word
+      currentLineWidth += wordWidth
+    })
+
+    // 添加最后一行
+    pushCurrentLineSegment()
+    if (currentLine.length > 0) {
+      lines.push(currentLine)
+    }
+
+    return lines
+  }
+
+  // 笔刷质感的高亮绘制（用于 ==text==）
+  const drawBrushMark = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, size: number) => {
+    const paddingX = Math.max(2, size * 0.12)
+    const paddingY = Math.max(1, size * 0.1)
+    const markHeight = size * 0.9
+    const startX = x - paddingX
+    const startY = y - markHeight + paddingY * 0.3
+    const markWidth = width + paddingX * 2
+
+    // 简单的可重复“随机”数，避免每次渲染抖动
+    const rand = (seed: number) => {
+      const s = Math.sin(seed * 12.9898) * 43758.5453
+      return s - Math.floor(s)
+    }
+
+    ctx.save()
+    ctx.globalAlpha = 0.9
+    const gradient = ctx.createLinearGradient(startX, startY, startX, startY + markHeight)
+    gradient.addColorStop(0, '#fff176')
+    gradient.addColorStop(1, '#ffd54f')
+    ctx.fillStyle = gradient
+
+    const roughness = Math.max(1.5, size * 0.06)
+    const topJitter = roughness * (0.5 + rand(startX + y))
+    const bottomJitter = roughness * (0.8 + rand(markWidth + y))
+
+    // 不规则多边形，模拟笔刷边缘
+    ctx.beginPath()
+    ctx.moveTo(startX, startY + topJitter)
+    ctx.lineTo(startX + markWidth, startY + topJitter * 0.7)
+    ctx.lineTo(startX + markWidth - roughness * rand(startX + markWidth), startY + markHeight - bottomJitter)
+    ctx.lineTo(startX + roughness * rand(y + markWidth), startY + markHeight + bottomJitter * 0.5)
+    ctx.closePath()
+    ctx.fill()
+
+    // 轻微覆涂，增加纹理层次
+    ctx.globalAlpha = 0.15
+    ctx.fillRect(startX + markWidth * 0.08, startY + markHeight * 0.3, markWidth * 0.35, roughness)
+    ctx.fillRect(startX + markWidth * 0.5, startY + markHeight * 0.65, markWidth * 0.28, roughness * 0.9)
+    ctx.restore()
+  }
+
+  // 处理每一段文本
+  const paragraphs = digest.value.split('\n')
+  const allLines: DigestTextSegment[][] = []
+  paragraphs.forEach((para: string) => {
+    if (para.trim()) {
+      const segments = parseMarkdown(para)
+      allLines.push(...wrapTextSegments(segments))
+    } else {
+      // 空行
+      allLines.push([])
+    }
+  })
+
+  // 计算行高和总高度
+  const lineHeightPx = fontSize.value * lineHeight.value
+  const totalHeight = allLines.length * lineHeightPx
+
+  // 计算起始 Y 坐标（垂直居中）
+  let startY = (canvas.height - totalHeight) / 2
+
+  // 绘制文本
+  allLines.forEach(line => {
+    if (line.length === 0) {
+      startY += lineHeightPx
+      return
+    }
+
+    const spacing = letterSpacing.value / 50
+    let currentX = edgePadding.value
+
+    // 先计算整行宽度（用于居中对齐）
+    let totalLineWidth = 0
+    context.font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+    line.forEach(segment => {
+      const segmentFont = segment.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+      context.font = segmentFont
+      const chars = segment.text.split('')
+      chars.forEach(char => {
+        totalLineWidth += context.measureText(char).width + spacing
+      })
+    })
+    totalLineWidth = Math.min(totalLineWidth, canvas.width - (edgePadding.value * 2))
+
+    // 根据对齐方式计算起始 X 坐标
+    if (textAlign.value === 'left') {
+      currentX = edgePadding.value
+    } else if (textAlign.value === 'center') {
+      currentX = (canvas.width - totalLineWidth) / 2
+    }
+
+    // 绘制每个片段
+    line.forEach(segment => {
+      const segmentFont = segment.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
+      context.font = segmentFont
+      context.fillStyle = textColor.value
+      context.textAlign = 'left'
+
+      const chars = segment.text.split('')
+      const segmentStartX = currentX
+      let segmentWidth = 0
+
+      // 先计算片段宽度
+      chars.forEach(char => {
+        segmentWidth += context.measureText(char).width + spacing
+      })
+
+      // 先绘制高亮背景（如果有）
+      if (segment.mark) {
+        const markWidth = Math.max(segmentWidth - spacing, 0)
+        drawBrushMark(context, segmentStartX, startY, markWidth, fontSize.value)
+        context.fillStyle = textColor.value
+      }
+
+      // 绘制文字
+      chars.forEach(char => {
+        context.fillText(char, currentX, startY)
+        const charWidth = context.measureText(char).width
+        currentX += charWidth + spacing
+      })
+
+      // 绘制下划线
+      if (segment.underline) {
+        context.strokeStyle = textColor.value
+        context.lineWidth = Math.max(1, fontSize.value / 20)
+        context.beginPath()
+        context.moveTo(segmentStartX, startY + 4) // 距离文字更远 2px（从 +2 改为 +4）
+        context.lineTo(segmentStartX + segmentWidth - spacing, startY + 4)
+        context.stroke()
+      }
+
+      // 绘制删除线
+      if (segment.strikethrough) {
+        context.strokeStyle = textColor.value
+        context.lineWidth = Math.max(1, fontSize.value / 20)
+        context.beginPath()
+        const strikeY = startY - fontSize.value * 0.3
+        context.moveTo(segmentStartX, strikeY)
+        context.lineTo(segmentStartX + segmentWidth - spacing, strikeY)
+        context.stroke()
+      }
+    })
+
+    startY += lineHeightPx
+  })
+}
+
+const loadBackgroundImage = async () => {
+  if (!isCanvasReady) return
+
+  const canvas = canvasRef.value
+  const context = ctx.value
+
+  if (!canvas || !context) {
+    return
+  }
+
+  const token = ++loadToken
+  isLoading.value = true
+
+  try {
+    await nextTick()
+    await waitForNextPaint()
+
+    if (token !== loadToken) {
+      return
+    }
+
+    const renderSurface = document.createElement('canvas')
+    renderSurface.width = canvasWidth.value
+    renderSurface.height = canvasHeight.value
+
+    const renderContext = renderSurface.getContext('2d')
+    if (!renderContext) {
+      throw new Error('无法创建离屏 Canvas 上下文')
+    }
+
+    const backgroundSrc = getSelectedBackgroundSrc()
+
+    const [backgroundImage] = await Promise.all([
+      backgroundSrc ? loadBackgroundAsset(backgroundSrc) : Promise.resolve(null),
+      waitForDigestFont()
+    ])
+
+    if (token !== loadToken) {
+      return
+    }
+
+    drawCanvas(renderSurface, renderContext, backgroundImage)
+
+    if (token !== loadToken) {
+      return
+    }
+
+    if (canvas.width !== renderSurface.width) {
+      canvas.width = renderSurface.width
+    }
+
+    if (canvas.height !== renderSurface.height) {
+      canvas.height = renderSurface.height
+    }
+
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.drawImage(renderSurface, 0, 0)
+  } catch (e) {
+    if (token !== loadToken) {
+      return
+    }
+
+    console.error('Canvas render failed:', e)
+    toastStore.error('文摘渲染失败，请重试')
+  } finally {
+    if (token === loadToken) {
+      isLoading.value = false
+    }
+  }
+}
+
+function onCopyImage() {
+  // 检测是否为 iOS 或 Safari, iOS/Safari 环境下使用替代方案
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+
+  if (isIOS || isSafari) {
+    toastStore.info('iOS/Safari 环境请选择"保存图片"')
+    return
+  }
+
+  proxy.$reortGaEvent('save-img', 'digest')
+  const canvas = canvasRef.value
+
+  if (!canvas) {
+    toastStore.error('图片尚未生成，请稍后重试')
+    return
+  }
+
+  // 直接从 canvas 获取 blob
+  canvas.toBlob((blob) => {
+    if (!blob) {
+      toastStore.error('复制图片失败，请重试')
+      return
+    }
+
+    navigator.clipboard.write([
+      new ClipboardItem({
+        'image/png': blob
+      })
+    ])
+      .then(() => {
+        toastStore.success('已复制图片至您的剪切板')
+        proxy.$reortGaEvent('copy-image', 'digest')
+      })
+      .catch((error) => {
+        console.error('复制图片失败:', error)
+        toastStore.error('复制图片失败，请重试')
+        proxy.$reortGaEvent('copy-image-failed', 'digest')
+      })
+  }, 'image/png')
+}
+
+function onSave2Image() {
+  proxy.$reortGaEvent('save-img', 'digest')
+  const canvas = canvasRef.value
+
+  if (!canvas) {
+    toastStore.error('图片尚未生成，请稍后重试')
+    return
+  }
+
+  try {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        download2png(blob)
+        toastStore.success('已成功为你保存图片')
+        proxy.$reortGaEvent('save-image', 'digest')
+      } else {
+        throw new Error('生成图片失败')
+      }
+    }, 'image/png')
+  } catch (error) {
+    console.error('保存图片失败:', error)
+    toastStore.error('保存图片失败，请重试')
+    proxy.$reortGaEvent('save-image-failed', 'digest')
+  }
+}
+
+// 修改保存函数
+function onSaveText2Storage() {
+  proxy.$reortGaEvent('save-digest', 'digest')
+  const hash = generateHash(digest.value)
+
+  // 检查是否已存在相同内容
+  if (digestStore.digestList.some((item: { hash: string }) => item.hash === hash)) {
+    return toastStore.info('该书摘内容已被保存过')
+  }
+
+  digestStore.addDigest({
+    hash,
+    text: digest.value,
+    timestamp: Date.now(),
+    click: 0
+  })
+  toastStore.success('已成功为你保存书摘')
+}
+
+// 处理图片上传
+const handleImageUpload = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  // 检查文件类型
+  if (!file.type.startsWith('image/')) {
+    toastStore.info('请上传图片格式文件')
+    return
+  }
+
+  // 读取为 Data URL（可序列化到 localStorage）
+  const reader = new FileReader()
+  reader.onload = () => {
+    const result = reader.result as string
+    if (result) {
+      backgrounds.value.unshift(result)
+      // 选中新上传的图片
+      selectedBg.value = 0
+      // 持久化用户上传的图片（只保存 data URL）
+      saveBackgroundsToStorage()
+    }
+    // 清空 input，允许重复上传同一张图片
+    input.value = ''
+  }
+  reader.onerror = () => {
+    toastStore.error('读取图片失败')
+  }
+  reader.readAsDataURL(file)
+}
+
+// 当 backgrounds 变化时，自动保存用户上传的 data URL
+watch(backgrounds, () => {
+  saveBackgroundsToStorage()
+}, { deep: true })
+
+function handleSelectWeight(item: SelectOption) {
+  fontWeight.value = item.id
+  proxy.$reortGaEvent('select-weight', 'digest')
+}
+
+function handleSelectFont(item: SelectOption) {
+  fontFamily.value = item.id
+  proxy.$reortGaEvent('select-font', 'digest')
+}
+
+const handleSelectAlignment = (item: SelectOption) => {
+  textAlign.value = item.id
+  proxy.$reortGaEvent('select-alignment', 'digest')
+}
+
+const handleSelectRatio = (item: RatioOption) => {
+  selectedRatio.value = item.id
+  updateCanvasSize(item)
+  void loadBackgroundImage()
+
+  proxy.$reortGaEvent('select-ratio', 'digest')
+}
+
+const handleImageError = (index: number) => {
+  const message = `背景图片 ${index + 1} 加载失败`
+  toastStore.error(message)
+  proxy.$reortGaEvent('load-bg-failed', 'digest')
+}
+
+const handleImageLoad = () => { }
+</script>
+
 <template>
   <div class="w-[80rem] md:w-full flex md:flex-col items-start justify-between p-6 md:p-0">
 
@@ -178,692 +980,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { getCurrentInstance, ref, onMounted, watch } from 'vue'
-import HeadlessSelect from './../components/HeadlessSelect.vue'
-import DigestHistory from './../components/DigestHistory.vue'
-import { download2png, debounce, generateHash, getStyleSettings, setStyleSettings, getStorageItem } from './../helper/util'
-import { BACKGROUNDS_STORAGE_KEY } from './../helper/constant'
-import { useToastStore } from './../stores/toast'
-import { useDigestStore } from './../stores/digest'
-
-const toastStore = useToastStore()
-const digestStore = useDigestStore()
-
-// 获取已保存的设置或使用默认值
-const savedSettings = getStyleSettings()
-
-const digest = ref(digestStore.currentDigest)
-const fontFamily = ref(savedSettings.fontFamily)
-const fontSize = ref(savedSettings.fontSize)
-const textAlign = ref(savedSettings.textAlign)
-const lineHeight = ref(savedSettings.lineHeight)
-const letterSpacing = ref(savedSettings.letterSpacing)
-const edgePadding = ref(savedSettings.edgePadding)
-const roundedRadius = ref(savedSettings.roundedRadius)
-const fontWeight = ref(savedSettings.fontWeight)
-const textColor = ref(savedSettings.textColor)
-const selectedBg = ref(
-  typeof savedSettings.selectedBg === 'number' && savedSettings.selectedBg >= 0
-    ? savedSettings.selectedBg
-    : 0
-)
-const selectedRatio = ref(savedSettings.selectedRatio)
-const canvasWidth = ref(500)
-const canvasHeight = ref(660)
-const isLoading = ref(true)
-const { proxy } = getCurrentInstance() as any
-
-// 添加字重选项配置
-const fontWeights = [
-  { id: 'normal', name: '常规' },
-  { id: 'medium', name: '中等' },
-  { id: 'bold', name: '粗体' }
-]
-
-// script setup 部分添加字体配置
-const fontFamilys = [
-  { id: 'system-ui', name: '系统默认' },
-  { id: 'Noto Sans SC', name: '思源黑体' },
-  { id: 'ChillKai', name: '寒蝉正楷' },
-  { id: 'Playfair Display', name: 'Playfair Display' },
-  { id: 'Montserrat', name: 'Montserrat' },
-  { id: 'Dancing Script', name: 'Dancing Script' },
-  { id: 'Huiwen-Fangsong', name: '汇文仿宋' },
-  { id: 'PING FANG ZHUI FENG', name: '平方追风' },
-  { id: 'PING FANG SHAO HUA', name: '手写韶华' },
-]
-
-// 添加对齐方式选项配置
-const alignments = [
-  { id: 'left', name: '居左对齐' },
-  { id: 'center', name: '居中对齐' },
-]
-
-// 添加比例选项配置
-const ratios = [
-  { id: 'default', name: '默认比例', width: 500, height: 660 },
-  { id: 'xiaohongshu', name: '小红书', width: 540, height: 720 },
-  { id: 'douyin', name: '抖音', width: 540, height: 768 },
-  { id: 'square', name: '正方形', width: 600, height: 600 },
-  { id: 'weixin', name: '微信', width: 900, height: 500 },
-]
-
-const backgrounds = ref([
-  '/share/bg0.png',
-  '/share/bg1.png',
-  '/share/bg2.png',
-  '/share/bg3.png',
-  '/share/bg4.png',
-  '/share/bg5.png',
-])
-
-const canvasRef = ref(null)
-const ctx = ref(null)
-let isCanvasReady = false
-let loadToken = 0
-
-const debouncedUpdate = debounce(() => {
-  if (!isCanvasReady) return
-  loadBackgroundImage()
-  const settings = {
-    fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding,
-    fontWeight, textColor, selectedBg, roundedRadius, selectedRatio
-  }
-  setStyleSettings(settings)
-}, 100)
-
-// 监听所有样式变化
-watch(
-  [digest, fontFamily, fontSize, textAlign, lineHeight, letterSpacing, edgePadding, fontWeight, textColor, selectedBg, selectedRatio, roundedRadius],
-  () => {
-    debouncedUpdate()
-  },
-  { deep: true }
-)
-
-watch(
-  () => digestStore.currentDigest,
-  (newValue) => {
-    digest.value = newValue
-  }
-)
-
-onMounted(async () => {
-  if (!canvasRef.value) {
-    console.error('Canvas 元素未找到')
-    toastStore.error('页面初始化失败，请刷新重试')
-    isLoading.value = false
-    return
-  }
-
-  try {
-    const saved = getStorageItem(BACKGROUNDS_STORAGE_KEY)
-    if (Array.isArray(saved) && saved.length > 0) {
-      backgrounds.value = [...saved, ...backgrounds.value]
-      selectedBg.value = 0
-    }
-  } catch (e) {
-    console.warn('加载已保存背景失败', e)
-  }
-
-  const selectedRatioObj = ratios.find(r => r.id === selectedRatio.value) || ratios[0]
-  updateCanvasSize(selectedRatioObj)
-
-  try {
-    ctx.value = canvasRef.value.getContext('2d')
-    if (!ctx.value) {
-      throw new Error('无法获取 Canvas 2D 上下文')
-    }
-  } catch (e) {
-    console.error('Canvas 初始化失败:', e)
-    toastStore.error('Canvas 初始化失败，请刷新重试')
-    isLoading.value = false
-    return
-  }
-
-  try {
-    await Promise.race([
-      document.fonts.ready,
-      new Promise(resolve => setTimeout(resolve, 1000))
-    ])
-  } catch (e) {
-    console.warn('字体预加载失败:', e)
-  }
-
-  isCanvasReady = true
-  loadBackgroundImage()
-})
-
-// 保存用户上传的背景图片（只保存 data: 开头的图片，防止把内置资源写入 localStorage）
-const saveBackgroundsToStorage = () => {
-  try {
-    const dataUrls = backgrounds.value.filter(b => typeof b === 'string' && b.startsWith('data:'))
-    // 只保留最近 10 张，防止占用过多 localStorage
-    const trimmed = dataUrls.slice(0, 10)
-    localStorage.setItem(BACKGROUNDS_STORAGE_KEY, JSON.stringify(trimmed))
-  } catch (e) {
-    console.warn('保存背景图片失败', e)
-  }
-}
-
-const updateCanvasSize = (item) => {
-  canvasWidth.value = item.width
-  canvasHeight.value = item.height
-
-  // 更新 canvas 尺寸
-  if (canvasRef.value) {
-    canvasRef.value.width = item.width
-    canvasRef.value.height = item.height
-  }
-}
-
-const loadBackgroundImage = () => {
-  let index = typeof selectedBg.value === 'number' ? selectedBg.value : 0
-  if (index < 0 || index >= backgrounds.value.length) {
-    index = 0
-    selectedBg.value = 0
-  }
-
-  const src = backgrounds.value[index]
-  if (!src) {
-    isLoading.value = false
-    return
-  }
-
-  const token = ++loadToken
-  isLoading.value = true
-
-  const img = new Image()
-  img.onload = async () => {
-    if (token !== loadToken) return
-    try {
-      await drawCanvas(img)
-    } catch (e) {
-      console.error('Canvas draw failed:', e)
-    } finally {
-      isLoading.value = false
-    }
-  }
-  img.onerror = () => {
-    if (token !== loadToken) return
-    toastStore.error('背景图片加载失败')
-    isLoading.value = false
-  }
-  img.src = src
-
-  // Fallback: force hide skeleton after 8s no matter what
-  setTimeout(() => {
-    if (token === loadToken && isLoading.value) {
-      isLoading.value = false
-    }
-  }, 8000)
-}
-
-// 解析 Markdown 语法，返回文本片段数组
-const parseMarkdown = (text: string) => {
-  const segments: Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
-  let i = 0
-
-  while (i < text.length) {
-    // 检查各种标记
-    if (text.substring(i, i + 2) === '**' && text.indexOf('**', i + 2) !== -1) {
-      // 加粗 **text**
-      const endIndex = text.indexOf('**', i + 2)
-      if (endIndex !== -1) {
-        segments.push({ text: text.substring(i + 2, endIndex), bold: true })
-        i = endIndex + 2
-        continue
-      }
-    } else if (text.substring(i, i + 2) === '__' && text.indexOf('__', i + 2) !== -1) {
-      // 下划线 __text__
-      const endIndex = text.indexOf('__', i + 2)
-      if (endIndex !== -1) {
-        segments.push({ text: text.substring(i + 2, endIndex), underline: true })
-        i = endIndex + 2
-        continue
-      }
-    } else if (text.substring(i, i + 2) === '==' && text.indexOf('==', i + 2) !== -1) {
-      // 高亮 ==text==
-      const endIndex = text.indexOf('==', i + 2)
-      if (endIndex !== -1) {
-        segments.push({ text: text.substring(i + 2, endIndex), mark: true })
-        i = endIndex + 2
-        continue
-      }
-    } else if (text.substring(i, i + 2) === '~~' && text.indexOf('~~', i + 2) !== -1) {
-      // 删除线 ~~text~~
-      const endIndex = text.indexOf('~~', i + 2)
-      if (endIndex !== -1) {
-        segments.push({ text: text.substring(i + 2, endIndex), strikethrough: true })
-        i = endIndex + 2
-        continue
-      }
-    }
-
-    // 普通文本，找到下一个标记的开始位置
-    let nextMarkIndex = text.length
-    const marks = ['**', '__', '==', '~~']
-    marks.forEach(mark => {
-      const index = text.indexOf(mark, i)
-      if (index !== -1 && index < nextMarkIndex) {
-        nextMarkIndex = index
-      }
-    })
-
-    if (nextMarkIndex > i) {
-      segments.push({ text: text.substring(i, nextMarkIndex) })
-      i = nextMarkIndex
-    } else {
-      segments.push({ text: text.substring(i) })
-      break
-    }
-  }
-
-  return segments
-}
-
-const drawCanvas = async (backgroundImage) => {
-  const canvas = canvasRef.value
-  const context = ctx.value
-
-  context.clearRect(0, 0, canvas.width, canvas.height)
-  // 绘制背景
-  context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
-
-  // 优化字体加载：添加超时机制，避免无限期等待外部字体
-  try {
-    const fontLoadTimeout = new Promise((resolve) => setTimeout(resolve, 800))
-    const fontLoad = document.fonts.load(`${fontSize.value}px ${fontFamily.value}`)
-
-    // 使用 Promise.race 实现超时控制，最多等待 800ms
-    await Promise.race([fontLoad, fontLoadTimeout])
-  } catch (e) {
-    console.warn('字体加载失败，将使用后备字体:', e)
-  }
-
-  // 文本换行处理函数 - 基于单词换行，保持英文单词完整
-  const wrapTextSegments = (segments) => {
-    const lines: Array<Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }>> = []
-    const maxWidth = canvas.width - (edgePadding.value * 2)
-    const spacing = letterSpacing.value / 50
-
-    // 将片段展开为单词数组（保留样式信息）
-    const wordSegments: Array<{ word: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
-    segments.forEach(segment => {
-      // 按单词分割，保留空格
-      const words = segment.text.split(/(\s+)/)
-      words.forEach(word => {
-        if (word) {
-          wordSegments.push({
-            word,
-            bold: segment.bold,
-            underline: segment.underline,
-            mark: segment.mark,
-            strikethrough: segment.strikethrough
-          })
-        }
-      })
-    })
-
-    if (wordSegments.length === 0) return lines
-
-    const font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
-    context.font = font
-
-    // 逐行布局
-    let currentLine: Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }> = []
-    let currentLineText = ''
-    let currentLineWidth = 0
-    let currentStyle: any = null
-
-    wordSegments.forEach((wordSeg) => {
-      const word = wordSeg.word
-      const style = {
-        bold: wordSeg.bold,
-        underline: wordSeg.underline,
-        mark: wordSeg.mark,
-        strikethrough: wordSeg.strikethrough
-      }
-
-      const styleChanged = !currentStyle ||
-        currentStyle.bold !== style.bold ||
-        currentStyle.underline !== style.underline ||
-        currentStyle.mark !== style.mark ||
-        currentStyle.strikethrough !== style.strikethrough
-
-      const wordFont = style.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : font
-      context.font = wordFont
-      const wordWidth = context.measureText(word).width
-
-      // 检查样式变化
-      if (styleChanged && currentLineText) {
-        currentLine.push({ ...currentStyle, text: currentLineText })
-        currentLineText = ''
-      }
-
-      // 检查是否需要换行
-      if (currentLineWidth + wordWidth > maxWidth && currentLineText) {
-        currentLine.push({ ...currentStyle, text: currentLineText })
-        lines.push(currentLine)
-        currentLine = []
-        currentLineText = ''
-        currentLineWidth = 0
-        currentStyle = null
-      }
-
-      // 添加单词到当前行
-      if (!currentStyle || styleChanged) {
-        currentStyle = { ...style }
-        if (currentLineText) {
-          currentLine.push({ ...currentStyle, text: currentLineText })
-          currentLineText = ''
-        }
-      }
-
-      currentLineText += word
-      currentLineWidth += wordWidth
-    })
-
-    // 添加最后一行
-    if (currentLineText && currentStyle) {
-      currentLine.push({ ...currentStyle, text: currentLineText })
-    }
-    if (currentLine.length > 0) {
-      lines.push(currentLine)
-    }
-
-    return lines
-  }
-
-  // 笔刷质感的高亮绘制（用于 ==text==）
-  const drawBrushMark = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, size: number) => {
-    const paddingX = Math.max(2, size * 0.12)
-    const paddingY = Math.max(1, size * 0.1)
-    const markHeight = size * 0.9
-    const startX = x - paddingX
-    const startY = y - markHeight + paddingY * 0.3
-    const markWidth = width + paddingX * 2
-
-    // 简单的可重复“随机”数，避免每次渲染抖动
-    const rand = (seed: number) => {
-      const s = Math.sin(seed * 12.9898) * 43758.5453
-      return s - Math.floor(s)
-    }
-
-    ctx.save()
-    ctx.globalAlpha = 0.9
-    const gradient = ctx.createLinearGradient(startX, startY, startX, startY + markHeight)
-    gradient.addColorStop(0, '#fff176')
-    gradient.addColorStop(1, '#ffd54f')
-    ctx.fillStyle = gradient
-
-    const roughness = Math.max(1.5, size * 0.06)
-    const topJitter = roughness * (0.5 + rand(startX + y))
-    const bottomJitter = roughness * (0.8 + rand(markWidth + y))
-
-    // 不规则多边形，模拟笔刷边缘
-    ctx.beginPath()
-    ctx.moveTo(startX, startY + topJitter)
-    ctx.lineTo(startX + markWidth, startY + topJitter * 0.7)
-    ctx.lineTo(startX + markWidth - roughness * rand(startX + markWidth), startY + markHeight - bottomJitter)
-    ctx.lineTo(startX + roughness * rand(y + markWidth), startY + markHeight + bottomJitter * 0.5)
-    ctx.closePath()
-    ctx.fill()
-
-    // 轻微覆涂，增加纹理层次
-    ctx.globalAlpha = 0.15
-    ctx.fillRect(startX + markWidth * 0.08, startY + markHeight * 0.3, markWidth * 0.35, roughness)
-    ctx.fillRect(startX + markWidth * 0.5, startY + markHeight * 0.65, markWidth * 0.28, roughness * 0.9)
-    ctx.restore()
-  }
-
-  // 处理每一段文本
-  const paragraphs = digest.value.split('\n')
-  const allLines: Array<Array<{ text: string; bold?: boolean; underline?: boolean; mark?: boolean; strikethrough?: boolean }>> = []
-  paragraphs.forEach(para => {
-    if (para.trim()) {
-      const segments = parseMarkdown(para)
-      allLines.push(...wrapTextSegments(segments))
-    } else {
-      // 空行
-      allLines.push([])
-    }
-  })
-
-  // 计算行高和总高度
-  const lineHeightPx = fontSize.value * lineHeight.value
-  const totalHeight = allLines.length * lineHeightPx
-
-  // 计算起始 Y 坐标（垂直居中）
-  let startY = (canvas.height - totalHeight) / 2
-
-  // 绘制文本
-  allLines.forEach(line => {
-    if (line.length === 0) {
-      startY += lineHeightPx
-      return
-    }
-
-    const spacing = letterSpacing.value / 50
-    let currentX = edgePadding.value
-
-    // 先计算整行宽度（用于居中对齐）
-    let totalLineWidth = 0
-    context.font = `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
-    line.forEach(segment => {
-      const segmentFont = segment.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
-      context.font = segmentFont
-      const chars = segment.text.split('')
-      chars.forEach(char => {
-        totalLineWidth += context.measureText(char).width + spacing
-      })
-    })
-    totalLineWidth = Math.min(totalLineWidth, canvas.width - (edgePadding.value * 2))
-
-    // 根据对齐方式计算起始 X 坐标
-    if (textAlign.value === 'left') {
-      currentX = edgePadding.value
-    } else if (textAlign.value === 'center') {
-      currentX = (canvas.width - totalLineWidth) / 2
-    }
-
-    // 绘制每个片段
-    line.forEach(segment => {
-      const segmentFont = segment.bold ? `bold ${fontSize.value}px ${fontFamily.value}` : `${fontWeight.value} ${fontSize.value}px ${fontFamily.value}`
-      context.font = segmentFont
-      context.fillStyle = textColor.value
-      context.textAlign = 'left'
-
-      const chars = segment.text.split('')
-      const segmentStartX = currentX
-      let segmentWidth = 0
-
-      // 先计算片段宽度
-      chars.forEach(char => {
-        segmentWidth += context.measureText(char).width + spacing
-      })
-
-      // 先绘制高亮背景（如果有）
-      if (segment.mark) {
-        const markWidth = Math.max(segmentWidth - spacing, 0)
-        drawBrushMark(context, segmentStartX, startY, markWidth, fontSize.value)
-        context.fillStyle = textColor.value
-      }
-
-      // 绘制文字
-      chars.forEach(char => {
-        context.fillText(char, currentX, startY)
-        const charWidth = context.measureText(char).width
-        currentX += charWidth + spacing
-      })
-
-      // 绘制下划线
-      if (segment.underline) {
-        context.strokeStyle = textColor.value
-        context.lineWidth = Math.max(1, fontSize.value / 20)
-        context.beginPath()
-        context.moveTo(segmentStartX, startY + 4) // 距离文字更远 2px（从 +2 改为 +4）
-        context.lineTo(segmentStartX + segmentWidth - spacing, startY + 4)
-        context.stroke()
-      }
-
-      // 绘制删除线
-      if (segment.strikethrough) {
-        context.strokeStyle = textColor.value
-        context.lineWidth = Math.max(1, fontSize.value / 20)
-        context.beginPath()
-        const strikeY = startY - fontSize.value * 0.3
-        context.moveTo(segmentStartX, strikeY)
-        context.lineTo(segmentStartX + segmentWidth - spacing, strikeY)
-        context.stroke()
-      }
-    })
-
-    startY += lineHeightPx
-  })
-}
-
-function onCopyImage() {
-  // 检测是否为 iOS 或 Safari, iOS/Safari 环境下使用替代方案
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
-  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
-
-  if (isIOS || isSafari) {
-    toastStore.info('iOS/Safari 环境请选择"保存图片"')
-    return
-  }
-
-  proxy.$reortGaEvent('save-img', 'digest')
-  const canvas = canvasRef.value
-
-  // 直接从 canvas 获取 blob
-  canvas.toBlob((blob) => {
-    navigator.clipboard.write([
-      new ClipboardItem({
-        'image/png': blob
-      })
-    ])
-      .then(() => {
-        toastStore.success('已复制图片至您的剪切板')
-        proxy.$reortGaEvent('copy-image', 'digest')
-      })
-      .catch((error) => {
-        console.error('复制图片失败:', error)
-        toastStore.error('复制图片失败，请重试')
-        proxy.$reortGaEvent('copy-image-failed', 'digest')
-      })
-  }, 'image/png')
-}
-
-function onSave2Image() {
-  proxy.$reortGaEvent('save-img', 'digest')
-  const canvas = canvasRef.value
-  try {
-    canvas.toBlob((blob) => {
-      if (blob) {
-        download2png(blob)
-        toastStore.success('已成功为你保存图片')
-        proxy.$reortGaEvent('save-image', 'digest')
-      } else {
-        throw new Error('生成图片失败')
-      }
-    }, 'image/png')
-  } catch (error) {
-    console.error('保存图片失败:', error)
-    toastStore.error('保存图片失败，请重试')
-    proxy.$reortGaEvent('save-image-failed', 'digest')
-  }
-}
-
-// 修改保存函数
-function onSaveText2Storage() {
-  proxy.$reortGaEvent('save-digest', 'digest')
-  const hash = generateHash(digest.value)
-
-  // 检查是否已存在相同内容
-  if (digestStore.digestList.some(item => item.hash === hash)) {
-    return toastStore.info('该书摘内容已被保存过')
-  }
-
-  digestStore.addDigest({
-    hash,
-    text: digest.value,
-    timestamp: Date.now(),
-    click: 0
-  })
-  toastStore.success('已成功为你保存书摘')
-}
-
-// 处理图片上传
-const handleImageUpload = (event: Event) => {
-  const input = event.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
-
-  // 检查文件类型
-  if (!file.type.startsWith('image/')) {
-    toastStore.info('请上传图片格式文件')
-    return
-  }
-
-  // 读取为 Data URL（可序列化到 localStorage）
-  const reader = new FileReader()
-  reader.onload = () => {
-    const result = reader.result as string
-    if (result) {
-      backgrounds.value.unshift(result)
-      // 选中新上传的图片
-      selectedBg.value = 0
-      // 持久化用户上传的图片（只保存 data URL）
-      saveBackgroundsToStorage()
-    }
-    // 清空 input，允许重复上传同一张图片
-    input.value = ''
-  }
-  reader.onerror = () => {
-    toastStore.error('读取图片失败')
-  }
-  reader.readAsDataURL(file)
-}
-
-// 当 backgrounds 变化时，自动保存用户上传的 data URL
-watch(backgrounds, () => {
-  saveBackgroundsToStorage()
-}, { deep: true })
-
-function handleSelectWeight(item) {
-  fontWeight.value = item.id
-  proxy.$reortGaEvent('select-weight', 'digest')
-}
-
-function handleSelectFont(item) {
-  fontFamily.value = item.id
-  proxy.$reortGaEvent('select-font', 'digest')
-}
-
-const handleSelectAlignment = (item) => {
-  textAlign.value = item.id
-  proxy.$reortGaEvent('select-alignment', 'digest')
-}
-
-const handleSelectRatio = (item) => {
-  selectedRatio.value = item.id
-  updateCanvasSize(item)
-  loadBackgroundImage()
-
-  proxy.$reortGaEvent('select-ratio', 'digest')
-}
-
-const handleImageError = (index: number) => {
-  const message = `背景图片 ${index + 1} 加载失败`
-  toastStore.error(message)
-  proxy.$reortGaEvent('load-bg-failed', 'digest')
-}
-
-const handleImageLoad = () => { }
-</script>
-
 <style scoped>
 input[type="range"] {
   @apply h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
@@ -896,4 +1012,3 @@ input[type="range"]::-webkit-slider-thumb {
 @import url('https://fontsapi.zeoseven.com/495/main/result.css');
 @import url('https://fontsapi.zeoseven.com/157/main/result.css');
 </style>
-
