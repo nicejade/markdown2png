@@ -327,7 +327,7 @@ const drawCanvas = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     context.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height)
   } else {
     // 使用默认灰色背景
-    context.fillStyle = '##e5e7eb'
+    context.fillStyle = '#e5e7eb'
     context.fillRect(0, 0, canvas.width, canvas.height)
   }
 
@@ -336,22 +336,40 @@ const drawCanvas = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     const lines: DigestTextSegment[][] = []
     const maxWidth = canvas.width - (edgePadding.value * 2)
 
-    // 将片段展开为单词数组（保留样式信息）
+    // Split segments into wrapping units: CJK chars individually, whitespace groups, Latin words as groups
     const wordSegments: Array<{ word: string } & Omit<DigestTextSegment, 'text'>> = []
+    const isCJK = (char: string) => /[\u4e00-\u9fff\u3400-\u4dbf\u3000-\u303f\uff00-\uffef\u2e80-\u2eff\u31c0-\u31ef]/.test(char)
+
     segments.forEach(segment => {
-      // 按单词分割，保留空格
-      const words = segment.text.split(/(\s+)/)
-      words.forEach(word => {
-        if (word) {
-          wordSegments.push({
-            word,
-            bold: segment.bold,
-            underline: segment.underline,
-            mark: segment.mark,
-            strikethrough: segment.strikethrough
-          })
+      const style = {
+        bold: segment.bold,
+        underline: segment.underline,
+        mark: segment.mark,
+        strikethrough: segment.strikethrough
+      }
+      let latinBuffer = ''
+
+      const flushLatin = () => {
+        if (latinBuffer) {
+          wordSegments.push({ word: latinBuffer, ...style })
+          latinBuffer = ''
+        }
+      }
+
+      Array.from(segment.text).forEach(char => {
+        if (/\s/.test(char)) {
+          flushLatin()
+          wordSegments.push({ word: char, ...style })
+        } else if (isCJK(char)) {
+          // Each CJK character is its own wrapping unit for proper line breaking
+          flushLatin()
+          wordSegments.push({ word: char, ...style })
+        } else {
+          // Latin characters group into words
+          latinBuffer += char
         }
       })
+      flushLatin()
     })
 
     if (wordSegments.length === 0) return lines
@@ -398,8 +416,8 @@ const drawCanvas = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         pushCurrentLineSegment()
       }
 
-      // 检查是否需要换行
-      if (currentLineWidth + wordWidth > maxWidth && currentLineText && currentStyle) {
+      // Check if we need to wrap to the next line
+      if (currentLineWidth + wordWidth > maxWidth && currentLineWidth > 0) {
         pushCurrentLineSegment()
         lines.push(currentLine)
         currentLine = []
