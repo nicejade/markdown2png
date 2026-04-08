@@ -20,7 +20,8 @@
           'ring-white/60 ring-offset-2 focus:outline-none focus:ring-2',
         ]">
           <ul v-if="posts.length > 0">
-            <li v-for="post in posts" :key="post.hash" class="relative p-3 rounded-md cursor-pointer hover:bg-gray-100"
+            <li v-for="post in posts" :key="post.hash"
+              :class="['relative p-3 rounded-md cursor-pointer hover:bg-gray-100', post.digest === currentDigest ? 'bg-gray-100' : '']"
               @click="handleDigestClick(post)">
               <section class="text-sm font-medium leading-5"
                 style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
@@ -41,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
 import { TAB_LABELS } from './../helper/constant'
 import { useDigestStore } from './../stores/digest'
@@ -49,6 +50,7 @@ import { useToastStore } from './../stores/toast'
 
 const toastStore = useToastStore()
 const digestStore = useDigestStore()
+const currentDigest = computed(() => digestStore.currentDigest)
 const digestHistory = ref({
   recent: [],
   earliest: [],

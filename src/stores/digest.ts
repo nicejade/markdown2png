@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { DIGEST_TEXT } from '../helper/constant'
+import { DIGEST_TEXT, DIGEST_CURRENT_HASH } from '../helper/constant'
 
 interface DigestItem {
   hash: string
@@ -17,11 +17,15 @@ __未至千般恨不消。__
 export const useDigestStore = defineStore('digest', {
   state: () => {
     const savedDigests = JSON.parse(localStorage.getItem(DIGEST_TEXT) || '[]')
-    const isSvaedDigest = savedDigests.length > 0 
-    const recentDigest = isSvaedDigest && savedDigests[savedDigests.length - 1].text
+    const isSvaedDigest = savedDigests.length > 0
+    const savedHash = localStorage.getItem(DIGEST_CURRENT_HASH)
+    const selectedItem = savedHash && savedDigests.find((item: DigestItem) => item.hash === savedHash)
+    const initialDigest = selectedItem ? selectedItem.text
+      : isSvaedDigest ? savedDigests[savedDigests.length - 1].text
+      : DEFAULT_DIGEST
     return {
       digestList: savedDigests,
-      currentDigest: isSvaedDigest ? recentDigest : DEFAULT_DIGEST
+      currentDigest: initialDigest
     }
   },
   
@@ -41,6 +45,7 @@ export const useDigestStore = defineStore('digest', {
         this.digestList[index].click += 1
         localStorage.setItem(DIGEST_TEXT, JSON.stringify(this.digestList))
       }
+      localStorage.setItem(DIGEST_CURRENT_HASH, hash)
     },
   }
 })

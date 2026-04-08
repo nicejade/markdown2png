@@ -10,6 +10,8 @@ export const CURRENT_SIZE = 'current-size'
 
 export const DIGEST_TEXT = 'digest-text'
 
+export const DIGEST_CURRENT_HASH = 'digest-current-hash'
+
 export const TAB_LABELS = {
 	recent: "最近",
   earliest: "最早",
