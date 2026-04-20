@@ -873,7 +873,7 @@ const handleImageLoad = () => { }
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">字号</label>
             <div class="flex items-center justify-center h-10">
-              <input type="range" v-model="fontSize" min="12" max="72" class="flex-1 mr-4" />
+              <input type="range" v-model.number="fontSize" min="12" max="72" class="flex-1 mr-4" />
               <span class="text-sm">{{ fontSize }}px</span>
             </div>
           </div>
@@ -899,7 +899,7 @@ const handleImageLoad = () => { }
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">行高</label>
             <div class="flex items-center">
-              <input type="range" v-model="lineHeight" min="1" max="3" step="0.1" class="flex-1 mr-4" />
+              <input type="range" v-model.number="lineHeight" min="1" max="3" step="0.1" class="flex-1 mr-4" />
               <span class="text-sm">{{ lineHeight }}倍</span>
             </div>
           </div>
@@ -907,7 +907,7 @@ const handleImageLoad = () => { }
           <div>
             <label class="block mb-2 text-sm font-medium text-gray-400">间距</label>
             <div class="flex items-center">
-              <input type="range" v-model="letterSpacing" min="0" max="100" class="flex-1 mr-4" />
+              <input type="range" v-model.number="letterSpacing" min="0" max="100" class="flex-1 mr-4" />
               <span class="text-sm">{{ letterSpacing }}</span>
             </div>
           </div>
@@ -917,14 +917,14 @@ const handleImageLoad = () => { }
           <div class="w-full">
             <label class="block mb-2 text-sm font-medium text-gray-400">弧度</label>
             <div class="flex items-center justify-center h-10">
-              <input type="range" v-model="roundedRadius" min="0" max="250" class="flex-1 mr-4" />
+              <input type="range" v-model.number="roundedRadius" min="0" max="250" class="flex-1 mr-4" />
               <span class="text-sm">{{ roundedRadius }}px</span>
             </div>
           </div>
           <div class="w-full">
             <label class="block mb-2 text-sm font-medium text-gray-400">边距</label>
             <div class="flex items-center justify-center h-10">
-              <input type="range" v-model="edgePadding" min="20" max="200" class="flex-1 mr-4" />
+              <input type="range" v-model.number="edgePadding" min="20" max="200" class="flex-1 mr-4" />
               <span class="text-sm">{{ edgePadding }}px</span>
             </div>
           </div>
