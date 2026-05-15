@@ -440,45 +440,122 @@ const drawCanvas = (canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     return lines
   }
 
-  // 笔刷质感的高亮绘制（用于 ==text==）
+  // 荧光笔/笔刷质感的高亮绘制（用于 ==text==）
+  // 通过多层半透明叠加 + 软边缘 + 自然渐变，模拟真实荧光笔扫过纸面的效果
   const drawBrushMark = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, size: number) => {
-    const paddingX = Math.max(2, size * 0.12)
-    const paddingY = Math.max(1, size * 0.1)
-    const markHeight = size * 0.9
-    const startX = x - paddingX
-    const startY = y - markHeight + paddingY * 0.3
-    const markWidth = width + paddingX * 2
+    if (width <= 0) return
 
-    // 简单的可重复“随机”数，避免每次渲染抖动
+    // 基础内边距 + 用户要求的额外四面 3px 扩展
+    const extra = 3
+    const paddingX = Math.max(3, size * 0.18) + extra
+    const markHeight = size * 1.05 + extra * 2 // 上下各多 3px
+    const startX = x - paddingX
+    // y 是 fillText 的基线，文字主体大致在 [y - size, y] 之间；让高亮覆盖文字中段，并向上多伸 3px
+    const startY = y - size * 0.92 - extra
+    const markWidth = width + paddingX * 2
+    const cx = startX + markWidth / 2
+    const cy = startY + markHeight / 2
+
+    // 可重复"随机"，保证同一段文字重渲染时形态一致，且不同位置/宽度形态不同
     const rand = (seed: number) => {
-      const s = Math.sin(seed * 12.9898) * 43758.5453
+      const s = Math.sin(seed * 12.9898 + width * 78.233) * 43758.5453
       return s - Math.floor(s)
     }
 
     ctx.save()
-    ctx.globalAlpha = 0.9
-    const gradient = ctx.createLinearGradient(startX, startY, startX, startY + markHeight)
-    gradient.addColorStop(0, '#fff176')
-    gradient.addColorStop(1, '#ffd54f')
-    ctx.fillStyle = gradient
 
-    const roughness = Math.max(1.5, size * 0.06)
-    const topJitter = roughness * (0.5 + rand(startX + y))
-    const bottomJitter = roughness * (0.8 + rand(markWidth + y))
-
-    // 不规则多边形，模拟笔刷边缘
+    // —— 第 1 层：宽大的柔光底色（模拟荧光笔在纸面上的辉光） ——
+    // 荧光笔黄：高亮、偏冷，用 source-over 避免 multiply 压暗
+    ctx.globalCompositeOperation = 'source-over'
+    const halo = ctx.createRadialGradient(cx, cy, markHeight * 0.1, cx, cy, Math.max(markWidth, markHeight) * 0.7)
+    halo.addColorStop(0, 'rgba(255, 255, 80, 0.72)')     // 亮荧光黄中心
+    halo.addColorStop(0.55, 'rgba(255, 255, 40, 0.48)')  // 中段仍保持高亮
+    halo.addColorStop(1, 'rgba(255, 255, 120, 0)')       // 边缘透明 → 软边
+    ctx.fillStyle = halo
+    // 椭圆形软光斑，比文字略宽略高
     ctx.beginPath()
-    ctx.moveTo(startX, startY + topJitter)
-    ctx.lineTo(startX + markWidth, startY + topJitter * 0.7)
-    ctx.lineTo(startX + markWidth - roughness * rand(startX + markWidth), startY + markHeight - bottomJitter)
-    ctx.lineTo(startX + roughness * rand(y + markWidth), startY + markHeight + bottomJitter * 0.5)
+    ctx.ellipse(cx, cy, markWidth / 2 + size * 0.08, markHeight / 2, 0, 0, Math.PI * 2)
+    ctx.fill()
+
+    // —— 第 2 层：主笔触条带，使用贝塞尔曲线让上下边缘自然起伏 ——
+    // 高亮荧光笔主体：柠檬荧光 → 纯亮黄 → 略暖收尾
+    const stroke = ctx.createLinearGradient(startX, startY, startX, startY + markHeight)
+    stroke.addColorStop(0, 'rgba(255, 255, 120, 0.88)')  // 顶部冷调亮黄
+    stroke.addColorStop(0.5, 'rgba(255, 255, 60, 0.92)') // 中段荧光黄
+    stroke.addColorStop(1, 'rgba(255, 255, 90, 0.88)') // 底部亮黄
+    ctx.fillStyle = stroke
+
+    const wobble = Math.max(1.2, size * 0.05)
+    // 顶/底各 4 个控制点的偏移，营造手绘起伏
+    const topOff = [
+      wobble * (0.4 + rand(1)),
+      wobble * (0.2 + rand(2)) * -1,
+      wobble * (0.5 + rand(3)),
+      wobble * (0.3 + rand(4)),
+    ]
+    const botOff = [
+      wobble * (0.3 + rand(5)),
+      wobble * (0.5 + rand(6)) * -1,
+      wobble * (0.4 + rand(7)),
+      wobble * (0.2 + rand(8)),
+    ]
+    // 左端略微收窄，模拟起笔时墨色变淡；右端则更尖锐（拖尾）
+    const taperLeft = Math.min(size * 0.35, markWidth * 0.12)
+    // 右端尖锐拖尾长度，比左端更长更尖
+    const taperRight = Math.min(size * 0.7, markWidth * 0.22)
+
+    ctx.beginPath()
+    // 左端起笔：圆滑收口
+    ctx.moveTo(startX + taperLeft * 0.4, startY + markHeight * 0.15 + topOff[0])
+    // 上边缘：用三段二次贝塞尔串起来，形成自然曲线
+    const topY = startY + topOff[1]
+    ctx.quadraticCurveTo(startX + markWidth * 0.25, topY, startX + markWidth * 0.5, startY + topOff[2])
+    // 上边缘趋向右端时缓缓抬升，形成尖角的上沿
+    ctx.quadraticCurveTo(
+      startX + markWidth * 0.75, startY + topOff[3],
+      startX + markWidth - taperRight * 0.15, startY + markHeight * 0.32 + topOff[0]
+    )
+    // 右端：拉成一个尖锐的顶点（拖尾收笔）
+    const tipX = startX + markWidth + taperRight * 0.15 // 略微外探，让尖角更突出
+    const tipY = startY + markHeight * 0.55 + botOff[0] * 0.4
+    ctx.quadraticCurveTo(
+      startX + markWidth + taperRight * 0.05, startY + markHeight * 0.42,
+      tipX, tipY
+    )
+    // 从尖端回到下边缘
+    ctx.quadraticCurveTo(
+      startX + markWidth + taperRight * 0.05, startY + markHeight * 0.7,
+      startX + markWidth - taperRight * 0.2, startY + markHeight * 0.78 + botOff[0]
+    )
+    // 下边缘：反向三段贝塞尔
+    ctx.quadraticCurveTo(startX + markWidth * 0.75, startY + markHeight + botOff[1], startX + markWidth * 0.5, startY + markHeight + botOff[2])
+    ctx.quadraticCurveTo(startX + markWidth * 0.25, startY + markHeight + botOff[3], startX + taperLeft * 0.5, startY + markHeight * 0.85 + botOff[0])
+    // 左端封口
+    ctx.quadraticCurveTo(startX, startY + markHeight * 0.5, startX + taperLeft * 0.4, startY + markHeight * 0.15 + topOff[0])
     ctx.closePath()
     ctx.fill()
 
-    // 轻微覆涂，增加纹理层次
-    ctx.globalAlpha = 0.15
-    ctx.fillRect(startX + markWidth * 0.08, startY + markHeight * 0.3, markWidth * 0.35, roughness)
-    ctx.fillRect(startX + markWidth * 0.5, startY + markHeight * 0.65, markWidth * 0.28, roughness * 0.9)
+    // —— 第 3 层：高频纹理条纹，模拟笔刷毛与纸面摩擦留下的丝丝痕迹 ——
+    // 浅亮黄条纹，避免琥珀色压暗整体
+    ctx.globalAlpha = 0.14
+    ctx.fillStyle = 'rgba(255, 255, 140, 1)'
+    const stripes = Math.max(3, Math.floor(markWidth / Math.max(18, size * 0.6)))
+    for (let i = 0; i < stripes; i++) {
+      const t = (i + rand(i + 10)) / stripes
+      const sx = startX + markWidth * t
+      const sw = markWidth / stripes * (0.4 + rand(i + 20) * 0.5)
+      const sy = startY + markHeight * (0.25 + rand(i + 30) * 0.5)
+      const sh = Math.max(0.6, size * 0.04 * (0.6 + rand(i + 40)))
+      ctx.fillRect(sx, sy, sw, sh)
+    }
+
+    // —— 第 4 层：起笔处一点略深的按压色，让端头更生动 ——
+    ctx.globalAlpha = 0.16
+    ctx.fillStyle = 'rgba(255, 255, 100, 1)'
+    ctx.beginPath()
+    ctx.ellipse(startX + taperLeft * 0.6, cy, taperLeft * 0.5, markHeight * 0.32, 0, 0, Math.PI * 2)
+    ctx.fill()
+
     ctx.restore()
   }
 
