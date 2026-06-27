@@ -8,6 +8,36 @@ export const CURRENT_THEME = 'current-theme'
 
 export const CURRENT_SIZE = 'current-size'
 
+export const TEXT_ALIGN = 'text-align'
+
+export const WRAPPER_MARGIN = 'wrapper-margin'
+
+export const FONT_FAMILY = 'font-family'
+
+export const TEXT_ALIGN_ARR = [
+	{ id: 'left', name: '左对齐' },
+	{ id: 'justify', name: '两端对齐' },
+]
+
+export const MARGIN_ARR = [
+	{ id: 'compact', name: '紧凑', style: '--wrapper-padding: 1rem;' },
+	{ id: 'standard', name: '标准', style: '--wrapper-padding: 2rem;' },
+	{ id: 'relaxed', name: '宽松', style: '--wrapper-padding: 3rem;' },
+	{ id: 'wide', name: '超宽', style: '--wrapper-padding: 4rem;' },
+]
+
+export const FONT_FAMILY_ARR = [
+	{
+		id: 'default',
+		name: '系统默认',
+		style: "--markdown-font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;",
+	},
+	{ id: 'Noto Sans SC', name: '思源黑体', style: "--markdown-font-family: 'Noto Sans SC', sans-serif;" },
+	{ id: 'ChillKai', name: '寒蝉正楷', style: "--markdown-font-family: 'ChillKai', serif;" },
+	{ id: 'Huiwen-Fangsong', name: '汇文仿宋', style: "--markdown-font-family: 'Huiwen-Fangsong', serif;" },
+	{ id: 'PING FANG SHAO HUA', name: '手写韶华', style: "--markdown-font-family: 'PING FANG SHAO HUA', cursive;" },
+]
+
 export const DIGEST_TEXT = 'digest-text'
 
 export const DIGEST_CURRENT_HASH = 'digest-current-hash'
@@ -44,22 +74,22 @@ export const SIZES_ARR = [
 	{
 		name: '电脑端',
 		id: 'laptop',
-		style: 'width: 50rem; --wrapper-padding: 3rem;',
+		style: 'width: 50rem;',
 	},
 	{
 		name: '移动端',
 		id: 'mobile',
-		style: 'width: 20rem; --wrapper-padding: 1.2rem; --markdown-font-size: 0.9rem;',
+		style: 'width: 20rem;',
 	},
 	{
 		name: '平板端',
 		id: 'tablet',
-		style: 'width: 37.5rem; --wrapper-padding: 2rem;',
+		style: 'width: 37.5rem;',
 	},
 	{
 		name: '超级屏',
 		id: 'desktop',
-		style: 'width: 60rem; --wrapper-padding: 4rem;',
+		style: 'width: 60rem;',
 	},
 ]
 

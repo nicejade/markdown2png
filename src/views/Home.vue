@@ -10,7 +10,7 @@ import HeadlessSelect from './../components/HeadlessSelect.vue'
 import Recommand from './../components/Recommand.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
-import { THEME_ARR, SIZES_ARR } from './../helper/constant'
+import { THEME_ARR, SIZES_ARR, TEXT_ALIGN_ARR, MARGIN_ARR, FONT_FAMILY_ARR } from './../helper/constant'
 
 const toastStore = useToastStore()
 
@@ -25,8 +25,20 @@ interface Size {
 	style: string
 }
 
+interface Margin {
+	id: string
+	name: string
+	style: string
+}
+
+interface StyleOption {
+	id: string
+	name: string
+	style: string
+}
+
 const contentStore = useContentStore()
-let { currentSize, currentTheme } = storeToRefs(contentStore)
+let { currentSize, currentTheme, textAlign, wrapperMargin, fontFamily } = storeToRefs(contentStore)
 
 const editor = ref(null) as any
 let visble = ref(false) as any
@@ -56,7 +68,10 @@ function generateContentHash() {
 	const size = currentSize.value
 	const withDate = contentStore.isWithDate
 	const withWatermark = contentStore.isWithWatermark
-	return btoa(encodeURIComponent(`${content}-${theme}-${size}-${withDate}-${withWatermark}`)).slice(0, 16)
+	const align = contentStore.textAlign
+	const margin = contentStore.wrapperMargin
+	const family = contentStore.fontFamily
+	return btoa(encodeURIComponent(`${content}-${theme}-${size}-${withDate}-${withWatermark}-${align}-${margin}-${family}`)).slice(0, 16)
 }
 
 onMounted(() => {
@@ -64,6 +79,7 @@ onMounted(() => {
 	switch2preview()
 	updatePreview()
 	handlePasteEvent()
+	loadSelectedFont()
 })
 
 const currentSizeObj = computed(() => {
@@ -72,6 +88,22 @@ const currentSizeObj = computed(() => {
 
 const currentThemeObj = computed(() => {
 	return THEME_ARR.filter((item: Theme) => item.id === currentTheme.value)[0]
+})
+
+const currentMarginObj = computed(() => {
+	return MARGIN_ARR.filter((item: Margin) => item.id === wrapperMargin.value)[0]
+})
+
+const currentFontFamilyObj = computed(() => {
+	return FONT_FAMILY_ARR.filter((item: StyleOption) => item.id === fontFamily.value)[0]
+})
+
+const containerStyle = computed(() => {
+	return [
+		currentSizeObj.value.style,
+		currentMarginObj.value.style,
+		currentFontFamilyObj.value.style,
+	]
 })
 
 function updatePreview() {
@@ -124,6 +156,12 @@ function onPreviewImage() {
 	visble.value = true
 }
 
+function loadSelectedFont() {
+	const family = contentStore.fontFamily
+	if (family === 'default') return Promise.resolve()
+	return document.fonts.load(`1rem ${family}`)
+}
+
 // 优化的 generateBlob 函数
 async function generateBlob() {
 	const currentContentHash = generateContentHash()
@@ -147,6 +185,7 @@ async function generateBlob() {
 			// 预处理：确保所有字体和图片已加载
 			await Promise.all([
 				document.fonts.ready,
+				loadSelectedFont(),
 				...Array.from(container.querySelectorAll('img')).map(img => {
 					if (img.complete) return Promise.resolve()
 					return new Promise((resolve) => {
@@ -238,6 +277,28 @@ function handleSelectSize(item: Size) {
 	proxy.$reortGaEvent('home-size', 'main')
 }
 
+function handleSelectTextAlign(item: { id: string; name: string }) {
+	contentStore.updateTextAlign(item.id)
+	imageBlob = null
+	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-text-align', 'main')
+}
+
+function handleSelectMargin(item: Margin) {
+	contentStore.updateWrapperMargin(item.id)
+	imageBlob = null
+	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-margin', 'main')
+}
+
+async function handleSelectFontFamily(item: StyleOption) {
+	contentStore.updateFontFamily(item.id)
+	await loadSelectedFont()
+	imageBlob = null
+	setTimeout(preGenerateBlob, 100)
+	proxy.$reortGaEvent('home-font-family', 'main')
+}
+
 function onEditorFocus() {
 	switch2editor()
 	proxy.$reortGaEvent('home-focus', 'main')
@@ -321,11 +382,12 @@ async function onSave2Image() {
 
 <template>
 	<section class="flex justify-center w-full m-auto">
-		<div id="container" class="container" style="text-autospace: normal;" :style="currentSizeObj.style">
+		<div id="container" class="container" style="text-autospace: normal;" :style="containerStyle">
 			<div :class="`${currentThemeObj.id}-box warpper`">
 				<!-- <div class="bg" v-if="currentThemeObj.id === 'official'"></div> -->
 				<div class="content" :class="currentThemeObj.id">
-					<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus" class="editor markdown"
+					<div id="editor" ref="editor" @blur="onEditorBlur" @focus="onEditorFocus"
+						:class="['editor', 'markdown', { 'markdown--justify': textAlign === 'justify' }]"
 						contenteditable="true">
 					</div>
 				</div>
@@ -333,7 +395,27 @@ async function onSave2Image() {
 		</div>
 	</section>
 
-	<div class="flex flex-col items-center w-full px-6 py-4 mx-auto mt-8 mb-4 space-y-2 bg-white rounded-md shadow-lg operate-area">
+	<div class="flex flex-col items-center w-full px-6 py-4 mx-auto mt-6 mb-4 space-y-2 bg-white rounded-md shadow-lg typography-area">
+		<div class="flex flex-row items-center justify-evenly w-full space-x-6" role="group">
+			<div class="flex flex-col items-center justify-between h-20">
+				<p class="font-medium text-gray-400">文本对齐</p>
+				<HeadlessSelect className="w-28" :sourceArr="TEXT_ALIGN_ARR" :defaultId="textAlign"
+					@selected="handleSelectTextAlign" />
+			</div>
+			<div class="flex flex-col items-center justify-between h-20">
+				<p class="font-medium text-gray-400">外边距</p>
+				<HeadlessSelect className="w-24" :sourceArr="MARGIN_ARR" :defaultId="wrapperMargin"
+					@selected="handleSelectMargin" />
+			</div>
+			<div class="flex flex-col items-center justify-between h-20">
+				<p class="font-medium text-gray-400">字体</p>
+				<HeadlessSelect className="w-28" :sourceArr="FONT_FAMILY_ARR" :defaultId="fontFamily"
+					@selected="handleSelectFontFamily" />
+			</div>
+		</div>
+	</div>
+
+	<div class="flex flex-col items-center w-full px-6 py-4 mx-auto mb-4 space-y-2 bg-white rounded-md shadow-lg operate-area">
 		<div class="flex flex-wrap justify-between w-full space-x-6 item-center">
 			<div class="flex justify-between flex-auto mobile-adjust md:justify-evenly">
 				<div class="flex flex-col items-center justify-between h-20">
@@ -857,6 +939,7 @@ async function onSave2Image() {
 	}
 }
 
+.typography-area,
 .operate-area {
 	width: 40rem;
 
@@ -870,6 +953,7 @@ async function onSave2Image() {
 		width: 100% !important;
 	}
 
+	#app .typography-area,
 	#app .operate-area {
 		width: 100%;
 
