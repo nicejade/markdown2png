@@ -1,5 +1,12 @@
 import { defineStore } from 'pinia'
-import { DEFAULT_TEXT, CURRENT_CONTENT, HAVE_DATE, HAVE_WATERMARK, CURRENT_THEME, CURRENT_SIZE, TEXT_ALIGN, WRAPPER_MARGIN, FONT_FAMILY, THEME_ARR, SIZES_ARR } from './../helper/constant'
+import { DEFAULT_TEXT, CURRENT_CONTENT, HAVE_DATE, HAVE_WATERMARK, CURRENT_THEME, CURRENT_SIZE, TEXT_ALIGN, WRAPPER_MARGIN, FONT_FAMILY, FONT_FAMILY_ARR, THEME_ARR, SIZES_ARR } from './../helper/constant'
+
+const VALID_FONT_IDS = new Set(FONT_FAMILY_ARR.map((item) => item.id))
+
+function resolveStoredFontFamily(): string {
+	const stored = localStorage.getItem(FONT_FAMILY)
+	return stored && VALID_FONT_IDS.has(stored) ? stored : 'default'
+}
 
 export const useContentStore = defineStore({
   id: 'content',
@@ -14,7 +21,7 @@ export const useContentStore = defineStore({
       currentSize: localStorage.getItem(CURRENT_SIZE) || defaultSizeIdx,
       textAlign: localStorage.getItem(TEXT_ALIGN) || 'left',
       wrapperMargin: localStorage.getItem(WRAPPER_MARGIN) || 'standard',
-      fontFamily: localStorage.getItem(FONT_FAMILY) || 'default',
+      fontFamily: resolveStoredFontFamily(),
     }
   },
 

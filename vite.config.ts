@@ -33,8 +33,10 @@ export default defineConfig({
           'vue-vendor': ['vue', 'vue-router', 'pinia'],
           // UI 组件库
           'ui-vendor': ['@headlessui/vue', '@heroicons/vue'],
-          // 核心插件（Markdown 解析与 DOM 处理）
-          'libs-vendor': ['marked', '@zumer/snapdom']
+          // Markdown 解析（首屏同步依赖）
+          'libs-vendor': ['marked'],
+          // 图片生成库（仅在导出图片时动态加载，须独立分包以避免进入首屏）
+          'snapdom': ['@zumer/snapdom']
         }
       }
     },

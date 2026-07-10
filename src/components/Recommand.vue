@@ -11,7 +11,8 @@
 			</div>
 			<div class="flex flex-col items-end w-1/4">
 				<img class="w-20 h-auto border border-gray-300 rounded-md aspect-square"
-					src="https://niceshare.site/apple-touch-icon.png" />
+					src="https://niceshare.site/apple-touch-icon.png" alt="逍遥自在轩" width="80" height="80"
+					loading="lazy" decoding="async" />
 			</div>
 		</a>
 	</div>

@@ -32,10 +32,26 @@ export const FONT_FAMILY_ARR = [
 		name: '系统默认',
 		style: "--markdown-font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif;",
 	},
+	// Chinese typography
 	{ id: 'Noto Sans SC', name: '思源黑体', style: "--markdown-font-family: 'Noto Sans SC', sans-serif;" },
+	{ id: 'Noto Serif SC', name: '思源宋体', style: "--markdown-font-family: 'Noto Serif SC', serif;" },
 	{ id: 'ChillKai', name: '寒蝉正楷', style: "--markdown-font-family: 'ChillKai', serif;" },
 	{ id: 'Huiwen-Fangsong', name: '汇文仿宋', style: "--markdown-font-family: 'Huiwen-Fangsong', serif;" },
-	{ id: 'PING FANG SHAO HUA', name: '手写韶华', style: "--markdown-font-family: 'PING FANG SHAO HUA', cursive;" },
+	{ id: 'LXGW WenKai', name: '霞鹜文楷', style: "--markdown-font-family: 'LXGW WenKai', serif;" },
+	// Chinese–English bilingual
+	{ id: 'Inter', name: 'Inter', style: "--markdown-font-family: 'Inter', 'Noto Sans SC', sans-serif;" },
+	{ id: 'Roboto', name: 'Roboto', style: "--markdown-font-family: 'Roboto', 'Noto Sans SC', sans-serif;" },
+	{ id: 'Montserrat', name: 'Montserrat', style: "--markdown-font-family: 'Montserrat', 'Noto Sans SC', sans-serif;" },
+	{
+		id: 'Sarasa Gothic SC',
+		name: '更纱黑体',
+		style: "--markdown-font-family: 'Sarasa Gothic SC', sans-serif;",
+	},
+	{
+		id: 'Playfair Display',
+		name: 'Playfair Display',
+		style: "--markdown-font-family: 'Playfair Display', 'Noto Serif SC', serif;",
+	},
 ]
 
 export const DIGEST_TEXT = 'digest-text'

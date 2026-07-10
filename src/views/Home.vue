@@ -2,7 +2,6 @@
 import { computed, ref, getCurrentInstance, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { parse } from 'marked'
-import { snapdom } from '@zumer/snapdom'
 import { useToastStore } from './../stores/toast'
 import Switch from './../components/Switch.vue'
 import Spinner from './../components/Spinner.vue'
@@ -10,6 +9,7 @@ import HeadlessSelect from './../components/HeadlessSelect.vue'
 import Recommand from './../components/Recommand.vue'
 import { useContentStore } from './../stores/content'
 import { download2png, getCurrentDate } from './../helper/util'
+import { ensureFontLoaded } from './../helper/fonts'
 import { THEME_ARR, SIZES_ARR, TEXT_ALIGN_ARR, MARGIN_ARR, FONT_FAMILY_ARR } from './../helper/constant'
 
 const toastStore = useToastStore()
@@ -51,6 +51,16 @@ let genBlobPromise: Promise<void> | null = null
 let lastContentHash = ''
 const { proxy } = getCurrentInstance() as any
 
+// Lazily import snapdom so the image-capture library (~180KB) stays out of
+// the initial bundle; it is only needed when generating an image.
+let snapdomModulePromise: Promise<typeof import('@zumer/snapdom')> | null = null
+function loadSnapdom() {
+	if (!snapdomModulePromise) {
+		snapdomModulePromise = import('@zumer/snapdom')
+	}
+	return snapdomModulePromise
+}
+
 // snapdom options
 const snapdomOptions = {
 	backgroundColor: '#ffffff',
@@ -80,6 +90,10 @@ onMounted(() => {
 	updatePreview()
 	handlePasteEvent()
 	loadSelectedFont()
+
+	// Warm up the capture library during idle time, after first paint
+	const idle = (window as any).requestIdleCallback ?? ((cb: () => void) => setTimeout(cb, 2000))
+	idle(() => loadSnapdom())
 })
 
 const currentSizeObj = computed(() => {
@@ -95,7 +109,7 @@ const currentMarginObj = computed(() => {
 })
 
 const currentFontFamilyObj = computed(() => {
-	return FONT_FAMILY_ARR.filter((item: StyleOption) => item.id === fontFamily.value)[0]
+	return FONT_FAMILY_ARR.find((item: StyleOption) => item.id === fontFamily.value) ?? FONT_FAMILY_ARR[0]
 })
 
 const containerStyle = computed(() => {
@@ -157,9 +171,7 @@ function onPreviewImage() {
 }
 
 function loadSelectedFont() {
-	const family = contentStore.fontFamily
-	if (family === 'default') return Promise.resolve()
-	return document.fonts.load(`1rem ${family}`)
+	return ensureFontLoaded(contentStore.fontFamily)
 }
 
 // 优化的 generateBlob 函数
@@ -214,6 +226,7 @@ async function generateBlob() {
 			container.offsetHeight
 
 			// 使用 snapdom 生成图片
+			const { snapdom } = await loadSnapdom()
 			imageBlob = await snapdom.toBlob(container, snapdomOptions as any)
 
 			// 恢复原始样式
