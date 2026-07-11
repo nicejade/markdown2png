@@ -29,7 +29,8 @@
 			<a target="_blank" class="mx-3 text-gray-400 cursor-pointer hover:text-amber-500" rel="external noopener"
 				@click="$reortGaEvent('beian', 'footer')"
 				:href="assembleExternalLink('https://beian.miit.gov.cn/')">粤ICP备17099767号</a>
-			<img class="zero" src="./../assets/images/zero.gif" alt="深圳市市场监督管理局企业主体身份公示" />
+			<img class="zero" src="./../assets/images/zero.gif" alt="深圳市市场监督管理局企业主体身份公示" width="18" height="24"
+				loading="lazy" decoding="async" />
 		</div>
 	</footer>
 </template>

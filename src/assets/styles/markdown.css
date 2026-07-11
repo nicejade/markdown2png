@@ -11,20 +11,23 @@
 }
 
 .markdown {
-  font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-family: var(--markdown-font-family, 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans,
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol');
   font-size: var(--markdown-font-size, 1rem);
   line-height: 1.6;
   padding: 0;
-  /* 优化中英文混排的换行与对齐效果 */
-  text-align: justify;
-  text-justify: inter-character;
+  text-align: left;
   word-break: normal;
   overflow-wrap: break-word;
   hyphens: auto;
   -webkit-border-radius: 0 0 3px 3px;
   border-radius: 0 0 3px 3px;
   color: #161823;
+}
+
+.markdown--justify {
+  text-align: justify;
+  text-justify: inter-character;
 }
 
 .markdown > *:first-child {
