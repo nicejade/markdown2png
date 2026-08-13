@@ -87,7 +87,7 @@ pnpm preview
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=nicejade/markdown2png&type=date&legend=top-left)](https://www.star-history.com/#nicejade/markdown2png&type=date&legend=top-left)
+[![Star History Chart](https://star-history.dera.page/svg?repos=nicejade/markdown2png&type=date&legend=top-left)](https://star-history.dera.page/#nicejade/markdown2png&type=date&legend=top-left)
 
 ## 许可执照
 
