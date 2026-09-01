@@ -23,6 +23,12 @@ const urls = [
     priority: '0.8'
   },
   {
+    loc: `${baseUrl}/quote`,
+    lastmod: today,
+    changefreq: 'weekly',
+    priority: '0.8'
+  },
+  {
     loc: `${baseUrl}/about`,
     lastmod: today,
     changefreq: 'monthly',

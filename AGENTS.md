@@ -7,6 +7,7 @@ This is a **professional text-to-image conversion tool** that converts Markdown 
 Primary use cases:
 - **Main Converter Mode** (`/`): General-purpose Markdown to image conversion
 - **Digest Mode** (`/digest`): Specifically designed for reading notes and book excerpts sharing
+- **Quote Mode** (`/quote`): English quote cards with auto author detection and built-in templates
 - **About Page** (`/about`): Product introduction and usage instructions
 
 Live URL: https://share.lovejade.cn

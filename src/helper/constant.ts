@@ -109,7 +109,7 @@ export const SIZES_ARR = [
 	},
 ]
 
-export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)🍑 ，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。 基于 Vue3、Vite、Pinia、TailwindCSS、TypeScript 等技术栈构建。
+export const DEFAULT_TEXT = `[玉桃文飨轩](https://share.lovejade.cn/)🍑 ，专业的文本转图片工具。一键将 Markdown 转换为精美图片，支持书摘模式、金句模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。 基于 Vue3、Vite、Pinia、TailwindCSS、TypeScript 等技术栈构建。
 
 ## 如何使用？
 

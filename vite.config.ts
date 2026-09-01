@@ -78,6 +78,7 @@ export default defineConfig({
       clientFiles: [
         './src/views/Home.vue',
         './src/views/Digest.vue',
+        './src/views/Quote.vue',
         './src/components/**/*.vue'
       ]
     }

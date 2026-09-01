@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-09-01
+- Added Quote mode at `/quote`: paste an English sentence and export a shareable quote card.
+- Auto-detects the author after a dash (`—`, `--`, or ` - `); quote and author remain independently editable.
+- Shipped five built-in templates (素纸 / 书页 / 夜墨 / 暖笺 / 刊首) plus portrait, square, and story sizes.
+- Quote cards render locally in the browser with on-demand serif fonts (Libre Baskerville, EB Garamond, Cormorant Garamond, Playfair Display).
+
 ## 2026-07-10
 - Optimized homepage first-paint performance: removed ~960KB of render-blocking external font CSS (`fonts.css`) from the critical path; font stylesheets are now injected on demand only when the corresponding font is selected (`src/helper/fonts.ts`).
 - Deferred `@zumer/snapdom` (~80KB chunk) via dynamic import with idle-time warmup, keeping it out of the initial bundle; split it into a dedicated chunk in `vite.config.ts`.

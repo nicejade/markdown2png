@@ -39,6 +39,21 @@ const router = createRouter({
       }
     },
     {
+      path: '/quote',
+      name: 'quote',
+      component: () => import('../views/Quote.vue'),
+      meta: {
+        title: '金句模式 - 玉桃文飨轩 | 英文金句图片生成器',
+        description: '把一句英文金句做成精美分享图。粘贴句子即可，破折号后自动识别作者，内置素纸、书页、夜墨、暖笺、刊首五种模板。全部在浏览器本地生成。',
+        keywords: '金句生成器,英文金句图片,名言配图,quote card,金句转图片,励志语录海报',
+        canonical: `${baseUrl}/quote`,
+        ogImage: defaultOgImage,
+        ogImageAlt: '玉桃文飨轩金句模式 - 英文金句图片生成器',
+        ogType: 'website',
+        twitterCard: 'summary_large_image'
+      }
+    },
+    {
       path: '/about',
       name: 'about',
       component: () => import('../views/About.vue'),
