@@ -1,4 +1,4 @@
-import{p as t}from"./libs-vendor-C2liC-nd.js";import{d as a,m as s,x as o,v as n,l as c}from"./vue-vendor-DhcZvyQ5.js";const d=`
+import{p as t}from"./libs-vendor-C2liC-nd.js";import{d as a,m as s,x as o,v as n,l as c}from"./vue-vendor-DafZy9X7.js";const d=`
 [玉桃文飨轩🍑](https://share.lovejade.cn/?utm_source=about)，专业的文本转图片工具。一键将 [Markdown](https://site.lovejade.cn/tags/Markdown) 转换为精美图片，支持书摘模式、自定义主题、字体和背景。所有数据本地处理保障隐私安全，完美适配多端展示。让文章分享、读书笔记、社交传播更有格调。项目基于 [Vue3](https://site.lovejade.cn/post/5b1a221c0526c920d6dfaada) 、 [Vite](https://site.lovejade.cn/post/6010e1b10c71de1fb957b64e) 、 [Pinia](https://site.lovejade.cn/post/631813c3c0922e0e572bde81) 、 [TailwindCSS](https://site.lovejade.cn/post/5fd20cb4c06d6302c1907ec7) 、 [TypeScript](https://site.lovejade.cn/post/6278fdeaac00ce3f9b11a8ef) 等技术栈构建，并在 [Github 开源](https://github.com/nicejade/markdown2png)。
 
 ![玉桃文飨轩 | 应用桌面端截图](https://share.lovejade.cn/screenshots/desktop.png)
@@ -16,6 +16,7 @@ import{p as t}from"./libs-vendor-C2liC-nd.js";import{d as a,m as s,x as o,v as n
 - 📱 灵活调整输出尺寸，完美适配手机、平板、电脑等多种设备；
 - 💫 支持自定义背景、字体、颜色等，打造专属于您的分享样式；
 - 📚 特色功能：[真实感书摘模式](https://share.lovejade.cn/digest)，让读书笔记分享更有质感；
+- ✒️ 特色功能：[金句模式](https://share.lovejade.cn/quote)，粘贴一句英文即可生成精美金句图；破折号后自动识别作者，内置素纸、书页、夜墨、暖笺、刊首五种模板；
 - ⚡️ 一键复制图片至剪切板或下载图片，即时分享到各大社交平台；
 
 > 无论是创作者分享文章、读者记录书摘，还是设计师输出文案，[玉桃文飨轩](https://share.lovejade.cn/)都能帮您轻松将文字转化为精美图片。
@@ -39,4 +40,4 @@ import{p as t}from"./libs-vendor-C2liC-nd.js";import{d as a,m as s,x as o,v as n
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
 - [X（Twitter）](https://x.com/MarshalXuan)
 
-2023 年 11 月 27 日补录于〔深圳福田〕`,p={id:"about",class:"my-4 w-full max-w-3xl"},r=["innerHTML"],f=a({__name:"About",setup(i){let e=t(d,{breaks:!0});return(l,h)=>(c(),s("div",p,[o("div",{class:"markdown",innerHTML:n(e)},null,8,r)]))}});export{f as default};
+2023 年 11 月 27 日补录于〔深圳福田〕`,p={id:"about",class:"my-4 w-full max-w-3xl"},r=["innerHTML"],f=a({__name:"About",setup(i){let e=t(d,{breaks:!0});return(h,l)=>(c(),s("div",p,[o("div",{class:"markdown",innerHTML:n(e)},null,8,r)]))}});export{f as default};
