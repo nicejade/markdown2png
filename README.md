@@ -39,6 +39,7 @@
 
 - 在线访问地址：[https://share.lovejade.cn/](https://share.lovejade.cn/ '玉桃文飨轩')。
 - `书摘模式`地址：[https://share.lovejade.cn/digest](https://share.lovejade.cn/digest '书摘模式')。
+- `金句模式`地址：[https://share.lovejade.cn/quote](https://share.lovejade.cn/quote '金句模式')。
 
 ## 核心功能
 
@@ -49,6 +50,7 @@
 - 📱 灵活调整输出尺寸，完美适配手机、平板、电脑等多种设备；
 - 💫 支持自定义背景、字体、颜色等，打造专属于您的分享样式；
 - 📚 特色功能：[真实感书摘模式](https://share.lovejade.cn/digest)，让读书笔记分享更有质感；
+- ✒️ 特色功能：[金句模式](https://share.lovejade.cn/quote)，粘贴一句英文即可生成精美金句图，破折号后自动识别作者；
 - ⚡️ 一键复制图片至剪切板或下载图片，即时分享到各大社交平台；
 
 ## 本地开发
@@ -74,16 +76,20 @@ pnpm preview
 
 ## 相关链接
 
-- [清风明月轩](https://www.lovejade.cn//?ref=github.com)
-- [逍遥自在轩](https://niceshare.site/?ref=github.com)
+- [清风明月轩](https://www.lovejade.cn/?ref=github.com)
+- [逍遥自在轩](https://www.niceshare.site/?ref=github.com)
 - [晚晴幽草轩](https://www.jeffjade.com/nicelinks?ref=github.com)
+- [慧悟万象阁](https://meta.niceshare.site/?ref=github.com)
+- [逸趣游乐坊](https://play.niceshare.site/?ref=github.com)
+- [蓝河文档馆](https://blueos.niceshare.site/?ref=github.com)
+- [玉桃文飨轩](https://share.lovejade.cn/?ref=github.com)
 - [缘知随心庭](https://fine.niceshare.site/?ref=github.com)
 - [静轩之别苑](https://quickapp.lovejade.cn/?ref=github.com)
-- [悠然宜想亭](https://forum.lovejade.cn//?ref=github.com)
-- [静晴轩别苑](https://nice.lovejade.cn/?ref=github.com)
+- [悠然宜想亭](https://forum.lovejade.cn/?ref=github.com)
 - [SegmentFault](https://segmentfault.com/u/jeffjade)
-- [X（Twitter）](https://x.com/MarshalXuan)
-- [Facebook](https://www.facebook.com/nice.jade.yang)
+- [X（MarshalXuan）](https://x.com/MarshalXuan)
+- [FaceBook（MarshalXuan）](https://www.facebook.com/MarshalXuan/)
+- [@MarshalXuan](https://www.youtube.com/@MarshalXuan)
 
 ## Star History
 
