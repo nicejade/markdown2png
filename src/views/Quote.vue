@@ -125,25 +125,20 @@ async function captureCard(): Promise<Blob> {
 		}),
 	])
 
-	const previousTransform = (card as HTMLElement).style.transform
-	;(card as HTMLElement).style.transform = 'none'
-
-	try {
-		const { snapdom } = await loadSnapdom()
-		const blob = await snapdom.toBlob(card, {
-			type: 'png',
-			embedFonts: true,
-			dpr: 1,
-			scale: 1,
-			backgroundColor: null,
-		} as any)
-		if (!blob) {
-			throw new Error('Failed to generate image')
-		}
-		return blob
-	} finally {
-		;(card as HTMLElement).style.transform = previousTransform
+	// Capture the card itself (unscaled). Preview scale lives on a wrapper so
+	// snapdom never needs to mutate the visible transform.
+	const { snapdom } = await loadSnapdom()
+	const blob = await snapdom.toBlob(card, {
+		type: 'png',
+		embedFonts: true,
+		dpr: 1,
+		scale: 1,
+		backgroundColor: null,
+	} as any)
+	if (!blob) {
+		throw new Error('Failed to generate image')
 	}
+	return blob
 }
 
 async function onCopyImage() {
@@ -234,7 +229,9 @@ onBeforeUnmount(() => {
 		<div class="quote-preview-col relative w-3/5 mb-4 mr-8 md:w-full md:mr-0">
 			<div ref="previewRef" class="quote-preview">
 				<div class="quote-preview__scaler" :style="scalerStyle">
-					<QuoteCard :quote="quote" :author="author" :template="template" :size="size" />
+					<div class="quote-preview__native">
+						<QuoteCard :quote="quote" :author="author" :template="template" :size="size" />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -346,7 +343,8 @@ onBeforeUnmount(() => {
 	box-shadow: 0 8px 32px rgb(0 0 50 / 12%);
 }
 
-.quote-preview__scaler :deep(#quote-card) {
+.quote-preview__native {
+	width: max-content;
 	transform: scale(var(--preview-scale, 1));
 	transform-origin: top left;
 }

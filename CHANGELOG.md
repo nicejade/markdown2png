@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## 2026-09-02
+- Fixed Quote copy/save flashing a full-size preview: preview scale now lives on a wrapper, so capture no longer strips the visible transform.
+
 ## 2026-09-01
 - Added Quote mode at `/quote`: paste an English sentence and export a shareable quote card.
 - Auto-detects the author after a dash (`—`, `--`, or ` - `); quote and author remain independently editable.
